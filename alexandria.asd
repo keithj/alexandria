@@ -12,4 +12,5 @@
    (:file "macros" :depends-on ("package"))
    (:file "symbols" :depends-on ("package"))
    (:file "arrays" :depends-on ("package"))
+   (:file "types" :depends-on ("package"))
    (:file "numbers" :depends-on ("package" "sequences"))))

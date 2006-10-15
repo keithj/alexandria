@@ -108,7 +108,7 @@ SEQUENCE."
 (defun first-elt (sequence)
   "Returns the first element of SEQUENCE. Signals a type-error if SEQUENCE is
 not a sequence, or is an empty sequence."
-  (cond  ((cons sequence)
+  (cond  ((consp sequence)
           (car sequence))
          ((and (vectorp sequence) (plusp (length sequence)))
           (aref sequence 0))

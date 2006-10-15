@@ -250,7 +250,7 @@
             (circular-list-p dotted)
             (circular-list-p proper)
             (circular-list-p tailcirc)))
-  (t nil nil nil nil t))
+  (t nil nil nil t))
 
 (deftest circular-tree-p.1
     (let* ((circle (circular-list 1 2 3 4))
@@ -391,7 +391,7 @@
 
 (deftest iota.3
     (iota 3 :start 2 :step 3.0)
-  (2 5.0 8.0))
+  (2.0 5.0 8.0))
 
 (deftest lerp.1
     (lerp 0.5 1 2)
@@ -411,7 +411,7 @@
 
 (deftest mean.3 
     (mean '(1 2 10))
-  13/2)
+  13/3)
 
 (deftest median.1
     (median '(100 0 99 1 98 2 97))
@@ -570,7 +570,7 @@
 (deftest deletef.1
     (let* ((x '(1 2 3))
            (x* x)
-           (y #(1 2 3)))
+           (y (vector 1 2 3)))
       (deletef x 2)
       (deletef y 1)
       (list x x* y))

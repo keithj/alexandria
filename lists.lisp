@@ -52,6 +52,9 @@ argument.")
          nil)))
 
 (deftype proper-list ()
+  "Type designator for proper lists. Implemented as a SATISFIES type, hence
+not recommended for performance intensive use. Main usefullness as a type
+designator of the expexted type in a TYPE-ERROR."
   `(satisfies proper-list-p))
 
 (defun lastcar (list)
@@ -76,7 +79,9 @@ proper list."
     (nconc cycle cycle)))
 
 (deftype circular-list ()
-  "A circular list."
+  "Type designator for circular lists. Implemented as a SATISFIES type, so not
+recommended for performance intensive use. Main usefullness as the
+expected-type designator of a TYPE-ERROR."
   `(satisfies circular-list-p))
 
 (defun ensure-list (list)

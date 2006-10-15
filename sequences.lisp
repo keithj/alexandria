@@ -72,9 +72,10 @@ the result of calling REMOVE with ITEM, place, and the REMOVE-KEYWORDS.")
 the result of calling DELETE with ITEM, place, and the REMOVE-KEYWORDS.")
 
 (deftype proper-sequence ()
-  `(or vector 
-       proper-list
-       (and (not sequence) (not list) sequence)))
+  "Type designator for proper sequences, that is proper lists and sequences
+that are not lists."
+  `(or proper-list
+       (and (not list) sequence)))
 
 (defun emptyp (sequence)
   "Returns true if SEQUENCE is an empty sequence. Signals an error if SEQUENCE
@@ -85,7 +86,7 @@ is not a sequence"
 
 (defun sequence-of-length-p (sequence length)
   "Return true if SEQUENCE is a sequence of length LENGTH. Signals an error if
-SEQUENCE is not a sequence."
+SEQUENCE is not a sequence. Returns FALSE for circular lists."
   (etypecase sequence
     (null
      (zerop length))

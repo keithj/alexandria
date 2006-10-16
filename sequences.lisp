@@ -1,10 +1,7 @@
 (in-package :alexandria)
 
-(defun rotate-left (sequence &optional (n 1))
-  "Rotates the SEQUENCE to left by N, by moving N elements from the end of the
-sequence to the front. Resulting sequence may share structure with the
-original one. N defaults to 1. Sequence must be a proper sequence. N can be
-creater then the length of sequence."
+(defun rotate-tail-to-head (sequence n)
+  (declare (type (integer 1) n))
   (if (listp sequence)
       (let ((m (mod n (list-length sequence))))
         (if (null (cdr sequence))
@@ -20,10 +17,8 @@ creater then the length of sequence."
         (replace sequence tail)
         sequence)))
 
-(defun rotate-right (sequence &optional (n 1))
-    "Rotates the SEQUENCE to right by N, by moving N element from the front of
-the sequence to the end. Resulting sequence may share structure with the
-original one. N defaults to 1."
+(defun rotate-head-to-tail (sequence n)
+  (declare (type (integer 1) n))
   (if (listp sequence)
       (let ((m (mod (1- n) (list-length sequence))))
         (if (null (cdr sequence))
@@ -38,6 +33,21 @@ original one. N defaults to 1."
         (replace sequence sequence :start1 0 :start2 m)
         (replace sequence head :start1 (- len m))
         sequence)))
+
+(defun rotate (sequence &optional (n 1))
+  "Returns a sequence of the same type as SEQUENCE, with the elements of
+SEQUENCE rotated by N: N elements are moved from the end of the sequence to
+the front if N is positive, and -N elements moved from the front to the end if
+N is negative. SEQUENCE must be a proper sequence. N must be an integer,
+defaulting to 1. If absolute value of N is greater then the length of the
+sequence, the results are identical to calling ROTATE with (* (SIGNUM N) (MOD
+N (LENGTH SEQUENCE))). The original sequence may be destructively altered, and
+result sequence may share structure with it."
+  (if (plusp n)
+      (rotate-tail-to-head sequence n)
+      (if (minusp n)
+          (rotate-head-to-tail sequence (- n))
+          sequence)))
 
 (defun suffle (sequence &key (start 0) end)
   "Returns a radom permutation of SEQUENCE bounded by START and END.

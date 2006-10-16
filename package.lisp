@@ -57,8 +57,7 @@
    #:deletef
    #:proper-sequence
    #:random-elt
-   #:rotate-left
-   #:rotate-right
+   #:rotate
    #:sequence-of-length-p
    #:suffle
    ;; Macros

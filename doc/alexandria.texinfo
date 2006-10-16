@@ -145,8 +145,7 @@ terms and conditions:
 @include include/macro-alexandria-deletef.texinfo
 @include include/macro-alexandria-removef.texinfo
 
-@include include/fun-alexandria-rotate-left.texinfo
-@include include/fun-alexandria-rotate-right.texinfo
+@include include/fun-alexandria-rotate.texinfo
 @include include/fun-alexandria-suffle.texinfo
 @include include/fun-alexandria-random-elt.texinfo
 @include include/fun-alexandria-emptyp.texinfo

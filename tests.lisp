@@ -476,25 +476,25 @@
 
 ;;;; Sequences
 
-(deftest rotate-left.1
-    (list (rotate-left (list 1 2 3) 0)
-          (rotate-left (list 1 2 3))
-          (rotate-left (list 1 2 3) 2)
-          (rotate-left (list 1 2 3) 3)
-          (rotate-left (list 1 2 3) 4))
+(deftest rotate.1
+    (list (rotate (list 1 2 3) 0)
+          (rotate (list 1 2 3) 1)
+          (rotate (list 1 2 3) 2)
+          (rotate (list 1 2 3) 3)
+          (rotate (list 1 2 3) 4))
   ((1 2 3)
    (3 1 2)
    (2 3 1)
    (1 2 3)
    (3 1 2)))
 
-(deftest rotate-left.2
-    (list (rotate-left (vector 1 2 3 4) 0)
-          (rotate-left (vector 1 2 3 4))
-          (rotate-left (vector 1 2 3 4) 2)
-          (rotate-left (vector 1 2 3 4) 3)
-          (rotate-left (vector 1 2 3 4) 4)
-          (rotate-left (vector 1 2 3 4) 5))
+(deftest rotate.2
+    (list (rotate (vector 1 2 3 4) 0)
+          (rotate (vector 1 2 3 4))
+          (rotate (vector 1 2 3 4) 2)
+          (rotate (vector 1 2 3 4) 3)
+          (rotate (vector 1 2 3 4) 4)
+          (rotate (vector 1 2 3 4) 5))
   (#(1 2 3 4)
     #(4 1 2 3)
     #(3 4 1 2)
@@ -502,25 +502,25 @@
     #(1 2 3 4)
     #(4 1 2 3)))
 
-(deftest rotate-right.1
-    (list (rotate-right (list 1 2 3) 0)
-          (rotate-right (list 1 2 3))
-          (rotate-right (list 1 2 3) 2)
-          (rotate-right (list 1 2 3) 3)
-          (rotate-right (list 1 2 3) 4))
+(deftest rotate.3
+    (list (rotate (list 1 2 3) 0)
+          (rotate (list 1 2 3) -1)
+          (rotate (list 1 2 3) -2)
+          (rotate (list 1 2 3) -3)
+          (rotate (list 1 2 3) -4))
   ((1 2 3)
    (2 3 1)
    (3 1 2)
    (1 2 3)
    (2 3 1)))
 
-(deftest rotate-right.2
-    (list (rotate-right (vector 1 2 3 4) 0)
-          (rotate-right (vector 1 2 3 4))
-          (rotate-right (vector 1 2 3 4) 2)
-          (rotate-right (vector 1 2 3 4) 3)
-          (rotate-right (vector 1 2 3 4) 4)
-          (rotate-right (vector 1 2 3 4) 5))
+(deftest rotate.4
+    (list (rotate (vector 1 2 3 4) 0)
+          (rotate (vector 1 2 3 4) -1)
+          (rotate (vector 1 2 3 4) -2)
+          (rotate (vector 1 2 3 4) -3)
+          (rotate (vector 1 2 3 4) -4)
+          (rotate (vector 1 2 3 4) -5))
   (#(1 2 3 4)
    #(2 3 4 1)
    #(3 4 1 2)

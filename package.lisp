@@ -30,8 +30,11 @@
    #:proper-list-p
    #:proper-list
    #:mappend
+   #:map-product
+   #:flatten
    #:sans
    #:set-equal
+   #:setp
    ;; Numbers
    #:clamp
    #:gaussian-random

@@ -134,7 +134,10 @@ terms and conditions:
 @include include/fun-alexandria-ensure-list.texinfo
 @include include/fun-alexandria-sans.texinfo
 @include include/fun-alexandria-mappend.texinfo
+@include include/fun-alexandria-map-product.texinfo
 @include include/fun-alexandria-set-equal.texinfo
+@include include/fun-alexandria-setp.texinfo
+@include include/fun-alexandria-flatten.texinfo
 
 @node Sequence Manipulation
 @comment  node-name,  next,  previous,  up

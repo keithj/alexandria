@@ -111,23 +111,61 @@ all the result list to a single list. FUNCTION must return a list."
   (loop for results in (apply #'mapcar function lists)
         append results))
 
-(defun set-equal (list1 list2 &key (test #'eql) (key #'identity))
+(defun setp (object &key (test #'eql) (key #'identity))
+  "Returns true if OBJECT is a list that denotes a set, NIL otherwise. A list
+denotes a set if each element of the list is unique under KEY and TEST."
+  (and (listp object)
+       (let (seen)
+         (dolist (elt object t)
+           (let ((key (funcall key elt)))
+             (if (member key seen :test test)                 
+                 (return nil)
+                 (push key seen)))))))
+
+(defun set-equal (list1 list2 &key (test #'eql) (key nil keyp))
   "Returns true if every element of LIST1 matches some element of LIST2 and
 every element of LIST2 matches some element of LIST1. Otherwise returns false."
-  (let* ((table1 (make-hash-table :test test))
-         (table2 (make-hash-table :test test))
-         (keylist1 (mapcar (lambda (elt)
-                             (let ((elt-key (funcall key elt)))
-                               (setf (gethash elt-key table1) t)
-                               elt-key))
-                           list1)))
-    (dolist (elt list2)
-      (let ((elt-key (funcall key elt)))
-        (unless (gethash elt-key table1)
-          (return-from set-equal nil))
-        (setf (gethash elt-key table2) t)))
-    (dolist (elt-key keylist1)
-      (unless (gethash elt-key table2)
-        (return-from set-equal nil))))
-  t)
+  (let ((keylist1 (if keyp (mapcar key list1) list1))
+        (keylist2 (if keyp (mapcar key list2) list2)))
+    (and (dolist (elt keylist1 t)
+           (or (member elt keylist2 :test test)
+               (return nil)))
+         (dolist (elt keylist2 t)
+           (or (member elt keylist1 :test test)
+               (return nil))))))
 
+(defun map-product (function list &rest more-lists)
+  "Returns a list containing the results of calling FUNCTION with one argument
+from LIST, and one from each of MORE-LISTS for each combination of arguments.
+In other words, returns the product of LIST and MORE-LISTS using FUNCTION.
+
+Example:
+  
+ (map-product 'list '(1 2) '(3 4) '(5 6)) => ((1 3 5) (1 3 6) (1 4 5) (1 4 6) 
+                                              (2 3 5) (2 3 6) (2 4 5) (2 4 6))
+"
+  (labels ((%map-product (f lists)
+             (let ((more (cdr lists))
+                   (one (car lists)))
+               (if (not more)
+                   (mapcar f one)
+                   (mappend (lambda (x)
+                              (%map-product (curry f x) more))
+                            one)))))
+    (%map-product (if (functionp function) 
+                      function
+                      (fdefinition function))
+                  (cons list more-lists))))
+
+(defun flatten (tree)
+  "Traverses the tree in order, collecting non-null leaves into a list."
+  (let (list)
+    (labels ((traverse (subtree)
+               (when subtree
+                 (if (consp subtree)
+                     (progn 
+                       (traverse (car subtree))
+                       (traverse (cdr subtree)))
+                     (push subtree list)))))
+      (traverse tree))
+    (nreverse list)))

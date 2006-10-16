@@ -90,7 +90,6 @@ it is called with to FUNCTION."
     `(let ,(mapcar #'list curries arguments)
        (declare (optimize (speed 3) (safety 1) (debug 1)))
        (lambda (&rest more)
-         (declare (dynamic-extent more))
          (apply ,function ,@curries more)))))
 
 (defun rcurry (function &rest arguments)

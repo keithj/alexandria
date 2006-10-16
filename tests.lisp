@@ -342,6 +342,67 @@
             (ensure-list y)))
   ((1) (2)))
 
+(deftest setp.1
+    (setp '(1))
+  t)
+
+(deftest setp.2
+    (setp nil)
+  t)
+
+(deftest setp.3
+    (setp "foo")
+  nil)
+
+(deftest setp.4
+    (setp '(1 2 3 1))
+  nil)
+
+(deftest setp.5
+    (setp '(1 2 3))
+  t)
+
+(deftest setp.6
+    (setp '(a :a))
+  t)
+
+(deftest setp.7
+    (setp '(a :a) :key 'character)
+  nil)
+
+(deftest setp.8
+    (setp '(a :a) :key 'character :test (constantly nil))
+  t)
+
+(deftest set-equal.1
+    (set-equal '(1 2 3) '(3 1 2))
+  t)
+
+(deftest set-equal.2
+    (set-equal '("Xa") '("Xb")
+               :test (lambda (a b) (eql (char a 0) (char b 0))))
+  t)
+
+(deftest set-equal.3
+    (set-equal '(1 2) '(4 2))
+  nil)
+
+(deftest set-equal.4
+    (set-equal '(a b c) '(:a :b :c) :key 'string :test 'equal)
+  t)
+
+(deftest set-equal.5
+    (set-equal '(a d c) '(:a :b :c) :key 'string :test 'equal)
+  nil)
+
+(deftest map-product.1
+    (map-product 'cons '(2 3) '(1 4))
+  ((2 . 1) (2 . 4) (3 . 1) (3 . 4)))
+
+(deftest flatten.1
+    (flatten '((1) 2 (((3 4))) ((((5)) 6)) 7))
+  (1 2 3 4 5 6 7))
+
 (deftest sans.1
     (let ((orig '(a 1 b 2 c 3 d 4)))
       (list (sans orig 'a 'c)

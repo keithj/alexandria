@@ -80,10 +80,10 @@ interpolation coefficient V."
         (/ (+ (aref vector middle) (aref vector (1+ middle))) 2))))
 
 (declaim (inline variance))
-(defun variance (sample &key biased)
-  "Returns the variance of SAMPLE, unbiased if BIASED is false (the
-default.) SAMPLE must be a sequence of numbers."
-  (declare (inline mean))
+(defun variance (sample &key (biased t))
+  "Variance of SAMPLE. Returns the biased variance if BIASED is true (the default),
+and the unbiased estimator of variance if BIASED is false. SAMPLE must be a
+sequence of numbers."
   (let ((mean (mean sample)))
     (/ (reduce (lambda (a b)
                  (+ a (expt (- b mean) 2)))
@@ -92,10 +92,11 @@ default.) SAMPLE must be a sequence of numbers."
        (- (length sample) (if biased 0 1)))))
 
 (declaim (inline standard-deviation))
-(defun standard-deviation (sample &key biased)
-  "Standard deviation of SAMPLE, unbiased if BIASED is false (the default.)
-SAMPLE must be a sequence of numbers."
-  (declare (inline variance))
+(defun standard-deviation (sample &key (biased t))
+  "Standard deviation of SAMPLE. Returns the biased standard deviation if
+BIASED is true (the default), and the square root of the unbiased estimator
+for variance if BIASED is false (which is not the same as the unbiased
+estimator for standard deviation). SAMPLE must be a sequence of numbers."
   (sqrt (variance sample :biased biased)))
 
 (define-modify-macro maxf (&rest numbers) max

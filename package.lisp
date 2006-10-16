@@ -30,7 +30,7 @@
    #:proper-list-p
    #:proper-list
    #:mappend
-   #:remove-keys
+   #:sans
    #:set-equal
    ;; Numbers
    #:clamp

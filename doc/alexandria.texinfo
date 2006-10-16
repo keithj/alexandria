@@ -132,7 +132,7 @@ terms and conditions:
 @include include/fun-alexandria-lastcar.texinfo
 @include include/fun-alexandria-make-circular-list.texinfo
 @include include/fun-alexandria-ensure-list.texinfo
-@include include/fun-alexandria-remove-keys.texinfo
+@include include/fun-alexandria-sans.texinfo
 @include include/fun-alexandria-mappend.texinfo
 @include include/fun-alexandria-set-equal.texinfo
 

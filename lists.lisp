@@ -90,18 +90,20 @@ expected-type designator of a TYPE-ERROR."
       list
       (list list)))
 
-(defun remove-keys (keys plist)
-  "Returns a fresh propery-list with same keys and values as PLIST, except
-that keys in the list designated by KEYS and values corresponding to them are
-removed."
+(defun sans (plist &rest keys)
+  "Returns a propery-list with same keys and values as PLIST, except that keys
+in the list designated by KEYS and values corresponding to them are removed.
+The returned property-list may share structure with the PLIST, but PLIST is
+not destructively modified."
+  ;; FIXME: unoptimal: (sans '(:a 1 :b 2) :a) has no need to copy the
+  ;; tail.
   (do ((new nil)
        (tail plist (cddr tail)))
       ((endp tail)
        (nreverse new))
     (let ((key (car tail)))
       (unless (member key keys)
-        (push key new)
-        (push (cadr tail) new)))))
+        (setf new (list* (cadr tail) key new))))))
 
 (defun mappend (function &rest lists)
   "Applies FUNCTION to respective element(s) of each LIST, appending all the

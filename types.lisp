@@ -19,4 +19,5 @@ types are not equivalent."
            (values nil ok))
           (t
            (multiple-value-bind (sub ok) (subtypep type2 type1)
+             (declare (ignore sub))
              (values nil ok))))))

@@ -130,6 +130,7 @@ terms and conditions:
 @include include/fun-alexandria-circular-tree-p.texinfo
 @include include/fun-alexandria-proper-list-p.texinfo
 @include include/fun-alexandria-lastcar.texinfo
+@include include/fun-alexandria-setf-lastcar.texinfo
 @include include/fun-alexandria-make-circular-list.texinfo
 @include include/fun-alexandria-ensure-list.texinfo
 @include include/fun-alexandria-sans.texinfo
@@ -155,7 +156,9 @@ terms and conditions:
 @include include/fun-alexandria-sequence-of-length-p.texinfo
 @include include/fun-alexandria-copy-sequence.texinfo
 @include include/fun-alexandria-first-elt.texinfo
+@include include/fun-alexandria-setf-first-elt.texinfo
 @include include/fun-alexandria-last-elt.texinfo
+@include include/fun-alexandria-setf-last-elt.texinfo
 @include include/fun-alexandria-starts-with.texinfo
 @include include/fun-alexandria-ends-with.texinfo
 

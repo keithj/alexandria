@@ -316,6 +316,15 @@
         t))
   t)
 
+(deftest setf-lastcar.1
+    (let ((l (list 1 2 3 4)))
+      (values (lastcar l)
+              (progn
+                (setf (lastcar l) 42)
+                (lastcar l))))
+  4
+  42)
+
 (deftest make-circular-list.1
     (let ((l (make-circular-list 3 :initial-element :x)))
       (setf (car l) :y)
@@ -721,6 +730,18 @@
    :type-error
    :type-error))
 
+(deftest setf-first-elt.1
+    (let ((l (list 1 2 3))
+          (s (copy-seq "foobar"))
+          (v (vector :a :b :c)))
+      (setf (first-elt l) -1
+            (first-elt s) #\x
+            (first-elt v) 'zot)
+      (values l s v))
+  (-1 2 3)
+  "xoobar"
+  #(zot :b :c))
+
 (deftest last-elt.1
     (mapcar #'last-elt
             (list (list 1 2 3)
@@ -749,6 +770,18 @@
    :type-error
    :type-error))
 
+(deftest setf-last-elt.1
+    (let ((l (list 1 2 3))
+          (s (copy-seq "foobar"))
+          (b (copy-seq #*010101001)))
+      (setf (last-elt l) '???
+            (last-elt s) #\?
+            (last-elt b) 0)
+      (values l s b))
+  (1 2 ???)
+  "fooba?"
+  #*010101000)
+
 (deftest starts-with.1
     (list (starts-with 1 '(1 2 3))
           (starts-with 1 #(1 2 3))
@@ -759,6 +792,18 @@
           (starts-with nil nil))
   (t t t nil nil nil nil))
 
+(deftest starts-with.2
+    (values (starts-with 1 '(-1 2 3) :key '-)
+            (starts-with "foo" '("foo" "bar") :test 'equal)
+            (starts-with "f" '(#\f) :key 'string :test 'equal)
+            (starts-with -1 '(0 1 2) :key #'1+)
+            (starts-with "zot" '("ZOT") :test 'equal))
+  t
+  t
+  t
+  nil
+  nil)
+
 (deftest ends-with.1
     (list (ends-with 3 '(1 2 3))
           (ends-with 3 #(1 2 3))
@@ -768,6 +813,16 @@
           (ends-with 1 1)
           (ends-with nil nil))
   (t t t nil nil nil nil))
+
+(deftest ends-with.2
+    (values (ends-with 2 '(0 13 1) :key '1+)
+            (ends-with "foo" (vector "bar" "foo") :test 'equal)
+            (ends-with "X" (vector 1 2 #\X) :key 'string :test 'equal)
+            (ends-with "foo" "foo" :test 'equal))
+  t
+  t
+  t
+  nil)
 
 (deftest ends-with.error.1
     (handler-case

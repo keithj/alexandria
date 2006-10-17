@@ -73,6 +73,22 @@ proper list."
              :datum list
              :expected-type '(and list (not circular-list))))))
 
+(defun (setf lastcar) (object list)
+  "Sets the last element of LIST. Signals a type-error if LIST is not a proper
+list."
+  (do ((last list fast)
+       (fast list (cddr fast))
+       (slow (cons (car list) (cdr list)) (cdr slow)))
+      (nil)
+    (when (endp fast)
+      (return (setf (cadr last) object)))
+    (when (endp (cdr fast))
+      (return (setf (car fast) object)))
+    (when (eq fast slow) 
+      (error 'type-error 
+             :datum list
+             :expected-type '(and list (not circular-list))))))
+
 (defun make-circular-list (length &key initial-element)
   "Creates a circular list of LENGTH with the given INITIAL-ELEMENT."
   (let ((cycle (make-list length :initial-element initial-element)))

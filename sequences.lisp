@@ -119,56 +119,90 @@ SEQUENCE."
 (defun first-elt (sequence)
   "Returns the first element of SEQUENCE. Signals a type-error if SEQUENCE is
 not a sequence, or is an empty sequence."
+  ;; Can't just directly use ELT, as it is not guaranteed to signal the 
+  ;; type-error.
   (cond  ((consp sequence)
           (car sequence))
-         ((and (vectorp sequence) (plusp (length sequence)))
-          (aref sequence 0))
+         ((and (typep sequence '(and sequence (not list))) (plusp (length sequence)))
+          (elt sequence 0))
          (t
           (error 'type-error 
                  :datum sequence 
                  :expected-type '(and sequence (not (satisfies emptyp)))))))
 
+(defun (setf first-elt) (object sequence)
+  "Sets the first element of SEQUENCE. Signals a type-error if SEQUENCE is
+not a sequence, is an empty sequence, or if OBJECT cannot be stored in SEQUENCE."
+  ;; Can't just directly use ELT, as it is not guaranteed to signal the 
+  ;; type-error.
+  (cond ((consp sequence)
+         (setf (car sequence) object))
+        ((and (typep sequence '(and sequence (not list))) (plusp (length sequence)))
+         (setf (elt sequence 0) object))
+        (t
+         (error 'type-error 
+                :datum sequence 
+                :expected-type '(and proper-sequence (not (satisfies emptyp)))))))
+
 (defun last-elt (sequence)
   "Returns the last element of SEQUENCE. Signals a type-error if SEQUENCE is
 not a proper sequence, or is an empty sequence."
-  (declare (inline lastcar))
+  ;; Can't just directly use ELT, as it is not guaranteed to signal the 
+  ;; type-error.
   (let ((len 0))
     (cond ((consp sequence)
            (lastcar sequence))
-          ((and (vectorp sequence) (plusp (setf len (length sequence))))
-           (aref sequence (1- len)))
-         (t
-          (error 'type-error 
-                 :datum sequence 
-                 :expected-type '(and proper-sequence (not (satisfies emptyp))))))))
+          ((and (typep sequence '(and sequence (not list))) (plusp (setf len (length sequence))))
+           (elt sequence (1- len)))
+          (t
+           (error 'type-error 
+                  :datum sequence 
+                  :expected-type '(and proper-sequence (not (satisfies emptyp))))))))
 
-(defun starts-with (object sequence)
+(defun (setf last-elt) (object sequence)
+  "Sets the last element of SEQUENCE. Signals a type-error if SEQUENCE is not a proper
+sequence, is an empty sequence, or if OBJECT cannot be stored in SEQUENCE."
+  (let ((len 0))
+    (cond ((consp sequence)
+           (setf (lastcar sequence) object))
+          ((and (typep sequence '(and sequence (not list))) (plusp (setf len (length sequence))))
+           (setf (elt sequence (1- len)) object))
+          (t
+           (error 'type-error 
+                  :datum sequence 
+                  :expected-type '(and proper-sequence (not (satisfies emptyp))))))))
+
+(defun starts-with (object sequence &key (test #'eql) (key #'identity))
   "Returns true if SEQUENCE is a sequence whose first element is EQL to OBJECT.
 Returns NIL if the SEQUENCE is not a sequence or is an empty sequence."
-  (eql (typecase sequence
-         (cons (car sequence))
-         (sequence
-          (if (plusp (length sequence))
-              (elt sequence 0)
-              (return-from starts-with nil)))
-         (t
-          (return-from starts-with nil)))
-       object))
+  (funcall test
+           (funcall key 
+                    (typecase sequence
+                      (cons (car sequence))
+                      (sequence
+                       (if (plusp (length sequence))
+                           (elt sequence 0)
+                           (return-from starts-with nil)))
+                      (t
+                       (return-from starts-with nil))))
+           object))
 
-(defun ends-with (object sequence)
+(defun ends-with (object sequence &key (test #'eql) (key #'identity))
   "Returns true if SEQUENCE is a sequence whose last element is EQL to OBJECT.
 Returns NIL if the SEQUENCE is not a sequence or is an empty sequence. Signals
 an error if SEQUENCE is an improper list."
-  (eql (typecase sequence
-         (cons 
-          ;; signals for improper lists
-          (lastcar sequence)) 
-         (sequence
-          ;; Can't use last-elt, as that signals an error for empty sequences          
-          (let ((len (length sequence)))
-            (if (plusp len)
-                (elt sequence (1- len))
-                (return-from ends-with nil))))
-         (t
-          (return-from ends-with nil)))
-       object))
+  (funcall test
+           (funcall key
+                    (typecase sequence
+                      (cons 
+                       ;; signals for improper lists
+                       (lastcar sequence)) 
+                      (sequence
+                       ;; Can't use last-elt, as that signals an error for empty sequences          
+                       (let ((len (length sequence)))
+                         (if (plusp len)
+                             (elt sequence (1- len))
+                             (return-from ends-with nil))))
+                      (t
+                       (return-from ends-with nil))))
+           object))

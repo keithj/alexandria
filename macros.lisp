@@ -24,19 +24,21 @@ Example:
           ,(let ,(mapcar #'list names gensyms)
              ,@forms)))))
 
-(defun parse-body (body &key documentation)
-  "Parses BODY into documentation string, declarations, and remaining forms.
-Documentation strings are recognized only if DOCUMENTATION is true. Returns
-three values: list of remaining forms, list of declarations, and documentation
-string if any."
+(defun parse-body (body &key documentation whole)
+  "Parses BODY into (values remaining-forms declarations doc-string).
+Documentation strings are recognized only if DOCUMENTATION is true.
+Syntax errors in body are signalled and WHOLE is used in the signal
+arguments when given."
   (let ((doc nil)
         (decls nil)
         (current nil))
     (tagbody
      :declarations
        (setf current (car body))
-       (when (and documentation (stringp current) (not doc) (cdr body))
-         (setf doc (pop body))
+       (when (and documentation (stringp current) (cdr body))
+         (if doc
+             (error "Too many documentation strings in ~S." (or whole body))
+             (setf doc (pop body)))
          (go :declarations))
        (when (starts-with 'declare current)
          (push (pop body) decls)

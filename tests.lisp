@@ -962,3 +962,78 @@
     (type= 'string 'list)
   nil
   t)
+
+;;;; Bindings
+
+(declaim (notinline opaque))
+(defun opaque (x)
+  x)
+
+(deftest if-let.1
+    (if-let (x (opaque :ok))
+            x
+            :bad)
+  :ok)
+
+(deftest if-let.2
+    (if-let (x (opaque nil))
+            :bad
+            (and (not x) :ok))
+  :ok)
+
+(deftest if-let.3
+    (let ((x 1))
+      (if-let ((x 2)
+               (y x))
+              (+ x y)
+              :oops))
+  3)
+
+(deftest if-let.4
+    (if-let ((x 1)
+             (y nil))
+            :oops
+            (and (not y) x))
+  1)
+
+(deftest if-let*.1
+    (let ((x 1))
+      (if-let* ((x 2)
+                (y x))
+               (+ x y)
+               :oops))
+  4)
+
+(deftest if-let*.2
+    (if-let* ((x 2)
+              (y (prog1 x (setf x nil))))
+             :oops
+             (and (not x) y))
+  2)
+
+(deftest when-let.1
+    (when-let (x (opaque :ok))
+      (setf x (cons x x))
+      x)
+  (:ok . :ok))
+
+(deftest when-let.2
+    (when-let ((x 1)
+               (y nil)
+               (z 3))
+      :oops)
+  nil)
+
+(deftest when-let.3
+    (let ((x 1))
+      (when-let ((x 2)
+                 (y x))
+        (+ x y)))
+  3)
+
+(deftest when-let*.1
+    (let ((x 1))
+      (when-let* ((x 2)
+                  (y x))
+        (+ x y)))
+  4)

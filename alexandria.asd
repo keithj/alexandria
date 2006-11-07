@@ -10,6 +10,7 @@
    (:file "symbols" :depends-on ("package"))
    (:file "arrays" :depends-on ("package"))
    (:file "types" :depends-on ("package"))
+   (:file "binding" :depends-on ("package"))
    (:file "functions" :depends-on ("package" "symbols"))
    (:file "lists" :depends-on ("package" "functions"))
    (:file "sequences" :depends-on ("package" "lists"))

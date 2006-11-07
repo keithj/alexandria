@@ -2,6 +2,11 @@
   (:nicknames :alexandria)
   (:use :cl)
   (:export 
+   ;; Binding constructs
+   #:if-let
+   #:if-let*
+   #:when-let
+   #:when-let*
    ;; Hash tables
    #:copy-hash-table
    #:hash-table-keys
@@ -65,6 +70,7 @@
    #:suffle
    ;; Macros
    #:with-unique-names   
+   #:with-gensyms
    #:once-only
    #:parse-body
    ;; Symbols

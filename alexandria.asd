@@ -5,6 +5,7 @@
   ((:static-file "LICENCE")
    (:static-file "tests.lisp")
    (:file "package")
+   (:file "errors" :depends-on ("package"))
    (:file "hash-tables" :depends-on ("package"))
    (:file "macros" :depends-on ("package"))
    (:file "symbols" :depends-on ("package"))

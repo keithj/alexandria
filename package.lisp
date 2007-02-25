@@ -81,4 +81,6 @@
    ;; Types
    #:of-type
    #:type=
+   ;; Errors
+   #:required-argument
    ))

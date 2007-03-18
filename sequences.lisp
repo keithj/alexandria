@@ -49,8 +49,8 @@ result sequence may share structure with it."
           (rotate-head-to-tail sequence (- n))
           sequence)))
 
-(defun suffle (sequence &key (start 0) end)
-  "Returns a radom permutation of SEQUENCE bounded by START and END.
+(defun shuffle (sequence &key (start 0) end)
+  "Returns a random permutation of SEQUENCE bounded by START and END.
 Permuted sequence may share storage with the original one. Signals
 an error if SEQUENCE is not a proper sequence."
   (declare (fixnum start) ((or fixnum null) end))

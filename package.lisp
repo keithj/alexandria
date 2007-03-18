@@ -67,7 +67,7 @@
    #:random-elt
    #:rotate
    #:sequence-of-length-p
-   #:suffle
+   #:shuffle
    ;; Macros
    #:with-unique-names   
    #:with-gensyms

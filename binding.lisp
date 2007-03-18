@@ -62,8 +62,7 @@ the bindings in effect."
            ,else-form))))
 
 (defmacro when-let (bindings &body forms)
-    "Creates new variable bindings, and conditionally executes either
-THEN-FORM or ELSE-FORM (defaulting to NIL).
+    "Creates new variable bindings, and conditionally executes FORMS.
 
 BINDINGS must be either single binding of the form:
 

@@ -106,7 +106,7 @@ expected-type designator of a TYPE-ERROR."
       list
       (list list)))
 
-(defun sans (plist &rest keys)
+(defun remove-from-plist (plist &rest keys)
   "Returns a propery-list with same keys and values as PLIST, except that keys
 in the list designated by KEYS and values corresponding to them are removed.
 The returned property-list may share structure with the PLIST, but PLIST is
@@ -120,6 +120,11 @@ not destructively modified."
     (let ((key (car tail)))
       (unless (member key keys)
         (setf new (list* (cadr tail) key new))))))
+
+(declaim (inline sans))
+(defun sans (plist &rest keys)
+  "Alias of REMOVE-FROM-PLIST for backward compatibility."
+  (apply #'remove-from-plist plist keys))
 
 (defun mappend (function &rest lists)
   "Applies FUNCTION to respective element(s) of each LIST, appending all the

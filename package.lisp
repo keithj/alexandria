@@ -38,6 +38,7 @@
    #:map-product
    #:flatten
    #:sans
+   #:remove-from-plist
    #:set-equal
    #:setp
    ;; Numbers

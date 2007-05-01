@@ -111,15 +111,16 @@ expected-type designator of a TYPE-ERROR."
 in the list designated by KEYS and values corresponding to them are removed.
 The returned property-list may share structure with the PLIST, but PLIST is
 not destructively modified."
+  (declare (optimize (speed 3)))
   ;; FIXME: unoptimal: (sans '(:a 1 :b 2) :a) has no need to copy the
   ;; tail.
-  (do ((new nil)
-       (tail plist (cddr tail)))
-      ((endp tail)
-       (nreverse new))
-    (let ((key (car tail)))
-      (unless (member key keys)
-        (setf new (list* (cadr tail) key new))))))
+  (loop for cell = plist :then (cddr cell)
+        for key = (car cell)
+        while cell
+        unless (member key keys :test #'eq)
+        collect key
+        and do (assert (cdr cell) () "Not a proper plist")
+        and collect (cadr cell)))
 
 (declaim (inline sans))
 (defun sans (plist &rest keys)

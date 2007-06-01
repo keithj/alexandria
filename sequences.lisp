@@ -137,12 +137,13 @@ not a sequence, is an empty sequence, or if OBJECT cannot be stored in SEQUENCE.
   ;; type-error.
   (cond ((consp sequence)
          (setf (car sequence) object))
-        ((and (typep sequence '(and sequence (not list))) (plusp (length sequence)))
+        ((and (typep sequence '(and sequence (not list)))
+              (plusp (length sequence)))
          (setf (elt sequence 0) object))
         (t
          (error 'type-error 
                 :datum sequence 
-                :expected-type '(and proper-sequence (not (satisfies emptyp)))))))
+                :expected-type '(and sequence (not (satisfies emptyp)))))))
 
 (defun last-elt (sequence)
   "Returns the last element of SEQUENCE. Signals a type-error if SEQUENCE is

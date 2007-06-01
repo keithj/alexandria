@@ -58,9 +58,10 @@
    ;; Numbers
    #:clamp
    #:gaussian-random
-   #:iota
+   #:iota   
    #:lerp
-   #:maxf
+   #:map-iota
+   #:maxf   
    #:mean   
    #:median
    #:minf

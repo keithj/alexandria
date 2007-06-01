@@ -103,8 +103,7 @@ with and ARGUMENTS to FUNCTION."
 (defmacro named-lambda (name lambda-list &body body)
   "Expands into a lambda-expression within whose BODY NAME denotes the
 function corresponding function."
-  (let* ((simplep (union lambda-list-keywords lambda-list))
-         (restp (and (not simplep) (find '&rest lambda-list))))
+  (let ((simplep (not (intersection lambda-list-keywords lambda-list))))
     (if simplep
         ;; Required arguments only, no need for APPLY
         `(lambda ,lambda-list
@@ -114,6 +113,5 @@ function corresponding function."
         ;; get &KEY and &REST handled correctly.
         (with-gensyms (arguments)
           `(lambda (&rest ,arguments)
-             ,@(unless restp `((declare (dynamic-extent ,arguments))))
              (labels ((,name ,lambda-list ,@body))
                (apply #',name ,arguments)))))))

@@ -26,7 +26,7 @@ returns the values of DEFAULT if no keys match."
               (error "No keys match in ESWITCH. Testing against ~S with ~S."
                      ,value ',test))))))
 
-(defmacro eswitch ((object &key (test 'eql) (key 'identity)) &body clauses)
+(defmacro cswitch ((object &key (test 'eql) (key 'identity)) &body clauses)
   "Like SWITCH, but signals a continuable error if no key matches."
   (with-gensyms (value)
     `(let ((,value (,key ,object)))

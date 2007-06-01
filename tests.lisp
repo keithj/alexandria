@@ -9,6 +9,107 @@
 
 (in-package :alexandria-test)
 
+;;;; Arrays
+
+(deftest copy-array.1
+    (let* ((orig (vector 1 2 3))
+           (copy (copy-array orig)))
+      (values (eq orig copy) (equalp orig copy)))
+  nil t)
+
+(deftest copy-array.2
+    (let ((orig (make-array 1024 :fill-pointer 0)))
+      (vector-push-extend 1 orig)
+      (vector-push-extend 2 orig)
+      (vector-push-extend 3 orig)
+      (let ((copy (copy-array orig)))
+        (values (eq orig copy) (equalp orig copy)
+                (array-has-fill-pointer-p copy)
+                (eql (fill-pointer orig) (fill-pointer copy)))))
+  nil t t t)
+
+(deftest array-index.1
+    (typep 0 'array-index)
+  t)
+
+;;;; Control flow
+
+(deftest switch.1
+    (switch (13 :test =)
+      (12 :oops)
+      (13.0 :yay))
+  :yay)
+
+(deftest switch.2
+    (switch (13 :default :yay)
+      ((+ 12 2) :oops)
+      ((- 13 1) :oops2))
+  :yay)
+
+(deftest eswitch.1
+    (let ((x 13))
+      (eswitch (x :test =)
+        (12 :oops)
+        (13.0 :yay)))
+  :yay)
+
+(deftest eswitch.2
+    (let ((x 13))
+      (eswitch (x :key 1+)
+        (11 :oops)
+        (14 :yay)))
+  :yay)
+
+(deftest cswitch.1
+    (cswitch (13 :test =)
+      (12 :oops)
+      (13.0 :yay))
+  :yay)
+
+(deftest cswitch.2
+    (cswitch (13 :key 1-)
+      (12 :yay)
+      (13.0 :oops))
+  :yay)
+
+(deftest whichever.1
+    (let ((x (whichever 1 2 3)))
+      (and (member x '(1 2 3)) t))
+  t)
+
+(deftest xor.1
+    (xor nil nil 1 nil)
+  1
+  t)
+
+;;;; Definitions
+
+(deftest define-constant.1
+    (let ((name (gensym)))
+      (eval `(define-constant ,name "FOO" :test equal))
+      (eval `(define-constant ,name "FOO" :test equal))
+      (values (equal "FOO" (symbol-value name))
+              (constantp name)))
+  t
+  t)
+
+(deftest define-constant.2
+    (let ((name (gensym)))
+      (eval `(define-constant ,name 13))
+      (eval `(define-constant ,name 13))
+      (values (eql 13 (symbol-value name))
+              (constantp name)))
+  t
+  t)
+
+;;;; Errors
+
+(deftest required-argument.1
+    (multiple-value-bind (res err)
+        (ignore-errors (required-argument))
+      (typep err 'error))
+  t)
+
 ;;;; Hash tables
 
 (deftest copy-hash-table.1
@@ -33,6 +134,7 @@
 (deftest maphash-keys.1
     (let ((keys nil)
           (table (make-hash-table)))
+      (declare (notinline maphash-keys))
       (dotimes (i 10)
         (setf (gethash i table) t))
       (maphash-keys (lambda (k) (push k keys)) table)
@@ -42,6 +144,7 @@
 (deftest maphash-values.1
     (let ((vals nil)
           (table (make-hash-table)))
+      (declare (notinline maphash-values))
       (dotimes (i 10)
         (setf (gethash i table) (- i)))
       (maphash-values (lambda (v) (push v vals)) table)
@@ -221,7 +324,54 @@
       (funcall r 8))
   4)
 
+(deftest named-lambda.1
+    (let ((fac (named-lambda fac (x)
+                 (if (> x 1)
+                     (* x (fac (- x 1)))
+                     x))))
+      (funcall fac 5))
+  120)
+
+(deftest named-lambda.2
+    (let ((fac (named-lambda fac (&key x)
+                 (if (> x 1)
+                     (* x (fac :x (- x 1)))
+                     x))))
+      (funcall fac :x 5))
+  120)
+
 ;;;; Lists
+
+(deftest alist-plist.1
+    (alist-plist '((a . 1) (b . 2) (c . 3)))
+  (a 1 b 2 c 3))
+
+(deftest plist-alist.1
+    (plist-alist '(a 1 b 2 c 3))
+  ((a . 1) (b . 2) (c . 3)))
+
+(deftest unionf.1
+    (let* ((list '(1 2 3))
+           (orig list))
+      (unionf list '(1 2 4))
+      (values (equal orig (list 1 2 3))
+              (eql (length list) 4)
+              (set-difference list (list 1 2 3 4))
+              (set-difference (list 1 2 3 4) list)))
+  t
+  t
+  nil
+  nil)
+
+(deftest nunionf.1
+    (let ((list '(1 2 3)))
+      (nunionf list '(1 2 4))
+      (values (eql (length list) 4)
+              (set-difference (list 1 2 3 4) list)
+              (set-difference list (list 1 2 3 4))))
+  t
+  nil
+  nil)
 
 (deftest appendf.1
     (let* ((list '(1 2 3))
@@ -251,6 +401,10 @@
             (circular-list-p proper)
             (circular-list-p tailcirc)))
   (t nil nil nil t))
+
+(deftest circular-list-p.2
+    (circular-list-p 'foo)
+  nil)
 
 (deftest circular-tree-p.1
     (let* ((circle (circular-list 1 2 3 4))
@@ -286,6 +440,10 @@
             (proper-list-p l4)
             (proper-list-p l5)))
   (t t nil t nil))
+
+(deftest proper-list-p.2
+    (proper-list-p '(1 2 . 3))
+  nil)
 
 (deftest proper-list.type.1
     (let ((l1 (list 1))
@@ -325,6 +483,13 @@
   4
   42)
 
+(deftest setf-lastcar.2
+    (let ((l (circular-list 1 2 3)))
+      (multiple-value-bind (res err)
+          (ignore-errors (setf (lastcar l) 4))
+        (typep err 'type-error)))
+  t)
+
 (deftest make-circular-list.1
     (let ((l (make-circular-list 3 :initial-element :x)))
       (setf (car l) :y)
@@ -350,6 +515,17 @@
       (list (ensure-list x)
             (ensure-list y)))
   ((1) (2)))
+
+(deftest ensure-cons.1
+    (let ((x (cons 1 2))
+          (y nil)
+          (z "foo"))
+      (values (ensure-cons x)
+              (ensure-cons y)
+              (ensure-cons z)))
+  (1 . 2)
+  (nil)
+  ("foo"))
 
 (deftest setp.1
     (setp '(1))
@@ -404,8 +580,16 @@
     (set-equal '(a d c) '(:a :b :c) :key 'string :test 'equal)
   nil)
 
+(deftest set-equal.6
+    (set-equal '(a b c) '(a b c d))
+  nil)
+
 (deftest map-product.1
     (map-product 'cons '(2 3) '(1 4))
+  ((2 . 1) (2 . 4) (3 . 1) (3 . 4)))
+
+(deftest map-product.2
+    (map-product #'cons '(2 3) '(1 4))
   ((2 . 1) (2 . 4) (3 . 1) (3 . 4)))
 
 (deftest flatten.1
@@ -445,10 +629,18 @@
           (clamp 0 1 2))
   (1.5 2.0 1.0 2 1))
 
-#+(or)
 (deftest gaussian-random.1
-    ???
-  )
+    (let ((min -0.2)
+          (max +0.2))
+      (multiple-value-bind (g1 g2)
+          (gaussian-random min max)
+        (values (<= min g1 max)
+                (<= min g2 max)
+                (/= g1 g2) ;uh
+                )))
+  t
+  t
+  t)
 
 (deftest iota.1
     (iota 3)
@@ -461,6 +653,17 @@
 (deftest iota.3
     (iota 3 :start 2 :step 3.0)
   (2.0 5.0 8.0))
+
+(deftest map-iota.1
+    (let (all)
+      (declare (notinline map-iota))
+      (values (map-iota (lambda (x) (push x all))
+                        3
+                        :start 2
+                        :step 1.1d0)
+              all))
+  3
+  (4.2d0 3.1d0 2.0d0))
 
 (deftest lerp.1
     (lerp 0.5 1 2)
@@ -490,11 +693,13 @@
     (median '(100 0 99 1 98 2 97 96))
   195/2)
 
-#+(or)
-(deftest variance)
+(deftest variance.1
+    (variance (list 1 2 3))
+  2/3)
 
-#+nil
-(deftest standard-deviation)
+(deftest standard-deviation.1
+    (< 0 (standard-deviation (list 1 2 3)) 1)
+  t)
 
 (deftest maxf.1
     (let ((x 1))
@@ -597,11 +802,28 @@
    #(1 2 3 4)
    #(2 3 4 1)))
 
-(deftest suffle.1
-    (let ((s (suffle (iota 100))))
+(deftest rotate.5
+    (values (rotate (list 1) 17)
+            (rotate (list 1) -5))
+  (1)
+  (1))
+
+(deftest shuffle.1
+    (let ((s (shuffle (iota 100))))
       (list (equal s (iota 100))
             (every (lambda (x)
                      (member x s))
+                   (iota 100))
+            (every (lambda (x)
+                     (typep x '(integer 0 99)))
+                   s)))
+  (nil t t))
+
+(deftest shuffle.2
+    (let ((s (shuffle (coerce (iota 100) 'vector))))
+      (list (equal s (coerce (iota 100) 'vector))
+            (every (lambda (x)
+                     (find x s))
                    (iota 100))
             (every (lambda (x)
                      (typep x '(integer 0 99)))
@@ -692,6 +914,7 @@
 (deftest copy-sequence.1
     (let ((l (list 1 2 3))
           (v (vector #\a #\b #\c)))
+      (declare (notinline copy-sequence))
       (let ((l.list (copy-sequence 'list l))
             (l.vector (copy-sequence 'vector l))
             (l.spec-v (copy-sequence '(vector fixnum) l))
@@ -742,6 +965,13 @@
   "xoobar"
   #(zot :b :c))
 
+(deftest setf-first-elt.error.1
+    (let ((l 'foo))
+      (multiple-value-bind (res err)
+          (ignore-errors (setf (first-elt l) 4))
+        (typep err 'type-error)))
+  t)
+
 (deftest last-elt.1
     (mapcar #'last-elt
             (list (list 1 2 3)
@@ -781,6 +1011,13 @@
   (1 2 ???)
   "fooba?"
   #*010101000)
+
+(deftest setf-last-elt.error.1
+    (handler-case
+        (setf (last-elt 'foo) 13)
+      (type-error ()
+        :type-error))
+  :type-error)
 
 (deftest starts-with.1
     (list (starts-with 1 '(1 2 3))
@@ -840,6 +1077,29 @@
                      (mapcar #'symbol-name syms)))))
   (nil t))
 
+(deftest with-unique-names.2
+    (let ((*gensym-counter* 0))
+      (let ((syms (with-unique-names ((foo "_foo_") (bar -bar-) (quux #\q))
+                    (list foo bar quux))))
+        (list (find-if #'symbol-package syms)
+              (equal '("_foo_0" "-BAR-1" "q2")
+                     (mapcar #'symbol-name syms)))))
+  (nil t))
+
+(deftest with-unique-names.3
+    (let ((*gensym-counter* 0))
+      (multiple-value-bind (res err)
+          (ignore-errors
+            (eval
+             '(let ((syms
+                     (with-unique-names ((foo "_foo_") (bar -bar-) (quux 42))
+                       (list foo bar quux))))
+               (list (find-if #'symbol-package syms)
+                (equal '("_foo_0" "-BAR-1" "q2")
+                 (mapcar #'symbol-name syms))))))
+        (typep err 'error)))
+  t)
+
 (deftest once-only.1
     (macrolet ((cons1.good (x)
                  (once-only (x)
@@ -883,23 +1143,35 @@
   ((declare (foo)))
   nil)
 
+(deftest parse-body.6
+    (multiple-value-bind (res err)
+        (ignore-errors
+          (parse-body '("foo" "bar" "quux")
+                      :documentation t))
+      (typep err 'error))
+  t)
+
 ;;;; Symbols
 
 (deftest ensure-symbol.1
     (ensure-symbol :cons :cl)
-  cons)
+  cons
+  :external)
 
 (deftest ensure-symbol.2
-    (ensure-symbol "CONS")
-  cons)
+    (ensure-symbol "CONS" :alexandria)
+  cons
+  :inherited)
 
 (deftest ensure-symbol.3
     (ensure-symbol 'foo :keyword)
-  :foo)
+  :foo
+  :external)
 
 (deftest ensure-symbol.4
-    (ensure-symbol #\*)
-  *)
+    (ensure-symbol #\* :alexandria)
+  *
+  :inherited)
 
 (deftest format-symbol.1
     (let ((s (format-symbol nil "X-~D" 13)))
@@ -933,9 +1205,11 @@
 ;;;; Type-system
 
 (deftest of-type.1
+    (locally
+        (declare (notinline of-type))
     (let ((f (of-type 'string)))
       (list (funcall f "foo")
-            (funcall f 'bar)))
+            (funcall f 'bar))))
   (t nil))
 
 (deftest type=.1
@@ -996,6 +1270,21 @@
             (and (not y) x))
   1)
 
+(deftest if-let.5
+    (if-let (x)
+            :oops
+            (not x))
+  t)
+
+(deftest if-let.error.1
+    (handler-case
+        (eval '(if-let x
+                :oops
+                :oops))
+      (type-error ()
+        :type-error))
+  :type-error)
+
 (deftest if-let*.1
     (let ((x 1))
       (if-let* ((x 2)
@@ -1010,6 +1299,19 @@
              :oops
              (and (not x) y))
   2)
+
+(deftest if-let*.3
+    (if-let* (x 1)
+             x
+             :oops)
+  1)
+
+(deftest if-let*.error.1
+    (handler-case
+        (eval '(if-let* x :oops :oops))
+      (type-error ()
+        :type-error))
+  :type-error)
 
 (deftest when-let.1
     (when-let (x (opaque :ok))
@@ -1031,9 +1333,29 @@
         (+ x y)))
   3)
 
+(deftest when-let.error.1
+    (handler-case
+        (eval '(when-let x :oops))
+      (type-error ()
+        :type-error))
+  :type-error)
+
 (deftest when-let*.1
     (let ((x 1))
       (when-let* ((x 2)
                   (y x))
         (+ x y)))
   4)
+
+(deftest when-let*.2
+    (let ((y 1))
+      (when-let* (x y)
+        (1+ x)))
+  2)
+
+(deftest when-let*.error.1
+    (handler-case
+        (eval '(when-let* x :oops))
+      (type-error ()
+        :type-error))
+  :type-error)

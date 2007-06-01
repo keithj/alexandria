@@ -99,3 +99,21 @@ with and ARGUMENTS to FUNCTION."
   (lambda (&rest more)
     (declare (dynamic-extent more))                 
     (multiple-value-call function (values-list more) (values-list arguments))))
+
+(defmacro named-lambda (name lambda-list &body body)
+  "Expands into a lambda-expression within whose BODY NAME denotes the
+function corresponding function."
+  (let* ((simplep (union lambda-list-keywords lambda-list))
+         (restp (and (not simplep) (find '&rest lambda-list))))
+    (if simplep
+        ;; Required arguments only, no need for APPLY
+        `(lambda ,lambda-list
+           (labels ((,name ,lambda-list ,@body))
+             (,name ,@lambda-list)))
+        ;; Lambda-list keywords present, need to APPLY to
+        ;; get &KEY and &REST handled correctly.
+        (with-gensyms (arguments)
+          `(lambda (&rest ,arguments)
+             ,@(unless restp `((declare (dynamic-extent ,arguments))))
+             (labels ((,name ,lambda-list ,@body))
+               (apply #',name ,arguments)))))))

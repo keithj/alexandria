@@ -7,6 +7,14 @@
    #:if-let*
    #:when-let
    #:when-let*
+   ;; Definitions
+   #:define-constant
+   ;; Control flow
+   #:switch
+   #:eswitch
+   #:cswitch
+   #:whichever
+   #:xor
    ;; Hash tables
    #:copy-hash-table
    #:hash-table-keys
@@ -24,14 +32,19 @@
    #:rcurry
    #:compose
    #:multiple-value-compose
+   #:named-lambda
    ;; Lists
+   #:alist-plist
    #:appendf
    #:circular-list
    #:circular-list-p
    #:circular-tree-p
+   #:ensure-cons
    #:ensure-list
    #:lastcar
    #:make-circular-list
+   #:nunionf
+   #:plist-alist
    #:proper-list-p
    #:proper-list
    #:mappend
@@ -41,6 +54,7 @@
    #:remove-from-plist
    #:set-equal
    #:setp
+   #:unionf
    ;; Numbers
    #:clamp
    #:gaussian-random
@@ -79,6 +93,8 @@
    #:format-symbol
    #:make-keyword
    #:make-gensym-list
+   ;; Strings
+   #:string-designator
    ;; Types
    #:of-type
    #:type=

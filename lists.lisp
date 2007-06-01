@@ -1,8 +1,34 @@
 (in-package :alexandria)
 
+(defun alist-plist (alist)
+  "Returns a property list containing the same keys and values as the
+association list ALIST in the same order."
+  (let (plist)
+    (dolist (pair alist)
+      (push (car pair) plist)
+      (push (cdr pair) plist))
+    (nreverse plist)))
+
+(defun plist-alist (plist)
+  "Returns an association list containing the same keys and values as the
+property list PLIST in the same order."
+  (let (alist)
+    (do ((tail plist (cddr tail)))
+        ((endp tail) (nreverse alist))
+      (push (cons (car tail) (cadr tail)) alist))))
+
 (define-modify-macro appendf (&rest lists) append
   "Modify-macro for APPEND. Appends LISTS to the place designated by the first
 argument.")
+
+(define-modify-macro unionf (list) union
+  "Modify-macro for UNION. Saves the union of LIST and the contents of the
+place designated by the first argument to the designated place.")
+
+(define-modify-macro nunionf (list) nunion
+  "Modify-macro for NUNION. Saves the union of LIST and the contents of the
+place designated by the first argument to the designated place. May modify
+either argument.")
 
 (defun circular-list (&rest elements)
   "Creates a circular list of ELEMENTS."
@@ -99,6 +125,13 @@ list."
 recommended for performance intensive use. Main usefullness as the
 expected-type designator of a TYPE-ERROR."
   `(satisfies circular-list-p))
+
+(defun ensure-cons (cons)
+  "If CONS is a cons, it is returned. Otherwise returns a fresh cons with CONS
+  in the car, and NIL in the cdr."
+  (if (consp cons)
+      cons
+      (cons cons nil)))
 
 (defun ensure-list (list)
   "If LIST is a list, it is returned. Otherwise returns the list designated by LIST."

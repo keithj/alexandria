@@ -52,6 +52,9 @@
    #:flatten
    #:sans
    #:remove-from-plist
+   #:remove-from-plistf
+   #:delete-from-plist
+   #:delete-from-plistf
    #:set-equal
    #:setp
    #:unionf

@@ -143,7 +143,7 @@ expected-type designator of a TYPE-ERROR."
   "Returns a propery-list with same keys and values as PLIST, except that keys
 in the list designated by KEYS and values corresponding to them are removed.
 The returned property-list may share structure with the PLIST, but PLIST is
-not destructively modified."
+not destructively modified. Keys are compared using EQ."
   (declare (optimize (speed 3)))
   ;; FIXME: unoptimal: (sans '(:a 1 :b 2) :a) has no need to copy the
   ;; tail.
@@ -154,6 +154,15 @@ not destructively modified."
         collect key
         and do (assert (cdr cell) () "Not a proper plist")
         and collect (cadr cell)))
+
+(defun delete-from-plist (plist &rest keys)
+  "Just like REMOVE-FROM-PLIST, but this version may destructively modify the
+provided plist."
+  ;; FIXME unoptimal
+  (apply 'remove-from-plist plist keys))
+
+(define-modify-macro remove-from-plistf (plist &rest keys) remove-from-plist)
+(define-modify-macro delete-from-plistf (plist &rest keys) delete-from-plist)
 
 (declaim (inline sans))
 (defun sans (plist &rest keys)

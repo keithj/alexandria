@@ -78,6 +78,8 @@
    #:copy-sequence
    #:first-elt
    #:last-elt
+   #:starts-with-subseq
+   #:ends-with-subseq
    #:starts-with
    #:ends-with
    #:removef

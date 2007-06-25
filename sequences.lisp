@@ -173,6 +173,44 @@ sequence, is an empty sequence, or if OBJECT cannot be stored in SEQUENCE."
                   :datum sequence 
                   :expected-type '(and proper-sequence (not (satisfies emptyp))))))))
 
+(defun starts-with-subseq (sequence prefix &rest args &key (return-suffix nil) &allow-other-keys)
+  "Test whether the first elements of SEQUENCE are the same (as per TEST) as the elements of PREFIX.
+
+If RETURN-SUFFIX is T the functions returns, as a second value, a
+displaced array pointing to the sequence after PREFIX."
+  (remove-from-plistf args :return-suffix)
+  (let ((sequence-length (length sequence))
+        (prefix-length (length prefix)))
+    (if (<= prefix-length sequence-length)
+        (let ((mismatch (apply #'mismatch sequence prefix args)))
+          (if mismatch
+              (if (< mismatch prefix-length)
+                  (values nil nil)
+                  (values t (when return-suffix
+                              (make-array (- sequence-length mismatch)
+                                          :element-type (array-element-type sequence)
+                                          :displaced-to sequence
+                                          :displaced-index-offset prefix-length
+                                          :adjustable nil))))
+              (values t (when return-suffix
+                          (make-array 0 :element-type (array-element-type sequence)
+                                      :adjustable nil)))))
+        (values nil nil))))
+
+(defun ends-with-subseq (sequence suffix &key (test #'eql))
+  "Test whether SEQUENCE ends with SUFFIX. In other words: return true if
+the last (length SUFFIX) elements of SEQUENCE are equal to SUFFIX."
+  (let ((sequence-length (length sequence))
+        (suffix-length (length suffix)))
+    (when (< sequence-length suffix-length)
+      ;; if SEQUENCE is shorter than SUFFIX, then SEQUENCE can't end with SUFFIX.
+      (return-from ends-with-subseq nil))
+    (loop for sequence-index from (- sequence-length suffix-length) below sequence-length
+          for suffix-index from 0 below suffix-length
+          when (not (funcall test (elt sequence sequence-index) (elt suffix suffix-index)))
+          do (return-from ends-with-subseq nil)
+          finally (return t))))
+
 (defun starts-with (object sequence &key (test #'eql) (key #'identity))
   "Returns true if SEQUENCE is a sequence whose first element is EQL to OBJECT.
 Returns NIL if the SEQUENCE is not a sequence or is an empty sequence."

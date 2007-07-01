@@ -40,6 +40,7 @@
    #:circular-list
    #:circular-list-p
    #:circular-tree-p
+   #:ensure-car
    #:ensure-cons
    #:ensure-list
    #:lastcar

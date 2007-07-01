@@ -126,6 +126,12 @@ recommended for performance intensive use. Main usefullness as the
 expected-type designator of a TYPE-ERROR."
   `(satisfies circular-list-p))
 
+(defun ensure-car (thing)
+  "If THING is a CONS, its CAR is returned. Otherwise THING is returned."
+  (if (consp thing)
+      (car thing)
+      thing))
+
 (defun ensure-cons (cons)
   "If CONS is a cons, it is returned. Otherwise returns a fresh cons with CONS
   in the car, and NIL in the cdr."

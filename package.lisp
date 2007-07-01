@@ -72,6 +72,7 @@
    #:standard-deviation
    ;; Arrays
    #:array-index
+   #:array-length
    #:copy-array
    ;; Sequences
    #:emptyp

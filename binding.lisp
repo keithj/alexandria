@@ -2,7 +2,7 @@
 
 (defmacro if-let (bindings then-form &optional else-form)
     "Creates new variable bindings, and conditionally executes either
-THEN-FORM or ELSE-FORM (defaulting to NIL).
+THEN-FORM or ELSE-FORM. ELSE-FORM defaults to NIL.
 
 BINDINGS must be either single binding of the form:
 
@@ -32,7 +32,7 @@ effect."
 
 (defmacro if-let* (bindings then-form &optional else-form)
   "Creates new variable bindings, and conditionally executes either THEN-FORM
-or ELSE-FORM (defaulting to NIL).
+or ELSE-FORM. ELSE-FORM defaults to NIL.
 
 BINDINGS must be either single binding of the form:
 
@@ -89,8 +89,7 @@ implicit PROGN."
          ,@forms))))
 
 (defmacro when-let* (bindings &body forms)
-  "Creates new variable bindings, and conditionally executes either THEN-FORM
-or ELSE-FORM (defaulting to NIL).
+  "Creates new variable bindings, and conditionally executes FORMS.
 
 BINDINGS must be either single binding of the form:
 

@@ -82,7 +82,8 @@ the last."
 it is called with to FUNCTION."
   (declare (optimize (speed 3) (safety 1) (debug 1)))
   (lambda (&rest more)
-    (declare (dynamic-extent more))                 
+    (declare (dynamic-extent more))
+    ;; Using M-V-C we don't need to append the arguments.
     (multiple-value-call function (values-list arguments) (values-list more))))
 
 (define-compiler-macro curry (function &rest arguments)
@@ -102,7 +103,7 @@ with and ARGUMENTS to FUNCTION."
 
 (defmacro named-lambda (name lambda-list &body body)
   "Expands into a lambda-expression within whose BODY NAME denotes the
-function corresponding function."
+corresponding function."
   (let ((simplep (not (intersection lambda-list-keywords lambda-list))))
     (if simplep
         ;; Required arguments only, no need for APPLY

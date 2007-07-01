@@ -1,10 +1,18 @@
 (in-package :alexandria)
 
-(declaim (inline of-type))
 (defun of-type (type)
   "Returns a function of one argument, which returns true when its argument is
 of TYPE."
   (lambda (thing) (typep thing type)))
+
+(define-compiler-macro of-type (&whole form type &environment env)
+  ;; This can yeild a big benefit, but no point inlining the function
+  ;; all over the place if TYPE is not constant.
+  (if (constantp type env)
+      (with-gensyms (thing)
+        `(lambda (,thing)
+           (typep ,thing ,type)))
+      form))
 
 (declaim (inline type=))
 (defun type= (type1 type2)

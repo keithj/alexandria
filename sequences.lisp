@@ -245,3 +245,133 @@ an error if SEQUENCE is an improper list."
                       (t
                        (return-from ends-with nil))))
            object))
+
+(defun map-combinations (function sequence &key (start 0) end length (copy t))
+  "Calls FUNCTION with each combination of LENGTH constructable from the
+elements of the subsequence of SEQUENCE delimited by START and END. START
+defaults to 0, END to length of SEQUENCE, and LENGTH to the length of the
+delimited subsequence. (So unless LENGTH is specified there is only a single
+combination, which has the same elements as the delimited subsequence.) If
+COPY is true (the default) each combination is freshly allocated. If COPY is
+false all combinations are EQ to each other, in which case consequences are
+specified if a combination is modified by FUNCTION."
+  (let* ((end (or end (length sequence)))
+         (size (- end start))
+         (length (or length size))
+         (combination (subseq sequence 0 length))
+         (function (ensure-function function)))
+    (if (= length size)
+        (funcall function combination)
+        (flet ((call ()
+                 (funcall function (if copy
+                                       (copy-seq combination)
+                                       combination))))
+          (etypecase sequence
+            ;; When dealing with lists we prefer walking back and
+            ;; forth instead of using indexes.
+            (list
+             (labels ((combine-list (c-tail o-tail)
+                        (if (not c-tail)
+                            (call)
+                            (do ((tail o-tail (cdr tail)))
+                                ((not tail))
+                              (setf (car c-tail) (car tail))
+                              (combine-list (cdr c-tail) (cdr tail))))))
+               (combine-list combination (nthcdr start sequence))))
+            (vector
+             (labels ((combine (count start)
+                        (if (zerop count)
+                            (call)
+                            (loop for i from start below end
+                                  do (let ((j (- count 1)))
+                                       (setf (aref combination j) (aref sequence i))
+                                       (combine j (+ i 1)))))))
+               (combine length start)))
+            (sequence
+             (labels ((combine (count start)
+                        (if (zerop count)
+                            (call)
+                            (loop for i from start below end
+                                  do (let ((j (- count 1)))
+                                       (setf (elt combination j) (elt sequence i))
+                                       (combine j (+ i 1)))))))
+               (combine length start)))))))
+  sequence)
+
+(defun map-permutations (function sequence &key (start 0) end length (copy t))
+  "Calls function with each permutation of LENGTH constructable
+from the subsequence of SEQUENCE delimited by START and END. START
+defaults to 0, END to length of the sequence, and LENGTH to the
+length of the delimited subsequence."
+  (let* ((end (or end (length sequence)))
+         (size (- end start))
+         (length (or length size)))
+    (labels ((permute (seq n)
+               (let ((n-1 (- n 1)))
+                 (if (zerop n-1)
+                     (funcall function (if copy
+                                           (copy-seq seq)
+                                           seq))
+                     (if (evenp n-1)
+                         (loop for i from 0 upto n-1
+                               do (permute seq n-1)
+                                  (if (evenp n-1)
+                                      (rotatef (elt seq 0) (elt seq n-1))
+                                      (rotatef (elt seq i) (elt seq n-1))))))))
+             (permute-sequence (seq)
+               (permute seq length)))
+      (if (= length size)
+          ;; Things are simple if we need to just permute the
+          ;; full START-END range.
+          (permute-sequence (subseq sequence start end))
+          ;; Otherwise we need to generate all the combinations
+          ;; of LENGTH in the START-END range, and then permute
+          ;; a copy of the result: can't permute the combination
+          ;; directly, as they share structure with each other.
+          (let ((permutation (subseq sequence 0 length)))
+            (flet ((permute-combination (combination)
+                     (permute-sequence (replace permutation combination))))
+              (declare (dynamic-extent #'permute-combination))
+              (map-combinations #'permute-combination sequence
+                                :start start
+                                :end end
+                                :length length
+                                :copy nil)))))))
+
+(defun map-derangements (function sequence &key (start 0) end (copy t))
+  "Calls FUNCTION with each derangement of the subsequence of SEQUENCE denoted
+by the bounding index designators START and END. Derangement is a permutation
+of the sequence where no element remains in place. SEQUENCE is not modified,
+but individual derangements are EQ to each other. Consequences are unspecified
+if calling FUNCTION modifies either the derangement or SEQUENCE."
+  (let* ((end (or end (length sequence)))
+         (size (- end start))
+         ;; We don't really care about the elements here.
+         (derangement (subseq sequence 0 size))
+         ;; Bitvector that has 1 for elements that have been deranged.         
+         (mask (make-array size :element-type 'bit :initial-element 0)))
+    (declare (dynamic-extent mask))
+    ;; ad hoc algorith
+    (labels ((derange (place n)
+               ;; Perform one recursive step in deranging the
+               ;; sequence: PLACE is index of the original sequence
+               ;; to derange to another index, and N is the number of
+               ;; indexes not yet deranged.
+               (if (zerop n)
+                   (funcall function (if copy
+                                         (copy-seq derangement)
+                                         derangement))
+                   ;; Itarate over the indexes I of the subsequence to
+                   ;; derange: if I != PLACE and I has not yet been
+                   ;; deranged by an earlier call put the element from
+                   ;; PLACE to I, mark I as deranged, and recurse,
+                   ;; finally removing the mark.
+                   (loop for i from 0 below size
+                         do
+                         (unless (or (= place (+ i start)) (not (zerop (bit mask i))))
+                           (setf (elt derangement i) (elt sequence place)
+                                 (bit mask i) 1)
+                           (derange (1+ place) (1- n))
+                           (setf (bit mask i) 0))))))
+      (derange start size)
+      sequence)))

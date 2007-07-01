@@ -10,21 +10,21 @@
    ;; Definitions
    #:define-constant
    ;; Control flow
-   #:switch
-   #:eswitch
    #:cswitch
+   #:eswitch
+   #:switch
    #:whichever
    #:xor
    ;; Hash tables
-   #:copy-hash-table
-   #:hash-table-keys
-   #:hash-table-values
-   #:hash-table-plist
-   #:hash-table-alist
    #:alist-hash-table
-   #:plist-hash-table
+   #:copy-hash-table
+   #:hash-table-alist
+   #:hash-table-keys
+   #:hash-table-plist
+   #:hash-table-values
    #:maphash-keys
    #:maphash-values
+   #:plist-hash-table
    ;; Functions
    #:compose
    #:conjoin
@@ -43,16 +43,15 @@
    #:ensure-car
    #:ensure-cons
    #:ensure-list
+   #:flatten
    #:lastcar
    #:make-circular-list
+   #:map-product
+   #:mappend
    #:nunionf
    #:plist-alist
-   #:proper-list-p
    #:proper-list
-   #:mappend
-   #:map-product
-   #:flatten
-   #:sans
+   #:proper-list-p
    #:remove-from-plist
    #:remove-from-plistf
    #:delete-from-plist
@@ -81,31 +80,34 @@
    #:array-length
    #:copy-array
    ;; Sequences
-   #:emptyp
    #:copy-sequence
+   #:deletef
+   #:emptyp
+   #:ends-with
+   #:ends-with-subseq
    #:first-elt
    #:last-elt
-   #:starts-with-subseq
-   #:ends-with-subseq
-   #:starts-with
-   #:ends-with
-   #:removef
-   #:deletef
+   #:map-combinations
+   #:map-derangements
+   #:map-permuations
    #:proper-sequence
    #:random-elt
+   #:removef
    #:rotate
    #:sequence-of-length-p
    #:shuffle
+   #:starts-with
+   #:starts-with-subseq
    ;; Macros
-   #:with-unique-names   
-   #:with-gensyms
    #:once-only
    #:parse-body
+   #:with-gensyms
+   #:with-unique-names
    ;; Symbols
    #:ensure-symbol
    #:format-symbol
-   #:make-keyword
    #:make-gensym-list
+   #:make-keyword
    ;; Strings
    #:string-designator
    ;; Types

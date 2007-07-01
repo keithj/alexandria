@@ -61,7 +61,10 @@
    #:setp
    #:unionf
    ;; Numbers
+   #:binomial-coefficient
    #:clamp
+   #:count-permutations
+   #:factorial
    #:gaussian-random
    #:iota   
    #:lerp
@@ -70,8 +73,9 @@
    #:mean   
    #:median
    #:minf
-   #:variance
    #:standard-deviation
+   #:subfactorial
+   #:variance
    ;; Arrays
    #:array-index
    #:array-length

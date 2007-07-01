@@ -125,3 +125,113 @@ maximum of its original value and NUMBERS.")
 (define-modify-macro minf (&rest numbers) min
   "Modify-macro for MIN. Sets place designated by the first argument to the
 minimum of its original value and NUMBERS.")
+
+;;;; Factorial
+
+;;; KLUDGE: This is really dependant on the numbers in question: for
+;;; small numbers this is larger, and vice versa. Ideally instead of a
+;;; constant we would have RANGE-FAST-TO-MULTIPLY-DIRECTLY-P.
+(defconstant +factorial-bisection-range-limit+ 8)
+
+;;; KLUDGE: This is really platform dependant: ideally we would use
+;;; (load-time-value (find-good-direct-multiplication-limit)) instead.
+(defconstant +factorial-direct-multiplication-limit+ 13)
+
+(defun %multiply-range (i j)
+  ;; We use a a bit of cleverness here:
+  ;;
+  ;; 1. For large factorials we bisect in order to avoid expensive bignum
+  ;;    multiplications: 1 x 2 x 3 x ... runs into bignums pretty soon,
+  ;;    and once it does that all further multiplications will be with bignums.
+  ;;
+  ;;    By instead doing the multiplication in a tree like
+  ;;       ((1 x 2) x (3 x 4)) x ((5 x 6) x (7 x 8))
+  ;;    we manage to get less bignums.
+  ;;
+  ;; 2. Division isn't exactly free either, however, so we don't bisect
+  ;;    all the way down, but multiply ranges of integers close to each
+  ;;    other directly.
+  ;;
+  ;; For even better results it should be possible to use prime
+  ;; factorization magic, but Nikodemus ran out of steam.
+  ;;
+  ;; KLUDGE: We support factorials of bignums, but it seems quite
+  ;; unlikely anyone would ever be able to use them on a modern lisp,
+  ;; since the resulting numbers are unlikely to fit in memory... but
+  ;; it would be extremely unelegant to define FACTORIAL only on
+  ;; fixnums, _and_ on lisps with 16 bit fixnums this can actually be
+  ;; needed.
+  (labels ((bisect (j k)
+             (declare (type (integer 1 #.most-positive-fixnum) j k))
+             (if (< (- k j) +factorial-bisection-range-limit+)
+                 (multiply-range j k)
+                 (let ((middle (+ j (truncate (- k j) 2))))
+                   (* (bisect j middle)
+                      (bisect (+ middle 1) k)))))
+           (bisect-big (j k)
+             (declare (type (integer 1) j k))
+             (if (= j k)
+                 j
+                 (let ((middle (+ j (truncate (- k j) 2))))                   
+                   (* (if (<= middle most-positive-fixnum)
+                          (bisect j middle)
+                          (bisect-big j middle))
+                      (bisect-big (+ middle 1) k)))))
+           (multiply-range (j k)
+             (declare (type (integer 1 #.most-positive-fixnum) j k))
+             (do ((f k (* f m))
+                  (m (1- k) (1- m)))
+                 ((< m j) f)
+               (declare (type (integer 0 (#.most-positive-fixnum)) m)
+                        (unsigned-byte f)))))
+    (bisect i j)))
+
+(declaim (inline factorial))
+(defun %factorial (n)
+  (if (< n 2)
+      1
+      (%multiply-range 1 n)))
+
+(defun factorial (n)
+  "Factorial of non-negative integer N."
+  (check-type n (integer 0))
+  (%factorial n))
+
+;;;; Combinatorics
+
+(defun binomial-coefficient (n k)
+  "Binomial coefficient of N and K, also expressed as N choose K. This is the
+number of K element combinations given N choises. N must be equal to or
+greater then K."
+  (check-type n (integer 0))
+  (check-type k (integer 0))
+  (assert (>= n k))
+  (if (or (zerop k) (= n k))
+      1
+      (let ((n-k (- n k)))
+        (if (= 1 n-k)
+            n
+            ;; General case, avoid computing the 1x...xK twice:
+            ;;
+            ;;    N!           1x...xN          (K+1)x...xN
+            ;; --------  =  ---------------- =  ------------, N>1
+            ;; K!(N-K)!     1x...xK x (N-K)!       (N-K)!
+            (/ (%multiply-range (+ k 1) n)
+               (%factorial n-k))))))
+
+(defun subfactorial (n)
+  "Subfactorial of the non-negative integer N."
+  (check-type n (integer 0))
+  (case n
+    (0 1)
+    (1 0)
+    (otherwise
+     (floor (/ (+ 1 (factorial n)) (exp 1))))))
+
+(defun count-permutations (n &optional (k n))
+  "Number of K element permutations for a sequence of N objects.
+R defaults to N"
+  ;; FIXME: Use %multiply-range and take care of 1 and 2, plus
+  ;; check types.
+  (/ (factorial n)
+     (factorial (- n k))))

@@ -116,3 +116,13 @@ corresponding function."
           `(lambda (&rest ,arguments)
              (labels ((,name ,lambda-list ,@body))
                (apply #',name ,arguments)))))))
+
+(declare (ftype (function (t) (values function &optional))
+                ensure-function))
+(defun ensure-function (function-designator)
+  "Returns the function designated by FUNCTION-DESIGNATOR:
+if FUNCTION-DESIGNATOR is a function, it is returned, otherwise
+it must be a function name and its FDEFINITION is returned."
+  (if (functionp function-designator)
+      function-designator
+      (fdefinition function-designator)))

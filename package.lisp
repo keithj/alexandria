@@ -26,13 +26,14 @@
    #:maphash-keys
    #:maphash-values
    ;; Functions
-   #:conjoin
-   #:disjoin
-   #:curry
-   #:rcurry
    #:compose
+   #:conjoin
+   #:curry
+   #:disjoin
+   #:ensure-function
    #:multiple-value-compose
    #:named-lambda
+   #:rcurry
    ;; Lists
    #:alist-plist
    #:appendf

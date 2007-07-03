@@ -117,7 +117,7 @@ corresponding function."
              (labels ((,name ,lambda-list ,@body))
                (apply #',name ,arguments)))))))
 
-(declare (ftype (function (t) (values function &optional))
+(declaim (ftype (function (t) (values function &optional))
                 ensure-function))
 (defun ensure-function (function-designator)
   "Returns the function designated by FUNCTION-DESIGNATOR:

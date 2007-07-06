@@ -10,6 +10,9 @@ Signals an error if NAME is already a bound non-constant variable.
 
 Signals an error if NAME is already a constant variable whose value is not
 equal under TEST to result of evaluating INITIAL-VALUE."
+  (when (and (consp test)
+             (member (first test) '(quote function)))
+    (setf test (second test)))
   `(defconstant ,name
      (let ((new ,initial-value))
        (if (boundp ',name)

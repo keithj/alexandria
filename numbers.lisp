@@ -14,8 +14,8 @@ MIN and MAX if NUMBER is greater then MAX, otherwise returns NUMBER."
   "Returns two gaussian random double floats as the primary and secondary value,
 optionally constrained by MIN and MAX. Gaussian random numbers form a standard
 normal distribution around 0.0d0."
-  (labels ((gauss () 
-             (loop 
+  (labels ((gauss ()
+             (loop
                 for x1 = (- (random 2.0d0) 1.0d0)
                 for x2 = (- (random 2.0d0) 1.0d0)
                 for w = (+ (expt x1 2) (expt x2 2))
@@ -172,7 +172,7 @@ minimum of its original value and NUMBERS.")
              (declare (type (integer 1) j k))
              (if (= j k)
                  j
-                 (let ((middle (+ j (truncate (- k j) 2))))                   
+                 (let ((middle (+ j (truncate (- k j) 2))))
                    (* (if (<= middle most-positive-fixnum)
                           (bisect j middle)
                           (bisect-big j middle))

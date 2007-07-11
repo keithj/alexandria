@@ -1,7 +1,7 @@
 (defpackage :alexandria.0.dev
   (:nicknames :alexandria)
   (:use :cl)
-  (:export 
+  (:export
    ;; Binding constructs
    #:if-let
    #:if-let*
@@ -65,11 +65,11 @@
    #:count-permutations
    #:factorial
    #:gaussian-random
-   #:iota   
+   #:iota
    #:lerp
    #:map-iota
-   #:maxf   
-   #:mean   
+   #:maxf
+   #:mean
    #:median
    #:minf
    #:standard-deviation

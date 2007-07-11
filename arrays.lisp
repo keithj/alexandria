@@ -12,7 +12,7 @@ ARRAY-DIMENSION-LIMIT."
 ARRAY-DIMENSION-LIMIT."
   `(integer 0 ,length))
 
-(defun copy-array (array &key 
+(defun copy-array (array &key
                    (element-type (array-element-type array))
                    (fill-pointer (and (array-has-fill-pointer-p array)
                                       (fill-pointer array)))
@@ -24,7 +24,7 @@ the keyword arguments."
     ;; Dictionary entry for ADJUST-ARRAY requires adjusting a
     ;; displaced array to a non-displaced one to make a copy.
     (adjust-array
-     (make-array dims 
+     (make-array dims
                  :element-type element-type :fill-pointer fill-pointer
                  :adjustable adjustable :displaced-to array)
      dims)))

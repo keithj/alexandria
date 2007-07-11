@@ -94,8 +94,8 @@ proper list."
       (return (cadr last)))
     (when (endp (cdr fast))
       (return (car fast)))
-    (when (eq fast slow) 
-      (error 'type-error 
+    (when (eq fast slow)
+      (error 'type-error
              :datum list
              :expected-type '(and list (not circular-list))))))
 
@@ -110,8 +110,8 @@ list."
       (return (setf (cadr last) object)))
     (when (endp (cdr fast))
       (return (setf (car fast) object)))
-    (when (eq fast slow) 
-      (error 'type-error 
+    (when (eq fast slow)
+      (error 'type-error
              :datum list
              :expected-type '(and list (not circular-list))))))
 
@@ -188,7 +188,7 @@ denotes a set if each element of the list is unique under KEY and TEST."
        (let (seen)
          (dolist (elt object t)
            (let ((key (funcall key elt)))
-             (if (member key seen :test test)                 
+             (if (member key seen :test test)
                  (return nil)
                  (push key seen)))))))
 
@@ -210,8 +210,8 @@ from LIST, and one from each of MORE-LISTS for each combination of arguments.
 In other words, returns the product of LIST and MORE-LISTS using FUNCTION.
 
 Example:
-  
- (map-product 'list '(1 2) '(3 4) '(5 6)) => ((1 3 5) (1 3 6) (1 4 5) (1 4 6) 
+
+ (map-product 'list '(1 2) '(3 4) '(5 6)) => ((1 3 5) (1 3 6) (1 4 5) (1 4 6)
                                               (2 3 5) (2 3 6) (2 4 5) (2 4 6))
 "
   (labels ((%map-product (f lists)
@@ -222,7 +222,7 @@ Example:
                    (mappend (lambda (x)
                               (%map-product (curry f x) more))
                             one)))))
-    (%map-product (if (functionp function) 
+    (%map-product (if (functionp function)
                       function
                       (fdefinition function))
                   (cons list more-lists))))
@@ -233,7 +233,7 @@ Example:
     (labels ((traverse (subtree)
                (when subtree
                  (if (consp subtree)
-                     (progn 
+                     (progn
                        (traverse (car subtree))
                        (traverse (cdr subtree)))
                      (push subtree list)))))

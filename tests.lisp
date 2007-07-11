@@ -148,7 +148,7 @@
       (dotimes (i 10)
         (setf (gethash i table) (- i)))
       (maphash-values (lambda (v) (push v vals)) table)
-      (set-equal vals '(0 -1 -2 -3 -4 -5 -6 -7 -8 -9)))  
+      (set-equal vals '(0 -1 -2 -3 -4 -5 -6 -7 -8 -9)))
   t)
 
 (deftest hash-table-keys.1
@@ -224,7 +224,7 @@
   (nil :cons :string))
 
 (deftest conjoin.1
-    (let ((conjunction (conjoin #'consp 
+    (let ((conjunction (conjoin #'consp
                                 (lambda (x)
                                   (stringp (car x)))
                                 (lambda (x)
@@ -235,7 +235,7 @@
   (nil nil #\f))
 
 (deftest compose.1
-    (let ((composite (compose '1+ 
+    (let ((composite (compose '1+
                               (lambda (x)
                                 (* x 2))
                               #'read-from-string)))
@@ -243,9 +243,9 @@
   3)
 
 (deftest compose.2
-    (let ((composite 
+    (let ((composite
            (locally (declare (notinline compose))
-             (compose '1+ 
+             (compose '1+
                       (lambda (x)
                         (* x 2))
                       #'read-from-string))))
@@ -254,7 +254,7 @@
 
 (deftest compose.3
     (let ((compose-form (funcall (compiler-macro-function 'compose)
-                                 '(compose '1+ 
+                                 '(compose '1+
                                    (lambda (x)
                                      (* x 2))
                                    #'read-from-string)
@@ -300,7 +300,7 @@
         (multiple-value-list (funcall fun "2 9"))))
   (4 1))
 
-(deftest curry.1 
+(deftest curry.1
     (let ((curried (curry '+ 3)))
       (funcall curried 1 5))
   9)
@@ -419,7 +419,7 @@
            (quite-proper (list 1 2 3))
            (quite-dotted (list 1 (cons 2 3))))
       (list (circular-tree-p circle)
-            (circular-tree-p tree1)            
+            (circular-tree-p tree1)
             (circular-tree-p tree2)
             (circular-tree-p dotted)
             (circular-tree-p proper)
@@ -467,7 +467,7 @@
 
 (deftest lastcar.error.2
     (handler-case
-        (progn 
+        (progn
           (lastcar (circular-list 1 2 3))
           nil)
       (error ()
@@ -681,7 +681,7 @@
     (mean '(1 2 3 4))
   5/2)
 
-(deftest mean.3 
+(deftest mean.3
     (mean '(1 2 10))
   13/3)
 
@@ -879,7 +879,7 @@
   (t t nil nil))
 
 (deftest emptyp.1
-    (mapcar #'emptyp 
+    (mapcar #'emptyp
             (list (list 1)
                   (circular-list 1)
                   nil
@@ -993,10 +993,10 @@
                   :zot
                   (circular-list 1 2 3)
                   (list* 1 2 3 (circular-list 4 5))))
-  (:type-error 
-   :type-error 
-   :type-error 
-   :type-error 
+  (:type-error
+   :type-error
+   :type-error
+   :type-error
    :type-error
    :type-error))
 
@@ -1115,20 +1115,20 @@
 
 (deftest parse-body.1
     (parse-body '("doc" "body") :documentation t)
-  ("body") 
-  nil 
+  ("body")
+  nil
   "doc")
 
 (deftest parse-body.2
     (parse-body '("body") :documentation t)
-  ("body") 
-  nil 
+  ("body")
+  nil
   nil)
 
 (deftest parse-body.3
     (parse-body '("doc" "body"))
-  ("doc" "body") 
-  nil 
+  ("doc" "body")
+  nil
   nil)
 
 (deftest parse-body.4
@@ -1181,7 +1181,7 @@
 
 (deftest format-symbol.2
     (format-symbol :keyword "SYM-~A" :bolic)
-  :sym-bolic) 
+  :sym-bolic)
 
 (deftest format-symbol.3
     (let ((*package* (find-package :cl)))

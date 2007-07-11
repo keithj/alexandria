@@ -26,11 +26,11 @@ Example:
   (let ((y 0)) (cons1 (incf y))) => (1 . 1)"
   (let ((gensyms (make-gensym-list (length names) "ONCE-ONLY")))
     ;; bind in user-macro
-    `(let ,(mapcar (lambda (g n) (list g `(gensym ,(string n)))) 
+    `(let ,(mapcar (lambda (g n) (list g `(gensym ,(string n))))
                    gensyms names)
        ;; bind in final expansion
        `(let (,,@(mapcar (lambda (g n) ``(,,g ,,n)) gensyms names))
-          ;; bind in user-macro          
+          ;; bind in user-macro
           ,(let ,(mapcar #'list names gensyms)
              ,@forms)))))
 

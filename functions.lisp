@@ -98,7 +98,7 @@ it is called with to FUNCTION."
 with and ARGUMENTS to FUNCTION."
   (declare (optimize (speed 3) (safety 1) (debug 1)))
   (lambda (&rest more)
-    (declare (dynamic-extent more))                 
+    (declare (dynamic-extent more))
     (multiple-value-call function (values-list more) (values-list arguments))))
 
 (defmacro named-lambda (name lambda-list &body body)

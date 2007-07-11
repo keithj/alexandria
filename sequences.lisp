@@ -119,21 +119,21 @@ SEQUENCE."
 (defun first-elt (sequence)
   "Returns the first element of SEQUENCE. Signals a type-error if SEQUENCE is
 not a sequence, or is an empty sequence."
-  ;; Can't just directly use ELT, as it is not guaranteed to signal the 
+  ;; Can't just directly use ELT, as it is not guaranteed to signal the
   ;; type-error.
   (cond  ((consp sequence)
           (car sequence))
          ((and (typep sequence '(and sequence (not list))) (plusp (length sequence)))
           (elt sequence 0))
          (t
-          (error 'type-error 
-                 :datum sequence 
+          (error 'type-error
+                 :datum sequence
                  :expected-type '(and sequence (not (satisfies emptyp)))))))
 
 (defun (setf first-elt) (object sequence)
   "Sets the first element of SEQUENCE. Signals a type-error if SEQUENCE is
 not a sequence, is an empty sequence, or if OBJECT cannot be stored in SEQUENCE."
-  ;; Can't just directly use ELT, as it is not guaranteed to signal the 
+  ;; Can't just directly use ELT, as it is not guaranteed to signal the
   ;; type-error.
   (cond ((consp sequence)
          (setf (car sequence) object))
@@ -141,14 +141,14 @@ not a sequence, is an empty sequence, or if OBJECT cannot be stored in SEQUENCE.
               (plusp (length sequence)))
          (setf (elt sequence 0) object))
         (t
-         (error 'type-error 
-                :datum sequence 
+         (error 'type-error
+                :datum sequence
                 :expected-type '(and sequence (not (satisfies emptyp)))))))
 
 (defun last-elt (sequence)
   "Returns the last element of SEQUENCE. Signals a type-error if SEQUENCE is
 not a proper sequence, or is an empty sequence."
-  ;; Can't just directly use ELT, as it is not guaranteed to signal the 
+  ;; Can't just directly use ELT, as it is not guaranteed to signal the
   ;; type-error.
   (let ((len 0))
     (cond ((consp sequence)
@@ -156,8 +156,8 @@ not a proper sequence, or is an empty sequence."
           ((and (typep sequence '(and sequence (not list))) (plusp (setf len (length sequence))))
            (elt sequence (1- len)))
           (t
-           (error 'type-error 
-                  :datum sequence 
+           (error 'type-error
+                  :datum sequence
                   :expected-type '(and proper-sequence (not (satisfies emptyp))))))))
 
 (defun (setf last-elt) (object sequence)
@@ -169,8 +169,8 @@ sequence, is an empty sequence, or if OBJECT cannot be stored in SEQUENCE."
           ((and (typep sequence '(and sequence (not list))) (plusp (setf len (length sequence))))
            (setf (elt sequence (1- len)) object))
           (t
-           (error 'type-error 
-                  :datum sequence 
+           (error 'type-error
+                  :datum sequence
                   :expected-type '(and proper-sequence (not (satisfies emptyp))))))))
 
 (defun starts-with-subseq (sequence prefix &rest args &key (return-suffix nil) &allow-other-keys)
@@ -215,7 +215,7 @@ the last (length SUFFIX) elements of SEQUENCE are equal to SUFFIX."
   "Returns true if SEQUENCE is a sequence whose first element is EQL to OBJECT.
 Returns NIL if the SEQUENCE is not a sequence or is an empty sequence."
   (funcall test
-           (funcall key 
+           (funcall key
                     (typecase sequence
                       (cons (car sequence))
                       (sequence
@@ -233,11 +233,12 @@ an error if SEQUENCE is an improper list."
   (funcall test
            (funcall key
                     (typecase sequence
-                      (cons 
+                      (cons
                        ;; signals for improper lists
-                       (lastcar sequence)) 
+                       (lastcar sequence))
                       (sequence
-                       ;; Can't use last-elt, as that signals an error for empty sequences          
+                       ;; Can't use last-elt, as that signals an error
+                       ;; for empty sequences
                        (let ((len (length sequence)))
                          (if (plusp len)
                              (elt sequence (1- len))
@@ -348,7 +349,7 @@ if calling FUNCTION modifies either the derangement or SEQUENCE."
          (size (- end start))
          ;; We don't really care about the elements here.
          (derangement (subseq sequence 0 size))
-         ;; Bitvector that has 1 for elements that have been deranged.         
+         ;; Bitvector that has 1 for elements that have been deranged.
          (mask (make-array size :element-type 'bit :initial-element 0)))
     (declare (dynamic-extent mask))
     ;; ad hoc algorith

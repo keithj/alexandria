@@ -1,6 +1,6 @@
 (in-package :alexandria)
 
-(defun copy-hash-table (table &key 
+(defun copy-hash-table (table &key
                         (test (hash-table-test table))
                         (size (hash-table-size table))
                         (rehash-size (hash-table-size table))
@@ -8,8 +8,8 @@
   "Returns a shallow copy of hash table TABLE, with the same keys and values
 as the TABLE. The copy has the same properties as the original, unless
 overridden by the keyword arguments."
-  (let ((copy (make-hash-table :test test :size size 
-                               :rehash-size rehash-size 
+  (let ((copy (make-hash-table :test test :size size
+                               :rehash-size rehash-size
                                :rehash-threshold rehash-threshold)))
     (maphash (lambda (k v)
                (setf (gethash k copy) v))

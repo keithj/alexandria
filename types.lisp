@@ -29,3 +29,6 @@ types are not equivalent."
            (multiple-value-bind (sub ok) (subtypep type2 type1)
              (declare (ignore sub))
              (values nil ok))))))
+
+(define-modify-macro coercef (type-spec) coerce
+  "Modify-macro for COERCE.")

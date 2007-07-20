@@ -113,6 +113,7 @@
    ;; Types
    #:of-type
    #:type=
+   #:coercef
    ;; Errors
    #:required-argument
    #:simple-style-warning

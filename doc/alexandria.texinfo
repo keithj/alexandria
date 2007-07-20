@@ -191,6 +191,7 @@ terms and conditions:
 
 @include include/fun-alexandria-of-type.texinfo
 @include include/fun-alexandria-type-equal.texinfo
+@include include/macro-alexandria-coercef.texinfo
 
 @node Mathematical Utilities
 @comment  node-name,  next,  previous,  up

@@ -21,6 +21,10 @@ property list PLIST in the same order."
   "Modify-macro for APPEND. Appends LISTS to the place designated by the first
 argument.")
 
+(define-modify-macro nconcf (&rest lists) nconc
+  "Modify-macro for NCONC. Concatenates LISTS to place designated by the first
+argument.")
+
 (define-modify-macro unionf (list) union
   "Modify-macro for UNION. Saves the union of LIST and the contents of the
 place designated by the first argument to the designated place.")

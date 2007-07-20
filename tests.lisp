@@ -380,6 +380,13 @@
       (list list (eq list orig)))
   ((1 2 3 4 5 6 7 8) nil))
 
+(deftest nconcf.1
+    (let ((list1 (list 1 2 3))
+          (list2 (list 4 5 6)))
+      (nconcf list1 list2 (list 7 8 9))
+      list1)
+  (1 2 3 4 5 6 7 8 9))
+
 (deftest circular-list.1
     (let ((circle (circular-list 1 2 3)))
       (list (first circle)

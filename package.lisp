@@ -37,6 +37,7 @@
    ;; Lists
    #:alist-plist
    #:appendf
+   #:nconcf
    #:circular-list
    #:circular-list-p
    #:circular-tree-p

@@ -126,6 +126,7 @@ terms and conditions:
 @include include/type-alexandria-proper-list.texinfo
 @include include/type-alexandria-circular-list.texinfo
 @include include/macro-alexandria-appendf.texinfo
+@include include/macro-alexandria-nconcf.texinfo
 @include include/fun-alexandria-circular-list.texinfo
 @include include/fun-alexandria-circular-list-p.texinfo
 @include include/fun-alexandria-circular-tree-p.texinfo

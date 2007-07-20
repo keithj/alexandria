@@ -80,6 +80,7 @@ terms and conditions:
 * Array Utilities::             
 * Type Designator Manipulation::  
 * Mathematical Utilities::      
+* Features::                    
 @end menu
 
 @node Top
@@ -208,5 +209,12 @@ terms and conditions:
 @include include/fun-alexandria-median.texinfo
 @include include/fun-alexandria-variance.texinfo
 @include include/fun-alexandria-standard-deviation.texinfo
+
+@c FIXME: get a better section name
+@node Features
+@comment  node-name,  next,  previous,  up
+@section Features
+
+@include include/fun-alexandria-featurep.texinfo
 
 @bye

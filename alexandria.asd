@@ -18,4 +18,5 @@
    (:file "functions" :depends-on ("package" "symbols" "macros"))
    (:file "lists" :depends-on ("package" "functions"))
    (:file "sequences" :depends-on ("package" "lists"))
-   (:file "numbers" :depends-on ("package" "sequences"))))
+   (:file "numbers" :depends-on ("package" "sequences"))
+   (:file "features" :depends-on ("package"))))

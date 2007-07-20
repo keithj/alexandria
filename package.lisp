@@ -116,5 +116,4 @@
    #:coercef
    ;; Errors
    #:required-argument
-   #:simple-style-warning
    ))

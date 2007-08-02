@@ -1,5 +1,13 @@
 (in-package :alexandria)
 
+(defun extract-function-name (spec)
+  "Useful for macros that want to emulate the functional interface for functions
+like #'eq and 'eq."
+  (if (and (consp spec)
+           (member (first spec) '(quote function)))
+      (second spec)
+      spec))
+
 (defmacro define-constant (name initial-value &key (test 'eql) documentation)
   "Ensures that the global variable named by NAME is a constant with a value
 that is equal under TEST to the result of evaluating INITIAL-VALUE. TEST
@@ -10,9 +18,7 @@ Signals an error if NAME is already a bound non-constant variable.
 
 Signals an error if NAME is already a constant variable whose value is not
 equal under TEST to result of evaluating INITIAL-VALUE."
-  (when (and (consp test)
-             (member (first test) '(quote function)))
-    (setf test (second test)))
+  (setf test (extract-function-name test))
   `(defconstant ,name
      (let ((new ,initial-value))
        (if (boundp ',name)

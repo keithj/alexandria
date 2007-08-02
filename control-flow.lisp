@@ -1,44 +1,42 @@
 (in-package :alexandria)
 
-(defmacro switch ((object &key (test 'eql) (key 'identity) (default nil))
-                  &body clauses)
+(defun generate-switch-body (whole object clauses test key &optional default)
+  (with-gensyms (value)
+    (setf test (extract-function-name test))
+    (when (and (consp default)
+               (member (first default) '(error cerror)))
+      (setf default `(,@default "No keys match in SWITCH. Testing against ~S with ~S."
+                      ,value ',test)))
+    `(let ((,value (,key ,object)))
+      (cond ,@(mapcar (lambda (clause)
+                        (if (member (first clause) '(t otherwise))
+                            (progn
+                              (when default
+                                (error "Multiple default clauses or illegal use of a default clause in ~S."
+                                       whole))
+                              (setf default `(progn ,@(rest clause)))
+                              '(()))
+                            (destructuring-bind (key-form &body forms) clause
+                              `((,test ,value ,key-form)
+                                ,@forms))))
+                      clauses)
+            (t ,default)))))
+
+(defmacro switch (&whole whole (object &key (test 'eql) (key 'identity))
+                         &body clauses)
   "Evaluates first matching clause, returning its values, or evaluates and
 returns the values of DEFAULT if no keys match."
-  (with-gensyms (value)
-    `(let ((,value (,key ,object)))
-       (cond ,@(mapcar (lambda (clause)
-                         (destructuring-bind (key-form &body forms) clause
-                           `((,test ,value ,key-form)
-                             ,@forms)))
-                       clauses)
-             (t ,default)))))
+  (generate-switch-body whole object clauses test key))
 
-(defmacro eswitch ((object &key (test 'eql) (key 'identity)) &body clauses)
+(defmacro eswitch (&whole whole (object &key (test 'eql) (key 'identity))
+                          &body clauses)
   "Like SWITCH, but signals an error if no key matches."
-  (with-gensyms (value)
-    `(let ((,value (,key ,object)))
-       (cond ,@(mapcar (lambda (clause)
-                         (destructuring-bind (key-form &body forms) clause
-                           `((,test ,value ,key-form)
-                             ,@forms)))
-                       clauses)
-             (t
-              (error "No keys match in ESWITCH. Testing against ~S with ~S."
-                     ,value ',test))))))
+  (generate-switch-body whole object clauses test key '(error)))
 
-(defmacro cswitch ((object &key (test 'eql) (key 'identity)) &body clauses)
+(defmacro cswitch (&whole whole (object &key (test 'eql) (key 'identity))
+                          &body clauses)
   "Like SWITCH, but signals a continuable error if no key matches."
-  (with-gensyms (value)
-    `(let ((,value (,key ,object)))
-       (cond ,@(mapcar (lambda (clause)
-                         (destructuring-bind (key-form &body forms) clause
-                           `((,test ,value ,key-form)
-                             ,@forms)))
-                       clauses)
-             (t
-              (cerror "Return NIL from CSWITCH."
-               "No keys match in CSWITCH. Testing against ~S with ~S."
-               ,value ',test))))))
+  (generate-switch-body whole object clauses test key '(cerror "Return NIL from CSWITCH.")))
 
 (defmacro whichever (&rest possibilities)
   "Evaluates exactly one of POSSIBILITIES, chosen at random."

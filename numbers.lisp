@@ -183,7 +183,7 @@ minimum of its original value and NUMBERS.")
                   (m (1- k) (1- m)))
                  ((< m j) f)
                (declare (type (integer 0 (#.most-positive-fixnum)) m)
-                        (unsigned-byte f)))))
+                        (type unsigned-byte f)))))
     (bisect i j)))
 
 (declaim (inline factorial))

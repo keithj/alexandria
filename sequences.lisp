@@ -53,7 +53,7 @@ result sequence may share structure with it."
   "Returns a random permutation of SEQUENCE bounded by START and END.
 Permuted sequence may share storage with the original one. Signals
 an error if SEQUENCE is not a proper sequence."
-  (declare (fixnum start) ((or fixnum null) end))
+  (declare (fixnum start) (type (or fixnum null) end))
   (let ((end (or end (if (listp sequence) (list-length sequence) (length sequence)))))
     (loop for i from start below end
        do (rotatef (elt sequence i) (elt sequence (random end)))))
@@ -62,7 +62,7 @@ an error if SEQUENCE is not a proper sequence."
 (defun random-elt (sequence &key (start 0) end)
   "Returns a random element from SEQUENCE bounded by START and END. Signals an
 error if the SEQUENCE is not a proper sequence."
-  (declare (sequence sequence) (fixnum start) ((or fixnum null) end))
+  (declare (sequence sequence) (fixnum start) (type (or fixnum null) end))
   (let ((i (+ start (random (- (or end  (if (listp sequence)
                                             (list-length sequence)
                                             (length sequence)))

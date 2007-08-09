@@ -104,18 +104,8 @@ with and ARGUMENTS to FUNCTION."
 (defmacro named-lambda (name lambda-list &body body)
   "Expands into a lambda-expression within whose BODY NAME denotes the
 corresponding function."
-  (let ((simplep (not (intersection lambda-list-keywords lambda-list))))
-    (if simplep
-        ;; Required arguments only, no need for APPLY
-        `(lambda ,lambda-list
-           (labels ((,name ,lambda-list ,@body))
-             (,name ,@lambda-list)))
-        ;; Lambda-list keywords present, need to APPLY to
-        ;; get &KEY and &REST handled correctly.
-        (with-gensyms (arguments)
-          `(lambda (&rest ,arguments)
-             (labels ((,name ,lambda-list ,@body))
-               (apply #',name ,arguments)))))))
+  `(labels ((,name ,lambda-list ,@body))
+     #',name))
 
 (declaim (ftype (function (t) (values function &optional))
                 ensure-function))

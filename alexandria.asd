@@ -7,7 +7,7 @@
    (:file "package")
    (:file "definitions" :depends-on ("package"))
    (:file "strings" :depends-on ("package"))
-   (:file "errors" :depends-on ("package"))
+   (:file "conditions" :depends-on ("package"))
    (:file "hash-tables" :depends-on ("package"))
    (:file "macros" :depends-on ("package" "strings"))
    (:file "control-flow" :depends-on ("package" "macros"))

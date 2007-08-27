@@ -115,4 +115,5 @@
    #:type=
    ;; Errors
    #:required-argument
+   #:simple-style-warning
    ))

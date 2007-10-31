@@ -117,13 +117,8 @@
    #:coercef
    ;; Conditions
    #:required-argument
-v v v v v v v
    #:ignore-some-conditions
-   ;; Features
-   #:featurep
-*************
    #:simple-style-warning
    ;; Features
    #:featurep
-^ ^ ^ ^ ^ ^ ^
    ))

@@ -90,7 +90,7 @@
    #:last-elt
    #:map-combinations
    #:map-derangements
-   #:map-permuations
+   #:map-permutations
    #:proper-sequence
    #:random-elt
    #:removef

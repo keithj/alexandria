@@ -173,7 +173,7 @@ sequence, is an empty sequence, or if OBJECT cannot be stored in SEQUENCE."
                   :datum sequence
                   :expected-type '(and proper-sequence (not (satisfies emptyp))))))))
 
-(defun starts-with-subseq (sequence prefix &rest args &key (return-suffix nil) &allow-other-keys)
+(defun starts-with-subseq (prefix sequence &rest args &key (return-suffix nil) &allow-other-keys)
   "Test whether the first elements of SEQUENCE are the same (as per TEST) as the elements of PREFIX.
 
 If RETURN-SUFFIX is T the functions returns, as a second value, a
@@ -197,7 +197,7 @@ displaced array pointing to the sequence after PREFIX."
                                       :adjustable nil)))))
         (values nil nil))))
 
-(defun ends-with-subseq (sequence suffix &key (test #'eql))
+(defun ends-with-subseq (suffix sequence &key (test #'eql))
   "Test whether SEQUENCE ends with SUFFIX. In other words: return true if
 the last (length SUFFIX) elements of SEQUENCE are equal to SUFFIX."
   (let ((sequence-length (length sequence))

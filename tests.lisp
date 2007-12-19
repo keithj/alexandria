@@ -114,6 +114,21 @@
 
 ;;;; Hash tables
 
+(deftest ensure-hash-table.1
+    (let ((table (make-hash-table))
+          (x (list 1)))
+      (multiple-value-bind (value already-there)
+          (ensure-gethash x table 42)
+        (and (= value 42)
+             (not already-there)
+             (= 42 (gethash x table))
+             (multiple-value-bind (value2 already-there2)
+                 (ensure-gethash x table 13)
+               (and (= value2 42)
+                    already-there2
+                    (= 42 (gethash x table)))))))
+  t)
+
 (deftest copy-hash-table.1
     (let ((orig (make-hash-table :test 'eq :size 123))
           (foo "foo"))

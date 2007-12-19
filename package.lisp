@@ -18,6 +18,7 @@
    ;; Hash tables
    #:alist-hash-table
    #:copy-hash-table
+   #:ensure-gethash
    #:hash-table-alist
    #:hash-table-keys
    #:hash-table-plist

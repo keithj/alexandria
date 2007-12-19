@@ -12,6 +12,7 @@
    ;; Control flow
    #:cswitch
    #:eswitch
+   #:nth-value-or
    #:switch
    #:whichever
    #:xor

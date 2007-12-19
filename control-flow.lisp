@@ -66,3 +66,17 @@ value."
                               (setf ,true ,tmp))))
                    datums)
          (return-from ,xor (values ,true t))))))
+
+(defmacro nth-value-or (nth-value &body forms)
+  "Evaluates FORM arguments one at a time, until the NTH-VALUE returned by one
+of the forms is non-NIL. It then returns all the values returned by evaluating
+that form. If none of the forms return a non-nil nth value, this form returns
+NIL."
+  (once-only (nth-value)
+    (with-gensyms (values)
+      `(let ((,values (multiple-value-list ,(first forms))))
+         (if (nth ,nth-value ,values)
+             (values-list ,values)
+             ,(if (rest forms)
+                  `(nth-value-or ,nth-value ,@(rest forms))
+                  nil))))))

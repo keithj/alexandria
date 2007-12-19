@@ -1391,3 +1391,11 @@
       (type-error ()
         :type-error))
   :type-error)
+
+(deftest nth-value-or.1
+    (multiple-value-bind (a b c)
+        (nth-value-or 1
+                      (values 1 nil 1)
+                      (values 2 2 2))
+      (= a b c 2))
+  t)

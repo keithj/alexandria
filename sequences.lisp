@@ -51,12 +51,25 @@ result sequence may share structure with it."
 
 (defun shuffle (sequence &key (start 0) end)
   "Returns a random permutation of SEQUENCE bounded by START and END.
-Permuted sequence may share storage with the original one. Signals
-an error if SEQUENCE is not a proper sequence."
+Permuted sequence may share storage with the original one. Signals an
+error if SEQUENCE is not a proper sequence."
   (declare (fixnum start) (type (or fixnum null) end))
-  (let ((end (or end (if (listp sequence) (list-length sequence) (length sequence)))))
-    (loop for i from start below end
-       do (rotatef (elt sequence i) (elt sequence (random end)))))
+  (typecase sequence
+    (list
+     (let* ((end (or end (list-length sequence)))
+            (n (- end start)))
+       (do ((tail (nthcdr start sequence) (cdr tail)))
+           ((zerop n))
+         (rotatef (car tail) (car (nthcdr (random n) tail)))
+         (decf n))))
+    (vector
+     (let ((end (or end (length sequence))))
+       (loop for i from (- end 1) downto start
+             do (rotatef (aref sequence i) (aref sequence (random (+ i 1)))))))
+    (sequence
+     (let ((end (or end (length sequence))))
+       (loop for i from (- end 1) downto start
+             do (rotatef (elt sequence i) (elt sequence (random (+ i 1))))))))
   sequence)
 
 (defun random-elt (sequence &key (start 0) end)

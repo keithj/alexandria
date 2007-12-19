@@ -1,6 +1,7 @@
 (in-package :cl-user)
 
-(require :sb-rt)
+(eval-when (:compile-toplevel :load-toplevel)
+  (require :sb-rt))
 
 (require :alexandria)
 
@@ -41,9 +42,10 @@
   :yay)
 
 (deftest switch.2
-    (switch (13 :default :yay)
+    (switch (13)
       ((+ 12 2) :oops)
-      ((- 13 1) :oops2))
+      ((- 13 1) :oops2)
+      (t :yay))
   :yay)
 
 (deftest eswitch.1
@@ -351,9 +353,9 @@
   ((a . 1) (b . 2) (c . 3)))
 
 (deftest unionf.1
-    (let* ((list '(1 2 3))
+    (let* ((list (list 1 2 3))
            (orig list))
-      (unionf list '(1 2 4))
+      (unionf list (list 1 2 4))
       (values (equal orig (list 1 2 3))
               (eql (length list) 4)
               (set-difference list (list 1 2 3 4))
@@ -364,8 +366,8 @@
   nil)
 
 (deftest nunionf.1
-    (let ((list '(1 2 3)))
-      (nunionf list '(1 2 4))
+    (let ((list (list 1 2 3)))
+      (nunionf list (list 1 2 4))
       (values (eql (length list) 4)
               (set-difference (list 1 2 3 4) list)
               (set-difference list (list 1 2 3 4))))
@@ -374,7 +376,7 @@
   nil)
 
 (deftest appendf.1
-    (let* ((list '(1 2 3))
+    (let* ((list (list 1 2 3))
            (orig list))
       (appendf list '(4 5 6) '(7 8))
       (list list (eq list orig)))

@@ -33,7 +33,7 @@ PACKAGE."
   "Interns the string designated by NAME in the KEYWORD package."
   (intern (string name) :keyword))
 
-(defun make-gensym-list (length &optional x)
+(defun make-gensym-list (length &optional (x "G"))
   "Returns a list of LENGTH gensyms, each generated with a call to
 GENSYM using (if provided) as the argument."
   (loop repeat length

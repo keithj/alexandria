@@ -1226,6 +1226,14 @@
                      (mapcar 'symbol-name syms)))))
   (nil t))
 
+(deftest make-gensym-list.2
+    (let ((*gensym-counter* 0))
+      (let ((syms (make-gensym-list 3)))
+        (list (find-if 'symbol-package syms)
+              (equal '("G0" "G1" "G2")
+                     (mapcar 'symbol-name syms)))))
+  (nil t))
+
 ;;;; Type-system
 
 (deftest of-type.1

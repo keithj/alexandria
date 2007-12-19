@@ -620,15 +620,15 @@
     (flatten '((1) 2 (((3 4))) ((((5)) 6)) 7))
   (1 2 3 4 5 6 7))
 
-(deftest sans.1
+(deftest remove-from-plist.1
     (let ((orig '(a 1 b 2 c 3 d 4)))
-      (list (sans orig 'a 'c)
-            (sans orig 'b 'd)
-            (sans orig 'b)
-            (sans orig 'a)
-            (sans orig 'd 42 "zot")
-            (sans orig 'a 'b 'c 'd)
-            (sans orig 'a 'b 'c 'd 'x)
+      (list (remove-from-plist orig 'a 'c)
+            (remove-from-plist orig 'b 'd)
+            (remove-from-plist orig 'b)
+            (remove-from-plist orig 'a)
+            (remove-from-plist orig 'd 42 "zot")
+            (remove-from-plist orig 'a 'b 'c 'd)
+            (remove-from-plist orig 'a 'b 'c 'd 'x)
             (equal orig '(a 1 b 2 c 3 d 4))))
   ((b 2 d 4)
    (a 1 c 3)

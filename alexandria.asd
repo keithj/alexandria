@@ -9,7 +9,7 @@
    (:file "strings" :depends-on ("package"))
    (:file "conditions" :depends-on ("package"))
    (:file "hash-tables" :depends-on ("package"))
-   (:file "macros" :depends-on ("package" "strings"))
+   (:file "macros" :depends-on ("package" "strings" "symbols"))
    (:file "control-flow" :depends-on ("package" "macros"))
    (:file "symbols" :depends-on ("package"))
    (:file "arrays" :depends-on ("package"))

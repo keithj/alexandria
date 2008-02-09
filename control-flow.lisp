@@ -3,6 +3,7 @@
 (defun generate-switch-body (whole object clauses test key &optional default)
   (with-gensyms (value)
     (setf test (extract-function-name test))
+    (setf key (extract-function-name key))
     (when (and (consp default)
                (member (first default) '(error cerror)))
       (setf default `(,@default "No keys match in SWITCH. Testing against ~S with ~S."

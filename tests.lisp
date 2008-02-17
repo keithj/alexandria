@@ -1399,3 +1399,14 @@
                       (values 2 2 2))
       (= a b c 2))
   t)
+
+(deftest doplist.1
+    (let (keys values)
+      (doplist (k v '(a 1 b 2 c 3) (values t (reverse keys) (reverse values) k v))
+        (push k keys)
+        (push v values)))
+  t
+  (a b c)
+  (1 2 3)
+  nil
+  nil)

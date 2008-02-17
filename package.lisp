@@ -43,6 +43,7 @@
    #:circular-list
    #:circular-list-p
    #:circular-tree-p
+   #:doplist
    #:ensure-car
    #:ensure-cons
    #:ensure-list

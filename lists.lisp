@@ -17,6 +17,40 @@ property list PLIST in the same order."
         ((endp tail) (nreverse alist))
       (push (cons (car tail) (cadr tail)) alist))))
 
+(defun malformed-plist (plist)
+  (error "Malformed plist: ~S" plist))
+
+(defmacro doplist ((key val plist &optional values) &body body)
+  "Iterates over elements of PLIST. BODY can be preceded by
+declarations, and is like a TAGBODY. RETURN may be used to terminate
+the iteration early. If RETURN is not used, returns VALUES."
+  (multiple-value-bind (forms declarations) (parse-body body)
+    (with-gensyms (tail loop results)
+      `(block nil
+         (flet ((,results ()
+                  (let (,key ,val)
+                    (declare (ignorable ,key ,val))
+                    (return ,values))))
+           (let* ((,tail ,plist)
+                  (,key (if ,tail
+                            (pop ,tail)
+                            (,results)))
+                 (,val (if ,tail
+                           (pop ,tail)
+                           (malformed-plist ',plist))))
+            (declare (ignorable ,key ,val))
+            ,@declarations
+            (tagbody
+               ,loop
+               ,@forms
+               (setf ,key (if ,tail
+                              (pop ,tail)
+                              (,results))
+                     ,val (if ,tail
+                              (pop ,tail)
+                              (malformed-plist ',plist)))
+               (go ,loop))))))))
+
 (define-modify-macro appendf (&rest lists) append
   "Modify-macro for APPEND. Appends LISTS to the place designated by the first
 argument.")

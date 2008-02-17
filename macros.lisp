@@ -17,21 +17,35 @@
     "Alias for WITH-GENSYMS."
     `(with-gensyms ,names ,@forms))
 
-(defmacro once-only (names &body forms)
-  "Evaluates FORMS with NAMES rebound to temporary variables,
-ensuring that each is evaluated only once.
+(defmacro once-only (specs &body forms)
+  "Each SPEC must be either a NAME, or a (NAME INITFORM), with plain
+NAME using the named variable as initform.
+
+Evaluates FORMS with names rebound to temporary variables, ensuring
+that each is evaluated only once.
 
 Example:
   (defmacro cons1 (x) (once-only (x) `(cons ,x ,x)))
   (let ((y 0)) (cons1 (incf y))) => (1 . 1)"
-  (let ((gensyms (make-gensym-list (length names) "ONCE-ONLY")))
+  (let ((gensyms (make-gensym-list (length specs) "ONCE-ONLY"))
+        (names-and-forms (mapcar (lambda (spec)
+                                   (etypecase spec
+                                     (list
+                                      (destructuring-bind (name form) spec
+                                        (cons name form)))
+                                     (symbol
+                                      (cons spec spec))))
+                                 specs)))
     ;; bind in user-macro
-    `(let ,(mapcar (lambda (g n) (list g `(gensym ,(string n))))
-                   gensyms names)
+    `(let ,(mapcar (lambda (g n) (list g `(gensym ,(string (car n)))))
+                   gensyms names-and-forms)
        ;; bind in final expansion
-       `(let (,,@(mapcar (lambda (g n) ``(,,g ,,n)) gensyms names))
+       `(let (,,@(mapcar (lambda (g n)
+                           ``(,,g ,,(cdr n)))
+                         gensyms names-and-forms))
           ;; bind in user-macro
-          ,(let ,(mapcar #'list names gensyms)
+          ,(let ,(mapcar (lambda (n g) (list (car n) g))
+                         names-and-forms gensyms)
              ,@forms)))))
 
 (defun parse-body (body &key documentation whole)

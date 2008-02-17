@@ -1137,6 +1137,16 @@
               y)))
   ((1 . 1) 1 (2 . 3) 3))
 
+(deftest once-only.2
+    (macrolet ((cons1 (x)
+                 (once-only ((y x))
+                   `(cons ,y ,y))))
+      (let ((z 0))
+        (list (cons1 (incf z))
+              z
+              (cons1 (incf z)))))
+  ((1 . 1) 1 (2 . 2)))
+
 (deftest parse-body.1
     (parse-body '("doc" "body") :documentation t)
   ("body")

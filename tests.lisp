@@ -79,6 +79,14 @@
       (and (member x '(1 2 3)) t))
   t)
 
+(deftest whichever.2
+    (let* ((a 1)
+           (b 2)
+           (c 3)
+           (x (whichever a b c)))
+      (and (member x '(1 2 3)) t))
+  t)
+
 (deftest xor.1
     (xor nil nil 1 nil)
   1

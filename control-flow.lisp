@@ -39,15 +39,20 @@ returns the values of DEFAULT if no keys match."
   "Like SWITCH, but signals a continuable error if no key matches."
   (generate-switch-body whole object clauses test key '(cerror "Return NIL from CSWITCH.")))
 
-(defmacro whichever (&rest possibilities)
+(defmacro whichever (&rest possibilities &environment env)
   "Evaluates exactly one of POSSIBILITIES, chosen at random."
-  `(funcall (the function
-              (svref (load-time-value
-                      (vector ,@(mapcar (lambda (possibility)
-                                          `(lambda () ,possibility))
-                                        possibilities))
-                      t)
-                     (random ,(length possibilities))))))
+  (setf possibilities (mapcar (lambda (p) (macroexpand p env)) possibilities))
+  (if (every (lambda (p) (constantp p)) possibilities)
+      `(svref (load-time-value (vector ,@possibilities)) (random ,(length possibilities)))
+      (with-gensyms (function)
+        `(let ((,function (lambda () ,(pop possibilities))))
+           (declare (function ,function))
+           ,@(let ((p 1))
+               (mapcar (lambda (possibility)
+                         `(when (zerop (random ,(incf p)))
+                            (setf ,function (lambda () ,possibility))))
+                       possibilities))
+           (funcall ,function)))))
 
 (defmacro xor (&rest datums)
   "Evaluates its argument one at a time, from left to right. If more then one

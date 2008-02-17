@@ -883,7 +883,7 @@
    #(1 2 3)))
 
 (deftest deletef.1
-    (let* ((x '(1 2 3))
+    (let* ((x (list 1 2 3))
            (x* x)
            (y (vector 1 2 3)))
       (deletef x 2)

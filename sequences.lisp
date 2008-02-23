@@ -82,15 +82,21 @@ error if the SEQUENCE is not a proper sequence."
                                start)))))
     (elt sequence i)))
 
+(declaim (inline remove/swapped-arguments))
+(defun remove/swapped-arguments (sequence item &rest keyword-arguments)
+  (apply #'remove item sequence keyword-arguments))
+
 (define-modify-macro removef (item &rest remove-keywords)
-  (lambda (seq item &rest keyword-arguments)
-    (apply #'remove item seq keyword-arguments))
+  remove/swapped-arguments
   "Modify-macro for REMOVE. Sets place designated by the first argument to
 the result of calling REMOVE with ITEM, place, and the REMOVE-KEYWORDS.")
 
+(declaim (inline delete/swapped-arguments))
+(defun delete/swapped-arguments (sequence item &rest keyword-arguments)
+  (apply #'delete item sequence keyword-arguments))
+
 (define-modify-macro deletef (item &rest remove-keywords)
-  (lambda (seq item &rest keyword-arguments)
-    (apply #'delete item seq keyword-arguments))
+  delete/swapped-arguments
   "Modify-macro for DELETE. Sets place designated by the first argument to
 the result of calling DELETE with ITEM, place, and the REMOVE-KEYWORDS.")
 

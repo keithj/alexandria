@@ -19,4 +19,4 @@
    (:file "lists" :depends-on ("package" "functions"))
    (:file "sequences" :depends-on ("package" "lists"))
    (:file "numbers" :depends-on ("package" "sequences"))
-   (:file "features" :depends-on ("package"))))
+   (:file "features" :depends-on ("package" "control-flow"))))

@@ -1,17 +1,5 @@
 (in-package :alexandria)
 
-(deftype array-index (&optional (length array-dimension-limit))
-  "Type designator for an index into array of LENGTH: an integer between
-0 (inclusive) and LENGTH (exclusive). LENGTH defaults to
-ARRAY-DIMENSION-LIMIT."
-  `(integer 0 (,length)))
-
-(deftype array-length (&optional (length array-dimension-limit))
-  "Type designator for a dimension of an array of LENGTH: an integer between
-0 (inclusive) and LENGTH (inclusive). LENGTH defaults to
-ARRAY-DIMENSION-LIMIT."
-  `(integer 0 ,length))
-
 (defun copy-array (array &key
                    (element-type (array-element-type array))
                    (fill-pointer (and (array-has-fill-pointer-p array)

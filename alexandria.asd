@@ -12,7 +12,7 @@
    (:file "macros" :depends-on ("package" "strings" "symbols"))
    (:file "control-flow" :depends-on ("package" "macros"))
    (:file "symbols" :depends-on ("package"))
-   (:file "arrays" :depends-on ("package"))
+   (:file "arrays" :depends-on ("package" "types"))
    (:file "types" :depends-on ("package"))
    (:file "binding" :depends-on ("package"))
    (:file "functions" :depends-on ("package" "symbols" "macros"))

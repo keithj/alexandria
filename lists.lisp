@@ -205,8 +205,8 @@ provided plist."
   ;; FIXME unoptimal
   (apply 'remove-from-plist plist keys))
 
-(define-modify-macro remove-from-plistf (plist &rest keys) remove-from-plist)
-(define-modify-macro delete-from-plistf (plist &rest keys) delete-from-plist)
+(define-modify-macro remove-from-plistf (&rest keys) remove-from-plist)
+(define-modify-macro delete-from-plistf (&rest keys) delete-from-plist)
 
 (declaim (inline sans))
 (defun sans (plist &rest keys)

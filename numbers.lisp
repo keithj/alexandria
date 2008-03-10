@@ -44,7 +44,7 @@ normal distribution around 0.0d0."
 (defun iota (n &key (start 0) (step 1))
   "Return a list of n numbers, starting from START (with numeric contagion
 from STEP applied), each consequtive number being the sum of the previous one
-and STEP. START defaults to 0 and STEP to 0.
+and STEP. START defaults to 0 and STEP to 1.
 
 Examples:
 
@@ -62,13 +62,14 @@ Examples:
 (defun map-iota (function n &key (start 0) (step 1))
   "Calls FUNCTION with N numbers, starting from START (with numeric contagion
 from STEP applied), each consequtive number being the sum of the previous one
-and STEP. START defaults to 0 and STEP to 0. Returns N.
+and STEP. START defaults to 0 and STEP to 1. Returns N.
 
 Examples:
 
-  (iota 4)                      => (0 1 2 3 4)
-  (iota 3 :start 1 :step 1.0)   => (1.0 2.0 3.0)
-  (iota 3 :start -1 :step -1/2) => (-1 -3/2 -2)
+  (map-iota #'print 3 :start 1 :step 1.0) => 3
+    ;;; 1.0
+    ;;; 2.0
+    ;;; 3.0
 "
   (declare (type (integer 0) n) (number start step))
   (loop repeat n

@@ -1,7 +1,7 @@
 (in-package :alexandria)
 
 (defun extract-function-name (spec)
-  "Useful for macros that want to emulate the functional interface for functions
+  "Useful for macros that want to mimic the functional interface for functions
 like #'eq and 'eq."
   (if (and (consp spec)
            (member (first spec) '(quote function)))
@@ -26,7 +26,7 @@ like #'eq and 'eq."
                            ~S is not equal to the provided initial value ~S ~
                            under ~S.~:@>" name old new test)))))))
 
-(defmacro define-constant (name initial-value &key (test 'eql) documentation)
+(defmacro define-constant (name initial-value &key (test ''eql) documentation)
   "Ensures that the global variable named by NAME is a constant with a
 value that is equal under TEST to the result of evaluating
 INITIAL-VALUE. TEST is a /function designator/ that defaults to
@@ -39,5 +39,5 @@ Signals an error if NAME is already a constant variable whose value is not
 equal under TEST to result of evaluating INITIAL-VALUE."
   `(defconstant ,name (%reevaluate-constant ',name
                                             ,initial-value
-                                            :test ',(extract-function-name test))
+                                            :test ,test)
      ,@(when documentation `(,documentation))))

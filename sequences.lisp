@@ -1,5 +1,10 @@
 (in-package :alexandria)
 
+;; Make these inlinable by declaiming them INLINE here and some of them
+;; NOTINLINE at the end of the file. Exclude functions that have a compiler
+;; macro, because inlining seems to cancel compiler macros (at least on SBCL).
+(declaim (inline copy-sequence sequence-of-length-p))
+
 (defun rotate-tail-to-head (sequence n)
   (declare (type (integer 1) n))
   (if (listp sequence)
@@ -116,6 +121,9 @@ is not a sequence"
 (defun sequence-of-length-p (sequence length)
   "Return true if SEQUENCE is a sequence of length LENGTH. Signals an error if
 SEQUENCE is not a sequence. Returns FALSE for circular lists."
+  (declare (type array-index length)
+           (inline length)
+           (optimize speed))
   (etypecase sequence
     (null
      (zerop length))
@@ -123,11 +131,13 @@ SEQUENCE is not a sequence. Returns FALSE for circular lists."
      (let ((n (1- length)))
        (unless (minusp n)
          (let ((tail (nthcdr n sequence)))
-           (and tail (null (cdr tail)))))))
+           (and tail
+                (null (cdr tail)))))))
+    (vector
+     (= length (length sequence)))
     (sequence
      (= length (length sequence)))))
 
-(declaim (inline copy-sequence))
 (defun copy-sequence (type sequence)
   "Returns a fresh sequence of TYPE, which has the same elements as
 SEQUENCE."
@@ -395,3 +405,5 @@ if calling FUNCTION modifies either the derangement or SEQUENCE."
                            (setf (bit mask i) 0))))))
       (derange start size)
       sequence)))
+
+(declaim (notinline sequence-of-length-p))

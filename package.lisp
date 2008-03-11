@@ -122,6 +122,7 @@
    #:required-argument
    #:ignore-some-conditions
    #:simple-style-warning
+   #:unwind-protect-case
    ;; Features
    #:featurep
    ))

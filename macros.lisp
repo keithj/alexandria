@@ -64,7 +64,7 @@ arguments when given."
              (error "Too many documentation strings in ~S." (or whole body))
              (setf doc (pop body)))
          (go :declarations))
-       (when (starts-with 'declare current)
+       (when (and (listp current) (eql (first current) 'declare))
          (push (pop body) decls)
          (go :declarations)))
     (values body (nreverse decls) doc)))

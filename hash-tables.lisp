@@ -1,18 +1,24 @@
 (in-package :alexandria)
 
-(defun copy-hash-table (table &key
-                        (test (hash-table-test table))
-                        (size (hash-table-size table))
-                        (rehash-size (hash-table-size table))
-                        (rehash-threshold (hash-table-rehash-threshold table)))
-  "Returns a shallow copy of hash table TABLE, with the same keys and values
+(defun copy-hash-table (table &key key test size
+                                   rehash-size rehash-threshold)
+  "Returns a copy of hash table TABLE, with the same keys and values
 as the TABLE. The copy has the same properties as the original, unless
-overridden by the keyword arguments."
+overridden by the keyword arguments.
+
+Before each of the original values is set into the new hash-table, KEY
+is invoked on the value. As KEY defaults to CL:IDENTITY, a shallow
+copy is returned by default."
+  (setf key (or key 'identity))
+  (setf test (or test (hash-table-test table)))
+  (setf size (or size (hash-table-size table)))
+  (setf rehash-size (or rehash-size (hash-table-size table)))
+  (setf rehash-threshold (or rehash-threshold (hash-table-rehash-threshold table)))
   (let ((copy (make-hash-table :test test :size size
                                :rehash-size rehash-size
                                :rehash-threshold rehash-threshold)))
     (maphash (lambda (k v)
-               (setf (gethash k copy) v))
+               (setf (gethash k copy) (funcall key v)))
              table)
     copy))
 

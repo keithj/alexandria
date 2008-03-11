@@ -156,6 +156,24 @@
               (gethash "FOO" equalp-copy))))
   (123 2 t nil t t nil t))
 
+(deftest copy-hash-table.2
+    (let ((ht (make-hash-table))
+          (list (list :list (vector :A :B :C))))
+      (setf (gethash 'list ht) list)
+      (let* ((shallow-copy (copy-hash-table ht))
+	     (deep1-copy (copy-hash-table ht :key 'copy-list))
+	     (list         (gethash 'list ht))
+	     (shallow-list (gethash 'list shallow-copy))
+	     (deep1-list   (gethash 'list deep1-copy)))
+        (list (eq ht shallow-copy)
+	      (eq ht deep1-copy)
+	      (eq list shallow-list)
+	      (eq list deep1-list)	             ; outer list was copied.
+	      (eq (second list) (second shallow-list))
+	      (eq (second list) (second deep1-list)) ; inner vector wasn't copied.
+	      )))
+  (nil nil t nil t t))
+
 (deftest maphash-keys.1
     (let ((keys nil)
           (table (make-hash-table)))

@@ -33,6 +33,70 @@
     (typep 0 'array-index)
   t)
 
+;;;; Conditions
+
+(deftest unwind-protect-case.1
+    (let (result)
+      (unwind-protect-case ()
+	  (random 10)
+	(:normal (push :normal result))
+	(:abort  (push :abort result))
+	(:always (push :always result)))
+      result)
+  (:always :normal))
+
+(deftest unwind-protect-case.2
+    (let (result)
+      (unwind-protect-case ()
+	  (random 10)
+	(:always (push :always result))
+	(:normal (push :normal result))
+	(:abort  (push :abort result)))
+      result)
+  (:normal :always))
+
+(deftest unwind-protect-case.3
+    (let (result1 result2 result3)
+      (ignore-errors
+	(unwind-protect-case ()
+	    (error "FOOF!")
+	  (:normal (push :normal result1))
+	  (:abort  (push :abort result1))
+	  (:always (push :always result1))))
+      (catch 'foof
+	(unwind-protect-case ()
+	    (throw 'foof 42)
+	  (:normal (push :normal result2))
+	  (:abort  (push :abort result2))
+	  (:always (push :always result2))))
+      (block foof
+	(unwind-protect-case ()
+	    (return-from foof 42)
+	  (:normal (push :normal result3))
+	  (:abort  (push :abort result3))
+	  (:always (push :always result3))))
+      (values result1 result2 result3))
+  (:always :abort)
+  (:always :abort)
+  (:always :abort))
+
+(deftest unwind-protect-case.4
+    (let (result)
+      (unwind-protect-case (aborted-p)
+	  (random 42)
+	(:always (setq result aborted-p)))
+      result)
+  nil)
+
+(deftest unwind-protect-case.5
+    (let (result)
+      (block foof
+	(unwind-protect-case (aborted-p)
+	    (return-from foof)
+	  (:always (setq result aborted-p))))
+      result)
+  t)
+
 ;;;; Control flow
 
 (deftest switch.1

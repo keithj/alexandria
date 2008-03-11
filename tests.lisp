@@ -96,8 +96,8 @@
 
 (deftest define-constant.1
     (let ((name (gensym)))
-      (eval `(define-constant ,name "FOO" :test equal))
-      (eval `(define-constant ,name "FOO" :test equal))
+      (eval `(define-constant ,name "FOO" :test 'equal))
+      (eval `(define-constant ,name "FOO" :test 'equal))
       (values (equal "FOO" (symbol-value name))
               (constantp name)))
   t

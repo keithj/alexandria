@@ -189,20 +189,17 @@ in the list designated by KEYS and values corresponding to them are removed.
 The returned property-list may share structure with the PLIST, but PLIST is
 not destructively modified. Keys are compared using EQ."
   (declare (optimize (speed 3)))
-  ;; FIXME: unoptimal: (sans '(:a 1 :b 2) :a) has no need to copy the
-  ;; tail.
-  (loop for cell = plist :then (cddr cell)
-        for key = (car cell)
-        while cell
+  ;; FIXME: possible optimization: (remove-from-plist '(:x 0 :a 1 :b 2) :a)
+  ;; could return the tail without consing up a new list.
+  (loop for (key . rest) on plist by #'cddr
+        do (assert rest () "Expected a proper plist, got ~S" plist)
         unless (member key keys :test #'eq)
-        collect key
-        and do (assert (cdr cell) () "Not a proper plist")
-        and collect (cadr cell)))
+        collect key and collect (first rest)))
 
 (defun delete-from-plist (plist &rest keys)
   "Just like REMOVE-FROM-PLIST, but this version may destructively modify the
 provided plist."
-  ;; FIXME unoptimal
+  ;; FIXME: should not cons
   (apply 'remove-from-plist plist keys))
 
 (define-modify-macro remove-from-plistf (&rest keys) remove-from-plist)

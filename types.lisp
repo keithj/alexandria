@@ -45,26 +45,26 @@ ARRAY-DIMENSION-LIMIT."
                            above-zero positive-extremum zero)
                    (ecase type
                      (fixnum       (values 'most-negative-fixnum -1 1 'most-positive-fixnum 0))
-                     (integer      (values ''* -1 1 ''* 0))
-                     (rational     (values ''* ''(0) ''(0) ''* 0))
-                     (real         (values ''* ''(0) ''(0) ''* 0))
-                     (float        (values ''* ''(0.0E0) ''(0.0E0) ''* 0.0E0))
-                     (short-float  (values ''* ''(0.0S0) ''(0.0S0) ''* 0.0S0))
-                     (single-float (values ''* ''(0.0F0) ''(0.0F0) ''* 0.0F0))
-                     (double-float (values ''* ''(0.0D0) ''(0.0D0) ''* 0.0D0))
-                     (long-float   (values ''* ''(0.0L0) ''(0.0L0) ''* 0.0L0))))
+                     (integer      (values '* -1       1        '* 0))
+                     (rational     (values '* '(0)     '(0)     '* 0))
+                     (real         (values '* '(0)     '(0)     '* 0))
+                     (float        (values '* '(0.0E0) '(0.0E0) '* 0.0E0))
+                     (short-float  (values '* '(0.0S0) '(0.0S0) '* 0.0S0))
+                     (single-float (values '* '(0.0F0) '(0.0F0) '* 0.0F0))
+                     (double-float (values '* '(0.0D0) '(0.0D0) '* 0.0D0))
+                     (long-float   (values '* '(0.0L0) '(0.0L0) '* 0.0L0))))
              `(progn
                 (deftype ,negative-name ()
-                  `(,',base-type ,,negative-extremum ,,below-zero))
+                  `(,',base-type ,',negative-extremum ,',below-zero))
 
                 (deftype ,non-positive-name ()
-                  `(,',base-type ,,negative-extremum ,,zero))
+                  `(,',base-type ,',negative-extremum ,',zero))
 
                 (deftype ,non-negative-name ()
-                  `(,',base-type ,,zero ,,positive-extremum))
+                  `(,',base-type ,',zero ,',positive-extremum))
 
                 (deftype ,positive-name ()
-                  `(,',base-type ,,above-zero ,,positive-extremum))
+                  `(,',base-type ,',above-zero ,',positive-extremum))
 
                 (declaim (inline ,@predicate-names))
 

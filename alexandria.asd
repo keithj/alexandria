@@ -13,7 +13,7 @@
    (:file "control-flow" :depends-on ("package" "definitions" "macros"))
    (:file "symbols" :depends-on ("package"))
    (:file "arrays" :depends-on ("package" "types"))
-   (:file "types" :depends-on ("package" "symbols"))
+   (:file "types" :depends-on ("package" "symbols" "lists"))
    (:file "binding" :depends-on ("package"))
    (:file "functions" :depends-on ("package" "symbols" "macros"))
    (:file "lists" :depends-on ("package" "functions"))

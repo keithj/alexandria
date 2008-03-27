@@ -12,6 +12,12 @@ a default value for required keyword arguments."
 (defun simple-style-warning (message &rest args)
   (warn 'simple-style-warning :format-control message :format-arguments args))
 
+(define-condition simple-reader-error (reader-error simple-error)
+  ())
+
+(defun simple-reader-error (message &rest args)
+  (warn 'simple-reader-error :format-control message :format-arguments args))
+
 (defmacro ignore-some-conditions ((&rest conditions) &body body)
   "Similar to CL:IGNORE-ERRORS but the (unevaluated) CONDITIONS
 list determines which specific conditions are to be ignored."

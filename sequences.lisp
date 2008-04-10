@@ -118,6 +118,60 @@ is not a sequence"
     (list (null sequence))
     (sequence (zerop (length sequence)))))
 
+(defun length= (&rest sequences)
+  "Takes any number of sequences or integers in any order. Returns true iff
+the length of all the sequences and the integers are equal. Hint: there's a
+compiler macro that expands into more efficient code if the first argument
+is a literal integer."
+  (declare (dynamic-extent sequences)
+           (inline sequence-of-length-p)
+           (optimize speed))
+  (unless (cdr sequences)
+    (error "You must call LENGTH= with at least two arguments"))
+  ;; There's room for optimization here: multiple list arguments could be
+  ;; traversed in parallel.
+  (let* ((first (pop sequences))
+         (current (if (integerp first)
+                      first
+                      (length first))))
+    (declare (type array-index current))
+    (dolist (el sequences)
+      (if (integerp el)
+          (unless (= el current)
+            (return-from length= nil))
+          (unless (sequence-of-length-p el current)
+            (return-from length= nil)))))
+  t)
+
+(define-compiler-macro length= (&whole form length &rest sequences)
+  (cond
+    ((zerop (length sequences))
+     form)
+    (t
+     (let ((optimizedp (integerp length)))
+       (with-unique-names (tmp current)
+         (declare (ignorable current))
+         `(locally
+              (declare (inline sequence-of-length-p))
+            (let ((,tmp)
+                  ,@(unless optimizedp
+                     `((,current ,length))))
+              ,@(unless optimizedp
+                  `((unless (integerp ,current)
+                      (setf ,current (length ,current)))))
+              (and
+               ,@(loop
+                    :for sequence :in sequences
+                    :collect `(progn
+                                (setf ,tmp ,sequence)
+                                (if (integerp ,tmp)
+                                    (= ,tmp ,(if optimizedp
+                                                 length
+                                                 current))
+                                    (sequence-of-length-p ,tmp ,(if optimizedp
+                                                                    length
+                                                                    current)))))))))))))
+
 (defun sequence-of-length-p (sequence length)
   "Return true if SEQUENCE is a sequence of length LENGTH. Signals an error if
 SEQUENCE is not a sequence. Returns FALSE for circular lists."

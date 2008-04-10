@@ -99,6 +99,7 @@
    #:removef
    #:rotate
    #:sequence-of-length-p
+   #:length=
    #:shuffle
    #:starts-with
    #:starts-with-subseq

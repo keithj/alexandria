@@ -1025,6 +1025,44 @@
                   4))
   (t t t t t t nil nil nil nil))
 
+(deftest length=.1
+    (mapcar #'length=
+            (list nil
+                  #()
+                  (list 1)
+                  (vector 1)
+                  (list 1 2)
+                  (vector 1 2)
+                  (list 1 2)
+                  (vector 1 2)
+                  (list 1 2)
+                  (vector 1 2))
+            (list 0
+                  0
+                  1
+                  1
+                  2
+                  2
+                  1
+                  1
+                  4
+                  4))
+  (t t t t t t nil nil nil nil))
+
+(deftest length=.2
+    ;; test the compiler macro
+    (macrolet ((x (&rest args)
+                 (funcall
+                  (compile nil
+                           `(lambda ()
+                              (length= ,@args))))))
+      (list (x 2 '(1 2))
+            (x '(1 2) '(3 4))
+            (x '(1 2) 2)
+            (x '(1 2) 2 '(3 4))
+            (x 1 2 3)))
+  (t t t t nil))
+
 (deftest copy-sequence.1
     (let ((l (list 1 2 3))
           (v (vector #\a #\b #\c)))

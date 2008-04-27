@@ -25,6 +25,14 @@ a default value for required keyword arguments."
          :format-control message
          :format-arguments args))
 
+(define-condition simple-parse-error (simple-error parse-error)
+  ())
+
+(defun simple-parse-error (message &rest args)
+  (error 'simple-parse-error
+         :format-control message
+         :format-arguments args))
+
 (defmacro ignore-some-conditions ((&rest conditions) &body body)
   "Similar to CL:IGNORE-ERRORS but the (unevaluated) CONDITIONS
 list determines which specific conditions are to be ignored."

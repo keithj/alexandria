@@ -396,12 +396,11 @@ length of the delimited subsequence."
                      (funcall function (if copy
                                            (copy-seq seq)
                                            seq))
-                     (if (evenp n-1)
-                         (loop for i from 0 upto n-1
-                               do (permute seq n-1)
-                                  (if (evenp n-1)
-                                      (rotatef (elt seq 0) (elt seq n-1))
-                                      (rotatef (elt seq i) (elt seq n-1))))))))
+                     (loop for i from 0 upto n-1
+                           do (permute seq n-1)
+                           (if (evenp n-1)
+                               (rotatef (elt seq 0) (elt seq n-1))
+                               (rotatef (elt seq i) (elt seq n-1)))))))
              (permute-sequence (seq)
                (permute seq length)))
       (if (= length size)

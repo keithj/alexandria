@@ -983,6 +983,22 @@
    (1 3)
    #(2 3)))
 
+(deftest map-permutations.1
+    (let ((seq (list 1 2 3))
+          (seen nil)
+          (ok t))
+      (map-permutations (lambda (s)
+                          (unless (set-equal s seq)
+                            (setf ok nil))
+                          (when (member s seen :test 'equal)
+                            (setf ok nil))
+                          (push s seen))
+                        seq
+                        :copy t)
+      (values ok (length seen)))
+  t
+  6)
+
 (deftest proper-sequence.type.1
     (mapcar (lambda (x)
               (typep x 'proper-sequence))

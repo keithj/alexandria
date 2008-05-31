@@ -1493,34 +1493,6 @@
         :type-error))
   :type-error)
 
-(deftest if-let*.1
-    (let ((x 1))
-      (if-let* ((x 2)
-                (y x))
-               (+ x y)
-               :oops))
-  4)
-
-(deftest if-let*.2
-    (if-let* ((x 2)
-              (y (prog1 x (setf x nil))))
-             :oops
-             (and (not x) y))
-  2)
-
-(deftest if-let*.3
-    (if-let* (x 1)
-             x
-             :oops)
-  1)
-
-(deftest if-let*.error.1
-    (handler-case
-        (eval '(if-let* x :oops :oops))
-      (type-error ()
-        :type-error))
-  :type-error)
-
 (deftest when-let.1
     (when-let (x (opaque :ok))
       (setf x (cons x x))
@@ -1560,6 +1532,13 @@
       (when-let* (x y)
         (1+ x)))
   2)
+
+(deftest when-let*.3
+    (when-let* ((x t)
+                (y (consp x))
+                (z (error "OOPS")))
+      t)
+  nil)
 
 (deftest when-let*.error.1
     (handler-case

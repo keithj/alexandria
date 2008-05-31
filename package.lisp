@@ -4,7 +4,6 @@
   (:export
    ;; Binding constructs
    #:if-let
-   #:if-let*
    #:when-let
    #:when-let*
    ;; Definitions

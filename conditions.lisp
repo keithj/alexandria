@@ -12,11 +12,15 @@ a default value for required keyword arguments."
 (defun simple-style-warning (message &rest args)
   (warn 'simple-style-warning :format-control message :format-arguments args))
 
-;; We don't specify a :report for simple-reader-error to let the underlying
-;; implementation report the line and column position for us. Unfortunately
-;; this way the message from simple-error is not displayed, but it's still
-;; inspectable from the debugger.
-(define-condition simple-reader-error (reader-error simple-error)
+;; We don't specify a :report for simple-reader-error to let the
+;; underlying implementation report the line and column position for
+;; us. Unfortunately this way the message from simple-error is not
+;; displayed, unless there's special support for that in the
+;; implementation. But even then it's still inspectable from the
+;; debugger...
+(define-condition simple-reader-error
+    #-sbcl(reader-error simple-error)
+    #+sbcl(sb-int:simple-reader-error)
   ())
 
 (defun simple-reader-error (stream message &rest args)

@@ -119,7 +119,7 @@ either argument.")
   "Type designator for proper lists. Implemented as a SATISFIES type, hence
 not recommended for performance intensive use. Main usefullness as a type
 designator of the expected type in a TYPE-ERROR."
-  `(satisfies proper-list-p))
+  `(and list (satisfies proper-list-p)))
 
 (defun lastcar (list)
   "Returns the last element of LIST. Signals a type-error if LIST is not a

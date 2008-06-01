@@ -2,6 +2,16 @@
 
 (declaim (inline ensure-function))	; to propagate return type.
 
+(declaim (ftype (function (t) (values function &optional))
+                ensure-function))
+(defun ensure-function (function-designator)
+  "Returns the function designated by FUNCTION-DESIGNATOR:
+if FUNCTION-DESIGNATOR is a function, it is returned, otherwise
+it must be a function name and its FDEFINITION is returned."
+  (if (functionp function-designator)
+      function-designator
+      (fdefinition function-designator)))
+
 (defun disjoin (predicate &rest more-predicates)
   "Returns a function that applies each of PREDICATE and MORE-PREDICATE
 functions in turn to its arguments, returning the primary value of the first
@@ -121,13 +131,3 @@ with and ARGUMENTS to FUNCTION."
 corresponding function."
   `(labels ((,name ,lambda-list ,@body))
      #',name))
-
-(declaim (ftype (function (t) (values function &optional))
-                ensure-function))
-(defun ensure-function (function-designator)
-  "Returns the function designated by FUNCTION-DESIGNATOR:
-if FUNCTION-DESIGNATOR is a function, it is returned, otherwise
-it must be a function name and its FDEFINITION is returned."
-  (if (functionp function-designator)
-      function-designator
-      (fdefinition function-designator)))

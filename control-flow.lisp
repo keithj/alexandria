@@ -1,5 +1,13 @@
 (in-package :alexandria)
 
+(defun extract-function-name (spec)
+  "Useful for macros that want to mimic the functional interface for functions
+like #'eq and 'eq."
+  (if (and (consp spec)
+           (member (first spec) '(quote function)))
+      (second spec)
+      spec))
+
 (defun generate-switch-body (whole object clauses test key &optional default)
   (with-gensyms (value)
     (setf test (extract-function-name test))

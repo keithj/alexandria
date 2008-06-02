@@ -1,13 +1,5 @@
 (in-package :alexandria)
 
-(defun extract-function-name (spec)
-  "Useful for macros that want to mimic the functional interface for functions
-like #'eq and 'eq."
-  (if (and (consp spec)
-           (member (first spec) '(quote function)))
-      (second spec)
-      spec))
-
 (defun %reevaluate-constant (name value &key (test 'eql))
   (if (not (boundp name))
       value

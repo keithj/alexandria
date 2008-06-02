@@ -1,6 +1,6 @@
 (in-package :alexandria)
 
-(defmacro if-let (bindings then-form &optional else-form)
+(defmacro if-let (bindings &body (then-form &optional else-form))
     "Creates new variable bindings, and conditionally executes either
 THEN-FORM or ELSE-FORM. ELSE-FORM defaults to NIL.
 

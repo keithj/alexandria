@@ -127,4 +127,11 @@
    #:unwind-protect-case
    ;; Features
    #:featurep
+   ;; io
+   #:with-input-from-file
+   #:with-output-to-file
+   #:read-file-into-string
+   #:write-string-into-file
+   #:copy-stream
+   #:copy-file
    ))

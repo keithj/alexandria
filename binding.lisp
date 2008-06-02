@@ -73,7 +73,7 @@ or a list of bindings of the form:
 
 Each initial-form is executed in turn, and the variable bound to the
 corresponding value. Initial-form expressions can refer to variables
-previously bound by the IF-LET*.
+previously bound by the WHEN-LET*.
 
 Execution of WHEN-LET* stops immediately if any initial-form evaluates to NIL.
 If all initial-forms evaluate to true, then FORMS are executed as an implicit

@@ -1,7 +1,17 @@
 (in-package :alexandria)
 
 (defmacro with-gensyms (names &body forms)
-  "Binds each variable named in NAMES to a unique symbol around FORMS."
+  "Binds each variable named by a symbol in NAMES to a unique symbol around
+FORMS. Each of NAMES must either be either a symbol, or of the form:
+
+ (symbol string-designator)
+
+Bare symbols appearing in NAMES are equivalent to:
+
+ (symbol symbol)
+
+The string-designator is used as the argument to GENSYM when constructing the
+unique symbol the named variable will be bound to."
   `(let ,(mapcar (lambda (name)
                    (multiple-value-bind (symbol string)
                        (etypecase name
@@ -14,8 +24,8 @@
      ,@forms))
 
 (defmacro with-unique-names (names &body forms)
-    "Alias for WITH-GENSYMS."
-    `(with-gensyms ,names ,@forms))
+  "Alias for WITH-GENSYMS."
+  `(with-gensyms ,names ,@forms))
 
 (defmacro once-only (specs &body forms)
   "Each SPEC must be either a NAME, or a (NAME INITFORM), with plain

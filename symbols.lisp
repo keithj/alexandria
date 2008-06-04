@@ -38,3 +38,16 @@ PACKAGE."
 GENSYM using (if provided) as the argument."
   (loop repeat length
         collect (gensym x)))
+
+(defun symbolicate (&rest things)
+  "Concatenate together the names of some strings and symbols,
+producing a symbol in the current package."
+  (let* ((length (reduce #'+ things
+                         :key (lambda (x) (length (string x)))))
+         (name (make-array length :element-type 'character)))
+    (let ((index 0))
+      (dolist (thing things (values (intern name)))
+        (let* ((x (string thing))
+               (len (length x)))
+          (replace name x :start1 index)
+          (incf index len))))))

@@ -134,4 +134,6 @@
    #:write-string-into-file
    #:copy-stream
    #:copy-file
+   ;; new additions collected at the end
+   #:symbolicate
    ))

@@ -27,7 +27,7 @@ FILE-NAME. ARGS is sent as is to the call te open."
   `(with-open-file (,stream-name ,file-name :direction :output ,@args)
      ,@body))
 
-(defun read-file-into-string (pathname &key (buffer-size 4096) external-format)
+(defun read-file-into-string (pathname &key (buffer-size 4096) (external-format :default))
   "Return the contents of PATHNAME as a fresh string.
 
 The file specified by PATHNAME will be read one ELEMENT-TYPE
@@ -49,7 +49,7 @@ possible values."
 
 (defun write-string-into-file (string pathname &key (if-exists :error)
 						    (if-does-not-exist :error)
-						    external-format)
+						    (external-format :default))
   "Write STRING to PATHNAME.
 
 The EXTERNAL-FORMAT parameter will be passed to

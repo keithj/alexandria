@@ -114,6 +114,7 @@
    ;; Macros
    #:once-only
    #:parse-body
+   #:parse-ordinary-lambda-list
    #:with-gensyms
    #:with-unique-names
    ;; Symbols

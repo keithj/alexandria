@@ -120,6 +120,7 @@
    ;; Symbols
    #:ensure-symbol
    #:format-symbol
+   #:make-gensym
    #:make-gensym-list
    #:make-keyword
    ;; Strings

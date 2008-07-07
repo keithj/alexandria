@@ -92,10 +92,7 @@ ARRAY-DIMENSION-LIMIT."
 
                 (defun ,positive-p-name (n)
                   (and (typep n ',type)
-                       (< ,zero n)))
-
-                (export ',subtype-names :alexandria)
-                (export ',predicate-names :alexandria)))))))
+                       (< ,zero n)))))))))
   (frob fixnum integer)
   (frob integer)
   (frob rational)

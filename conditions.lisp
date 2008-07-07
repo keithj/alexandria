@@ -37,6 +37,14 @@ a default value for required keyword arguments."
          :format-control message
          :format-arguments args))
 
+(define-condition simple-program-error (simple-error program-error)
+  ())
+
+(defun simple-program-error (message &rest args)
+  (error 'simple-program-error
+         :format-control message
+         :format-arguments args))
+
 (defmacro ignore-some-conditions ((&rest conditions) &body body)
   "Similar to CL:IGNORE-ERRORS but the (unevaluated) CONDITIONS
 list determines which specific conditions are to be ignored."

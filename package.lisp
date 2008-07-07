@@ -2,19 +2,28 @@
   (:nicknames :alexandria)
   (:use :cl)
   (:export
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ;; BLESSED
+   ;;
    ;; Binding constructs
    #:if-let
    #:when-let
    #:when-let*
-   ;; Definitions
-   #:define-constant
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ;; REVIEW IN PROGRESS
+   ;;
    ;; Control flow
    #:cswitch
    #:eswitch
-   #:nth-value-or
    #:switch
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ;; REVIEW PENDING
+   ;;
+   #:nth-value-or
    #:whichever
    #:xor
+   ;; Definitions
+   #:define-constant
    ;; Hash tables
    #:alist-hash-table
    #:copy-hash-table
@@ -124,6 +133,7 @@
    #:simple-style-warning
    #:simple-reader-error
    #:simple-parse-error
+   #:simple-program-error
    #:unwind-protect-case
    ;; Features
    #:featurep

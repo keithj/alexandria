@@ -94,3 +94,8 @@ NIL."
              ,(if (rest forms)
                   `(nth-value-or ,nth-value ,@(rest forms))
                   nil))))))
+
+(defmacro multiple-value-prog2 (first-form second-form &body body)
+  "Like CL:MULTIPLE-VALUE-PROG1, except it saves the values of the
+second form."
+  `(progn ,first-form (multiple-value-prog1 ,second-form ,@body)))

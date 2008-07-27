@@ -16,6 +16,7 @@
    #:cswitch
    #:eswitch
    #:switch
+   #:multiple-value-prog2
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ;; REVIEW PENDING
    ;;

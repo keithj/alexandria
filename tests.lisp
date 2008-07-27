@@ -207,6 +207,8 @@
                     (= 42 (gethash x table)))))))
   t)
 
+#+clisp (pushnew 'copy-hash-table.1 *expected-failures*)
+
 (deftest copy-hash-table.1
     (let ((orig (make-hash-table :test 'eq :size 123))
           (foo "foo"))
@@ -215,16 +217,20 @@
       (let ((eq-copy (copy-hash-table orig))
             (eql-copy (copy-hash-table orig :test 'eql))
             (equal-copy (copy-hash-table orig :test 'equal))
-            (equalp-copy (copy-hash-table orig :test 'equalp)))
-        (list (hash-table-size eq-copy)
+            ;; CLISP overflows the stack with this bit.
+            ;; See <http://sourceforge.net/tracker/index.php?func=detail&aid=2029069&group_id=1355&atid=101355>.
+            #-clisp (equalp-copy (copy-hash-table orig :test 'equalp)))
+        (list (eql (hash-table-size eq-copy) (hash-table-size orig))
+              (eql (hash-table-rehash-size eq-copy)
+                   (hash-table-rehash-size orig))
               (hash-table-count eql-copy)
               (gethash orig eq-copy)
               (gethash (copy-seq foo) eql-copy)
               (gethash foo eql-copy)
               (gethash (copy-seq foo) equal-copy)
               (gethash "FOO" equal-copy)
-              (gethash "FOO" equalp-copy))))
-  (123 2 t nil t t nil t))
+              #-clisp (gethash "FOO" equalp-copy))))
+  (t t 2 t nil t t nil t))
 
 (deftest copy-hash-table.2
     (let ((ht (make-hash-table))
@@ -302,6 +308,8 @@
               (getf plist nil))))
   (20 0 -2 -7 nil))
 
+#+clisp (pushnew 'alist-hash-table.1 *expected-failures*)
+
 (deftest alist-hash-table.1
     (let* ((alist '((0 a) (1 b) (2 c)))
            (table (alist-hash-table alist)))
@@ -309,8 +317,10 @@
             (gethash 0 table)
             (gethash 1 table)
             (gethash 2 table)
-            (hash-table-test table)))
+            (hash-table-test table))) ; CLISP returns EXT:FASTHASH-EQL.
   (3 (a) (b) (c) eql))
+
+#+clisp (pushnew 'plist-hash-table.1 *expected-failures*)
 
 (deftest plist-hash-table.1
     (let* ((plist '(:a 1 :b 2 :c 3))
@@ -321,7 +331,7 @@
             (gethash :c table)
             (gethash 2 table)
             (gethash nil table)
-            (hash-table-test table)))
+            (hash-table-test table))) ; CLISP returns EXT:FASTHASH-EQ.
   (3 1 2 3 nil nil eq))
 
 ;;;; Functions

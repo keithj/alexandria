@@ -178,10 +178,16 @@
 
 ;;;; Errors
 
+;;; TYPEP is specified to return a generalized boolean and, for
+;;; example, ECL exploits this by returning the superclasses of ERROR
+;;; in this case.
+(defun errorp (x)
+  (not (null (typep x 'error))))
+
 (deftest required-argument.1
     (multiple-value-bind (res err)
         (ignore-errors (required-argument))
-      (typep err 'error))
+      (errorp err))
   t)
 
 ;;;; Hash tables
@@ -1338,7 +1344,7 @@
                (list (find-if #'symbol-package syms)
                 (equal '("_foo_0" "-BAR-1" "q2")
                  (mapcar #'symbol-name syms))))))
-        (typep err 'error)))
+        (errorp err)))
   t)
 
 (deftest once-only.1
@@ -1399,7 +1405,7 @@
         (ignore-errors
           (parse-body '("foo" "bar" "quux")
                       :documentation t))
-      (typep err 'error))
+      (errorp err))
   t)
 
 ;;;; Symbols

@@ -12,7 +12,7 @@ copy is returned by default."
   (setf key (or key 'identity))
   (setf test (or test (hash-table-test table)))
   (setf size (or size (hash-table-size table)))
-  (setf rehash-size (or rehash-size (hash-table-size table)))
+  (setf rehash-size (or rehash-size (hash-table-rehash-size table)))
   (setf rehash-threshold (or rehash-threshold (hash-table-rehash-threshold table)))
   (let ((copy (make-hash-table :test test :size size
                                :rehash-size rehash-size

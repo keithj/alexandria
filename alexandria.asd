@@ -21,3 +21,10 @@
    (:file "sequences" :depends-on ("package" "lists" "types"))
    (:file "numbers" :depends-on ("package" "sequences"))
    (:file "features" :depends-on ("package" "control-flow"))))
+
+(defmethod operation-done-p ((o test-op) (c (eql (find-system :alexandria))))
+  nil)
+
+(defmethod perform ((o test-op) (c (eql (find-system :alexandria))))
+  (operate 'load-op :alexandria-tests)
+  (operate 'test-op :alexandria-tests))

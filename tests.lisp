@@ -1,14 +1,14 @@
 (in-package :cl-user)
 
-(eval-when (:compile-toplevel :load-toplevel)
-  (require :sb-rt))
+(defpackage :alexandria-tests
+  (:use :cl :alexandria #+sbcl :sb-rt #-sbcl :rtest)
+  (:import-from #+sbcl :sb-rt #-sbcl :rtest
+                #:*compile-tests* #:*expected-failures*))
 
-(require :alexandria)
+(in-package :alexandria-tests)
 
-(defpackage :alexandria-test
-  (:use :cl :alexandria :sb-rt))
-
-(in-package :alexandria-test)
+(defun run-tests (&key ((:compiled *compile-tests)))
+  (do-tests))
 
 ;;;; Arrays
 

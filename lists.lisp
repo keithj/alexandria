@@ -1,5 +1,10 @@
 (in-package :alexandria)
 
+(declaim (inline safe-endp))
+(defun safe-endp (x)
+  (declare (optimize safety))
+  (endp x))
+
 (defun alist-plist (alist)
   "Returns a property list containing the same keys and values as the
 association list ALIST in the same order."
@@ -14,7 +19,7 @@ association list ALIST in the same order."
 property list PLIST in the same order."
   (let (alist)
     (do ((tail plist (cddr tail)))
-        ((endp tail) (nreverse alist))
+        ((safe-endp tail) (nreverse alist))
       (push (cons (car tail) (cadr tail)) alist))))
 
 (defun malformed-plist (plist)
@@ -121,37 +126,52 @@ not recommended for performance intensive use. Main usefullness as a type
 designator of the expected type in a TYPE-ERROR."
   `(and list (satisfies proper-list-p)))
 
-(defun lastcar (list)
-  "Returns the last element of LIST. Signals a type-error if LIST is not a
-proper list."
-  (do ((last list fast)
-       (fast list (cddr fast))
-       (slow (cons (car list) (cdr list)) (cdr slow)))
-      (nil)
-    (when (endp fast)
-      (return (cadr last)))
-    (when (endp (cdr fast))
-      (return (car fast)))
-    (when (eq fast slow)
-      (error 'type-error
-             :datum list
-             :expected-type '(and list (not circular-list))))))
+(defun circular-list-error (list)
+  (error 'type-error
+         :datum list
+         :expected-type '(and list (not circular-list))))
 
-(defun (setf lastcar) (object list)
-  "Sets the last element of LIST. Signals a type-error if LIST is not a proper
+(macrolet ((def (name lambda-list doc step declare ret1 ret2)
+             (assert (member 'list lambda-list))
+             `(defun ,name ,lambda-list
+                ,doc
+                (do ((last list fast)
+                     (fast list (cddr fast))
+                     (slow (cons (car list) (cdr list)) (cdr slow))
+                     ,@(when step (list step)))
+                    (nil)
+                  (declare (dynamic-extent slow) ,@(when declare (list declare)))
+                  (when (safe-endp fast)
+                    (return ,ret1))
+                  (when (safe-endp (cdr fast))
+                    (return ,ret2))
+                  (when (eq fast slow)
+                    (circular-list-error list))))))
+  (def proper-list-length (list)
+    "Returns length of LIST, signalling an error if it is not a proper list."
+    (n 1 (+ n 2))
+    ;; KLUDGE: Most implementations don't actually support lists with bignum
+    ;; elements -- and this is WAY faster on most implementations then declaring
+    ;; N to be an UNSIGNED-BYTE.
+    (fixnum n) 
+    (1- n)
+    n)
+  
+  (def lastcar (list)
+      "Returns the last element of LIST. Signals a type-error if LIST is not a
+proper list." 
+    nil
+    nil
+    (cadr last)
+    (car fast))
+  
+  (def (setf lastcar) (object list)
+      "Sets the last element of LIST. Signals a type-error if LIST is not a proper
 list."
-  (do ((last list fast)
-       (fast list (cddr fast))
-       (slow (cons (car list) (cdr list)) (cdr slow)))
-      (nil)
-    (when (endp fast)
-      (return (setf (cadr last) object)))
-    (when (endp (cdr fast))
-      (return (setf (car fast) object)))
-    (when (eq fast slow)
-      (error 'type-error
-             :datum list
-             :expected-type '(and list (not circular-list))))))
+    nil
+    nil
+    (setf (cadr last) object)
+    (setf (car fast) object)))
 
 (defun make-circular-list (length &key initial-element)
   "Creates a circular list of LENGTH with the given INITIAL-ELEMENT."

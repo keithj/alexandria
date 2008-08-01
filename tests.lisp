@@ -572,6 +572,40 @@
             (typep l5 'proper-list)))
   (t t nil t nil))
 
+(deftest proper-list-length.1
+    (values
+     (proper-list-length nil)
+     (proper-list-length (list 1))
+     (proper-list-length (list 2 2))
+     (proper-list-length (list 3 3 3))
+     (proper-list-length (list 4 4 4 4))
+     (proper-list-length (list 5 5 5 5 5))
+     (proper-list-length (list 6 6 6 6 6 6))
+     (proper-list-length (list 7 7 7 7 7 7 7))
+     (proper-list-length (list 8 8 8 8 8 8 8 8))
+     (proper-list-length (list 9 9 9 9 9 9 9 9 9)))
+  0 1 2 3 4 5 6 7 8 9)
+
+(deftest proper-list-length.2
+    (flet ((plength (x)
+             (handler-case
+                 (proper-list-length x)
+               (type-error ()
+                 :ok))))
+      (values
+       (plength (list* 1))
+       (plength (list* 2 2))
+       (plength (list* 3 3 3))
+       (plength (list* 4 4 4 4))
+       (plength (list* 5 5 5 5 5))
+       (plength (list* 6 6 6 6 6 6))
+       (plength (list* 7 7 7 7 7 7 7))
+       (plength (list* 8 8 8 8 8 8 8 8))
+       (plength (list* 9 9 9 9 9 9 9 9 9))))
+  :ok :ok :ok
+  :ok :ok :ok
+  :ok :ok :ok)
+
 (deftest lastcar.1
     (let ((l1 (list 1))
           (l2 (list 1 2)))
@@ -1235,6 +1269,45 @@
       (type-error ()
         :type-error))
   :type-error)
+
+(deftest sequences.passing-improper-lists
+    (macrolet ((signals-error-p (form)
+		 `(handler-case 
+                      (progn ,form nil)
+		    (type-error (e)
+                      t)))
+               (cut (fn &rest args)
+                 (with-gensyms (arg)
+                   (print`(lambda (,arg)
+                       (apply ,fn (list ,@(substitute arg '_ args))))))))
+      (let ((circular-list (make-circular-list 5 :initial-element :foo))
+	    (dotted-list (list* 'a 'b 'c 'd)))
+	(loop for nth from 0
+	      for fn in (list
+			 (cut #'lastcar _)
+			 (cut #'rotate _ 3)
+			 (cut #'rotate _ -3)
+			 (cut #'shuffle _)
+			 (cut #'random-elt _)
+			 (cut #'last-elt _)
+			 (cut #'ends-with :foo _))
+	      nconcing
+                 (let ((on-circular-p (signals-error-p (funcall fn circular-list)))
+                       (on-dotted-p (signals-error-p (funcall fn dotted-list))))
+                   (when (or (not on-circular-p) (not on-dotted-p))
+                     (append
+                      (unless on-circular-p
+                        (let ((*print-circle* t))
+                          (list
+                           (format nil
+                                   "No appropriate error signalled when passing ~S to ~Ath entry."
+                                   circular-list nth))))
+                      (unless on-dotted-p
+                        (list
+                         (format nil
+                                 "No appropriate error signalled when passing ~S to ~Ath entry."
+                                 dotted-list nth)))))))))
+  nil)
 
 (deftest with-unique-names.1
     (let ((*gensym-counter* 0))

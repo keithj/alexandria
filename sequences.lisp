@@ -8,7 +8,7 @@
 (defun rotate-tail-to-head (sequence n)
   (declare (type (integer 1) n))
   (if (listp sequence)
-      (let ((m (mod n (list-length sequence))))
+      (let ((m (mod n (proper-list-length sequence))))
         (if (null (cdr sequence))
             sequence
             (let* ((tail (last sequence (+ m 1)))
@@ -25,7 +25,7 @@
 (defun rotate-head-to-tail (sequence n)
   (declare (type (integer 1) n))
   (if (listp sequence)
-      (let ((m (mod (1- n) (list-length sequence))))
+      (let ((m (mod (1- n) (proper-list-length sequence))))
         (if (null (cdr sequence))
             sequence
             (let* ((headtail (nthcdr m sequence))
@@ -61,7 +61,7 @@ error if SEQUENCE is not a proper sequence."
   (declare (fixnum start) (type (or fixnum null) end))
   (typecase sequence
     (list
-     (let* ((end (or end (list-length sequence)))
+     (let* ((end (or end (proper-list-length sequence)))
             (n (- end start)))
        (do ((tail (nthcdr start sequence) (cdr tail)))
            ((zerop n))
@@ -82,7 +82,7 @@ error if SEQUENCE is not a proper sequence."
 error if the SEQUENCE is not a proper sequence."
   (declare (sequence sequence) (fixnum start) (type (or fixnum null) end))
   (let ((i (+ start (random (- (or end  (if (listp sequence)
-                                            (list-length sequence)
+                                            (proper-list-length sequence)
                                             (length sequence)))
                                start)))))
     (elt sequence i)))

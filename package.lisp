@@ -63,6 +63,7 @@
    #:nunionf
    #:plist-alist
    #:proper-list
+   #:proper-list-length
    #:proper-list-p
    #:remove-from-plist
    #:remove-from-plistf

@@ -73,6 +73,14 @@ place designated by the first argument to the designated place.")
 place designated by the first argument to the designated place. May modify
 either argument.")
 
+(define-modify-macro reversef () reverse
+  "Modify-macro for REVERSE. Copies and reverses the list stored in the given
+place and saves back the result into the place.")
+
+(define-modify-macro nreversef () nreverse
+  "Modify-macro for NREVERSE. Reverses the list stored in the given place by
+destructively modifying it and saves back the result into the place.")
+
 (defun circular-list (&rest elements)
   "Creates a circular list of ELEMENTS."
   (let ((cycle (copy-list elements)))

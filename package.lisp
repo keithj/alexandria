@@ -49,6 +49,8 @@
    #:alist-plist
    #:appendf
    #:nconcf
+   #:reversef
+   #:nreversef
    #:circular-list
    #:circular-list-p
    #:circular-tree-p

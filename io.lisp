@@ -61,20 +61,26 @@ possible values."
     (write-sequence string file-stream)))
 
 (defun copy-file (from to &key (if-to-exists :supersede)
-			       (element-type '(unsigned-byte 8)))
-  (with-input-from-file (input  from :element-type element-type)
+			       (element-type '(unsigned-byte 8)) force-output)
+  (with-input-from-file (input from :element-type element-type)
     (with-output-to-file (output to :element-type element-type
 				    :if-exists if-to-exists)
-      (copy-stream input output))))
+      (copy-stream input output
+                   :element-type element-type
+                   :force-output force-output))))
 
-(defun copy-stream (input output &optional (element-type (stream-element-type input)))
-  "Reads data from FROM and writes it to TO. Both FROM and TO must be streams,
-they will be passed to read-sequence/write-sequence and must have compatable
-element-types."
+(defun copy-stream (input output &key (element-type (stream-element-type input))
+                    (buffer-size 4096)
+                    (buffer (make-array buffer-size :element-type element-type))
+                    force-output)
+  "Reads data from INPUT and writes it to OUTPUT. Both INPUT and OUTPUT must
+be streams, they will be passed to READ-SEQUENCE and WRITE-SEQUENCE and must have
+compatible element-types."
   (loop
-     :with buffer-size = 4096
-     :with buffer = (make-array buffer-size :element-type element-type)
      :for bytes-read = (read-sequence buffer input)
      :while (= bytes-read buffer-size)
      :do (write-sequence buffer output)
-     :finally (write-sequence buffer output :end bytes-read)))
+     :finally (progn
+                (write-sequence buffer output :end bytes-read)
+                (when force-output
+                  (force-output output)))))

@@ -12,6 +12,11 @@ it must be a function name and its FDEFINITION is returned."
       function-designator
       (fdefinition function-designator)))
 
+(define-modify-macro ensure-functionf/1 () ensure-function)
+
+(defmacro ensure-functionf (&rest places)
+  `(progn ,@(mapcar (lambda (x) `(ensure-functionf/1 ,x)) places)))
+
 (defun disjoin (predicate &rest more-predicates)
   "Returns a function that applies each of PREDICATE and MORE-PREDICATE
 functions in turn to its arguments, returning the primary value of the first

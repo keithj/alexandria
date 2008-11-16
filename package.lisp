@@ -42,6 +42,7 @@
    #:curry
    #:disjoin
    #:ensure-function
+   #:ensure-functionf
    #:multiple-value-compose
    #:named-lambda
    #:rcurry

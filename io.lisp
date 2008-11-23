@@ -3,40 +3,54 @@
 
 (in-package :alexandria)
 
-(defmacro with-input-from-file ((stream-name file-name &rest args &key
-					     (direction nil direction-provided-p)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defun %expand-with-input/output-file (body direction stream-name file-name
+                                         &rest args
+                                         &key external-format
+                                         &allow-other-keys)
+    (remove-from-plistf args :external-format)
+    (with-unique-names (body-fn)
+      (once-only (external-format)
+        `(flet ((,body-fn (,stream-name)
+                  ,@body))
+           ;; this is needed not to screw up the default external-format when not specified
+           (if ,external-format
+               (with-open-file (,stream-name ,file-name :direction ,direction
+                                             :external-format ,external-format
+                                             ,@args)
+                 (,body-fn ,stream-name))
+               (with-open-file (,stream-name ,file-name :direction ,direction ,@args)
+                 (,body-fn ,stream-name))))))))
+
+(defmacro with-input-from-file ((stream-name file-name &rest args
+                                             &key (direction nil direction-p)
 					     &allow-other-keys)
                                 &body body)
-  "Evaluate BODY with STREAM-NAME bound to an input-stream from file
-FILE-NAME. ARGS is passed directly to open."
+  "Evaluate BODY with STREAM-NAME to an input stream on the file
+FILE-NAME. ARGS is sent as is to the call to OPEN except EXTERNAL-FORMAT,
+which is only sent to WITH-OPEN-FILE when it's not NIL."
   (declare (ignore direction))
-  (when direction-provided-p
-    (error "Can't specifiy :DIRECTION in WITH-INPUT-FROM-FILE."))
-  `(with-open-file (,stream-name ,file-name :direction :input ,@args)
-     ,@body))
+  (when direction-p
+    (error "Can't specifiy :DIRECTION for WITH-INPUT-FROM-FILE."))
+  (apply '%expand-with-input/output-file body :input stream-name file-name args))
 
-(defmacro with-output-to-file ((stream-name file-name &rest args &key
-					     (direction nil direction-provided-p)
+(defmacro with-output-to-file ((stream-name file-name &rest args
+                                            &key (direction nil direction-p)
 					     &allow-other-keys)
 			       &body body)
   "Evaluate BODY with STREAM-NAME to an output stream on the file
-FILE-NAME. ARGS is sent as is to the call te open."
+FILE-NAME. ARGS is sent as is to the call to OPEN except EXTERNAL-FORMAT,
+which is only sent to WITH-OPEN-FILE when it's not NIL."
   (declare (ignore direction))
-  (when direction-provided-p
-    (error "Can't specifiy :DIRECTION in WITH-OUTPUT-FILE."))
-  `(with-open-file (,stream-name ,file-name :direction :output ,@args)
-     ,@body))
+  (when direction-p
+    (error "Can't specifiy :DIRECTION for WITH-OUTPUT-TO-FILE."))
+  (apply '%expand-with-input/output-file body :output stream-name file-name args))
 
-(defun read-file-into-string (pathname &key (buffer-size 4096) (external-format :default))
-  "Return the contents of PATHNAME as a fresh string.
+(defun read-file-into-string (pathname &key (buffer-size 4096) external-format)
+  "Return the contents of the file denoted by PATHNAME as a fresh string.
 
-The file specified by PATHNAME will be read one ELEMENT-TYPE
-element at a time, the EXTERNAL-FORMAT and ELEMENT-TYPEs must be
-compatible.
-
-The EXTERNAL-FORMAT parameter will be passed to
-ENCODING-KEYWORD-TO-NATIVE, see ENCODING-KEYWORD-TO-NATIVE to
-possible values."
+The EXTERNAL-FORMAT parameter will be passed directly to WITH-OPEN-FILE
+unless it's NIL, which means the system default."
   (with-input-from-file
       (file-stream pathname :external-format external-format)
     (let ((*print-pretty* nil))
@@ -49,12 +63,11 @@ possible values."
 
 (defun write-string-into-file (string pathname &key (if-exists :error)
 						    (if-does-not-exist :error)
-						    (external-format :default))
+                                                    external-format)
   "Write STRING to PATHNAME.
 
-The EXTERNAL-FORMAT parameter will be passed to
-ENCODING-KEYWORD-TO-NATIVE, see ENCODING-KEYWORD-TO-NATIVE to
-possible values."
+The EXTERNAL-FORMAT parameter will be passed directly to WITH-OPEN-FILE
+unless it's NIL, which means the system default."
   (with-output-to-file (file-stream pathname :if-exists if-exists
 				    :if-does-not-exist if-does-not-exist
 				    :external-format external-format)

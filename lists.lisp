@@ -285,10 +285,7 @@ Example:
                    (mappend (lambda (x)
                               (%map-product (curry f x) more))
                             one)))))
-    (%map-product (if (functionp function)
-                      function
-                      (fdefinition function))
-                  (cons list more-lists))))
+    (%map-product (ensure-function function) (cons list more-lists))))
 
 (defun flatten (tree)
   "Traverses the tree in order, collecting non-null leaves into a list."

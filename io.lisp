@@ -61,18 +61,18 @@ possible values."
     (write-sequence string file-stream)))
 
 (defun copy-file (from to &key (if-to-exists :supersede)
-			       (element-type '(unsigned-byte 8)) force-output)
+			       (element-type '(unsigned-byte 8)) finish-output)
   (with-input-from-file (input from :element-type element-type)
     (with-output-to-file (output to :element-type element-type
 				    :if-exists if-to-exists)
       (copy-stream input output
                    :element-type element-type
-                   :force-output force-output))))
+                   :finish-output finish-output))))
 
 (defun copy-stream (input output &key (element-type (stream-element-type input))
                     (buffer-size 4096)
                     (buffer (make-array buffer-size :element-type element-type))
-                    force-output)
+                    finish-output)
   "Reads data from INPUT and writes it to OUTPUT. Both INPUT and OUTPUT must
 be streams, they will be passed to READ-SEQUENCE and WRITE-SEQUENCE and must have
 compatible element-types."
@@ -82,5 +82,5 @@ compatible element-types."
      :do (write-sequence buffer output)
      :finally (progn
                 (write-sequence buffer output :end bytes-read)
-                (when force-output
-                  (force-output output)))))
+                (when finish-output
+                  (finish-output output)))))

@@ -222,6 +222,8 @@
    #:with-output-to-file
    #:read-file-into-string
    #:write-string-into-file
+   #:read-file-into-byte-vector
+   #:write-byte-vector-into-file
    #:copy-stream
    #:copy-file
    ;; new additions collected at the end

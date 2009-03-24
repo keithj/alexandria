@@ -77,6 +77,24 @@ unless it's NIL, which means the system default."
                                     :external-format external-format)
     (write-sequence string file-stream)))
 
+(defun read-file-into-byte-vector (pathname)
+  "Read PATHNAME into a freshly allocated (unsigned-byte 8) vector."
+  (with-input-from-file (stream pathname :element-type '(unsigned-byte 8))
+    (let ((length (file-length stream)))
+      (assert length)
+      (let ((result (make-array length :element-type '(unsigned-byte 8))))
+        (read-sequence result stream)
+        result))))
+
+(defun write-byte-vector-into-file (bytes pathname &key (if-exists :error)
+                                                       if-does-not-exist)
+  "Write BYTES to PATHNAME."
+  (check-type bytes (vector (unsigned-byte 8)))
+  (with-output-to-file (stream pathname :if-exists if-exists
+                               :if-does-not-exist if-does-not-exist
+                               :element-type '(unsigned-byte 8))
+    (write-sequence bytes stream)))
+
 (defun copy-file (from to &key (if-to-exists :supersede)
 			       (element-type '(unsigned-byte 8)) finish-output)
   (with-input-from-file (input from :element-type element-type)

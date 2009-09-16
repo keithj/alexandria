@@ -855,7 +855,7 @@
 
 (deftest median.2
     (median '(100 0 99 1 98 2 97 96))
-  195/2)
+  193/2)
 
 (deftest variance.1
     (variance (list 1 2 3))

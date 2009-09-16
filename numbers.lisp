@@ -97,7 +97,7 @@ interpolation coefficient V."
          (middle (truncate length 2)))
     (if (oddp length)
         (aref vector middle)
-        (/ (+ (aref vector middle) (aref vector (1+ middle))) 2))))
+        (/ (+ (aref vector middle) (aref vector (1- middle))) 2))))
 
 (declaim (inline variance))
 (defun variance (sample &key (biased t))

@@ -120,9 +120,7 @@ Signals a PROGRAM-ERROR is the lambda-list is malformed."
           (&rest
            (if (member state '(:required &optional))
                (setf state elt)
-               (progn
-                 (break "state=~S" state)
-                 (fail elt))))
+               (fail elt)))
           (&key
            (if (member state '(:required &optional :after-rest))
                (setf state elt)

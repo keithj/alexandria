@@ -193,7 +193,9 @@ Signals a PROGRAM-ERROR is the lambda-list is malformed."
                   (destructuring-bind (var &optional init) elt
                     (declare (ignore init))
                     (check-variable var "&aux parameter"))
-                  (check-variable elt "&aux parameter"))
+                  (progn
+                    (check-variable elt "&aux parameter")
+                    (setf elt (list elt nil))))
               (push elt aux))
              (t
               (simple-program-error "Invalid ordinary lambda-list:~%  ~S" lambda-list)))))))

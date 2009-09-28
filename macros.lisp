@@ -79,7 +79,10 @@ arguments when given."
          (go :declarations)))
     (values body (nreverse decls) doc)))
 
-(defun parse-ordinary-lambda-list (lambda-list)
+(defun parse-ordinary-lambda-list (lambda-list &key (normalize t)
+                                   (normalize-optional normalize)
+                                   (normalize-keyword normalize)
+                                   (normalize-auxilary normalize))
   "Parses an ordinary lambda-list, returning as multiple values:
 
  1. Required parameters.
@@ -154,13 +157,15 @@ Signals a PROGRAM-ERROR is the lambda-list is malformed."
               (cond ((consp elt)
                      (destructuring-bind (name &rest tail) elt
                        (check-variable name "optional parameter")
-                       (if (cdr tail)
-                           (check-spec tail "optional-supplied-p parameter")
-                           (setf elt (append elt '(nil))))))
+                       (cond ((cdr tail)
+                              (check-spec tail "optional-supplied-p parameter"))
+                             (normalize-optional
+                              (setf elt (append elt '(nil)))))))
                     (t
                      (check-variable elt "optional parameter")
-                     (setf elt (cons elt '(nil nil)))))
-              (push elt optional))
+                     (when normalize-optional
+                       (setf elt (cons elt '(nil nil))))))
+              (push (ensure-list elt) optional))
              (&rest
               (check-variable elt "rest parameter")
               (setf rest elt
@@ -177,14 +182,18 @@ Signals a PROGRAM-ERROR is the lambda-list is malformed."
                                 (check-variable var "keyword parameter")))
                              (t
                               (check-variable var-or-kv "keyword parameter")
-                              (setf var-or-kv (list (make-keyword var-or-kv) var-or-kv))))
+                              (when normalize-keyword
+                                (setf var-or-kv (list (make-keyword var-or-kv) var-or-kv)))))
                        (if (cdr tail)
                            (check-spec tail "keyword-supplied-p parameter")
-                           (setf tail (append tail '(nil))))
+                           (when normalize-keyword
+                             (setf tail (append tail '(nil)))))
                        (setf elt (cons var-or-kv tail))))
                     (t
                      (check-variable elt "keyword parameter")
-                     (setf elt (list (list (make-keyword elt) elt) nil nil))))
+                     (setf elt (if normalize-keyword
+                                   (list (list (make-keyword elt) elt) nil nil)
+                                   (list elt)))))
               (push elt keys))
              (&aux
               (if (consp elt)
@@ -193,7 +202,8 @@ Signals a PROGRAM-ERROR is the lambda-list is malformed."
                     (check-variable var "&aux parameter"))
                   (progn
                     (check-variable elt "&aux parameter")
-                    (setf elt (list elt nil))))
+                    (setf elt (list* elt (when normalize-auxilary
+                                           '(nil))))))
               (push elt aux))
              (t
               (simple-program-error "Invalid ordinary lambda-list:~%  ~S" lambda-list)))))))

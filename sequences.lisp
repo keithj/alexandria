@@ -5,6 +5,26 @@
 ;; macro, because inlining seems to cancel compiler macros (at least on SBCL).
 (declaim (inline copy-sequence sequence-of-length-p))
 
+(defun sequence-of-length-p (sequence length)
+  "Return true if SEQUENCE is a sequence of length LENGTH. Signals an error if
+SEQUENCE is not a sequence. Returns FALSE for circular lists."
+  (declare (type array-index length)
+           (inline length)
+           (optimize speed))
+  (etypecase sequence
+    (null
+     (zerop length))
+    (cons
+     (let ((n (1- length)))
+       (unless (minusp n)
+         (let ((tail (nthcdr n sequence)))
+           (and tail
+                (null (cdr tail)))))))
+    (vector
+     (= length (length sequence)))
+    (sequence
+     (= length (length sequence)))))
+
 (defun rotate-tail-to-head (sequence n)
   (declare (type (integer 1) n))
   (if (listp sequence)
@@ -171,26 +191,6 @@ is a literal integer."
                                     (sequence-of-length-p ,tmp ,(if optimizedp
                                                                     length
                                                                     current)))))))))))))
-
-(defun sequence-of-length-p (sequence length)
-  "Return true if SEQUENCE is a sequence of length LENGTH. Signals an error if
-SEQUENCE is not a sequence. Returns FALSE for circular lists."
-  (declare (type array-index length)
-           (inline length)
-           (optimize speed))
-  (etypecase sequence
-    (null
-     (zerop length))
-    (cons
-     (let ((n (1- length)))
-       (unless (minusp n)
-         (let ((tail (nthcdr n sequence)))
-           (and tail
-                (null (cdr tail)))))))
-    (vector
-     (= length (length sequence)))
-    (sequence
-     (= length (length sequence)))))
 
 (defun copy-sequence (type sequence)
   "Returns a fresh sequence of TYPE, which has the same elements as

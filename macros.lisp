@@ -84,7 +84,9 @@ arguments when given."
                                    (normalize-optional normalize)
                                    (normalize-keyword normalize)
                                    (normalize-auxilary normalize))
-  "Parses an ordinary lambda-list, returning as multiple values:
+  "Parses an ordinary lambda-list, returning:
+
+\(values requireds optionals rest keywords allow-other-keys? auxiliaries)
 
  1. Required parameters.
  2. Optional parameter specifications, normalized into form (NAME INIT SUPPLIEDP)

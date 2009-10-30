@@ -80,6 +80,7 @@ arguments when given."
     (values body (nreverse decls) doc)))
 
 (defun parse-ordinary-lambda-list (lambda-list &key (normalize t)
+                                   allow-specializers
                                    (normalize-optional normalize)
                                    (normalize-keyword normalize)
                                    (normalize-auxilary normalize))
@@ -106,14 +107,17 @@ Signals a PROGRAM-ERROR is the lambda-list is malformed."
     (labels ((fail (elt)
                (simple-program-error "Misplaced ~S in ordinary lambda-list:~%  ~S"
                                      elt lambda-list))
-             (check-variable (elt what)
-               (unless (and (symbolp elt) (not (constantp elt)))
+             (check-variable (elt what &optional (allow-specializers allow-specializers))
+               (unless (and (or (symbolp elt)
+                                (and allow-specializers
+                                     (consp elt) (= 2 (length elt)) (symbolp (first elt))))
+                            (not (constantp elt)))
                  (simple-program-error "Invalid ~A ~S in ordinary lambda-list:~%  ~S"
                                        what elt lambda-list)))
              (check-spec (spec what)
                (destructuring-bind (init suppliedp) spec
                  (declare (ignore init))
-                 (check-variable suppliedp what))))
+                 (check-variable suppliedp what nil))))
       (dolist (elt lambda-list)
         (case elt
           (&optional

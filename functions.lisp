@@ -37,16 +37,18 @@ If none of the predicates returns true, NIL is returned."
 functions in turn to its arguments, returning NIL if any of the predicates
 returns false, without calling the remaining predicates. If none of the
 predicates returns false, returns the primary value of the last predicate."
-  (lambda (&rest arguments)
-    (and (apply predicate arguments)
-	 ;; Cannot simply use CL:EVERY because we want to return the
-	 ;; non-NIL value of the last predicate if all succeed.
-         (do ((tail (cdr more-predicates) (cdr tail))
-              (head (car more-predicates) (car tail)))
-             ((not tail)
-              (apply head arguments))
-           (unless (apply head arguments)
-             (return nil))))))
+  (if (null more-predicates)
+      predicate
+      (lambda (&rest arguments)
+	(and (apply predicate arguments)
+	     ;; Cannot simply use CL:EVERY because we want to return the
+	     ;; non-NIL value of the last predicate if all succeed.
+	     (do ((tail (cdr more-predicates) (cdr tail))
+		  (head (car more-predicates) (car tail)))
+		 ((not tail)
+		  (apply head arguments))
+	       (unless (apply head arguments)
+		 (return nil)))))))
 
 
 (defun compose (function &rest more-functions)
@@ -79,7 +81,7 @@ and then calling the next one with the primary value of the last."
 
 (defun multiple-value-compose (function &rest more-functions)
     "Returns a function composed of FUNCTION and MORE-FUNCTIONS that applies
-its arguments to to each in turn, starting from the rightmost of
+its arguments to each in turn, starting from the rightmost of
 MORE-FUNCTIONS, and then calling the next one with all the return values of
 the last."
   (declare (optimize (speed 3) (safety 1) (debug 1)))

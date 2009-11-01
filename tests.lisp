@@ -346,6 +346,12 @@
             (funcall disjunction "test")))
   (nil :cons :string))
 
+(deftest disjoin.2
+    (let ((disjunction (disjoin #'zerop)))
+      (list (funcall disjunction 0)
+            (funcall disjunction 1)))
+  (t nil))
+
 (deftest conjoin.1
     (let ((conjunction (conjoin #'consp
                                 (lambda (x)
@@ -356,6 +362,12 @@
             (funcall conjunction '(foo))
             (funcall conjunction '("foo"))))
   (nil nil #\f))
+
+(deftest conjoin.2
+    (let ((conjunction (conjoin #'zerop)))
+      (list (funcall conjunction 0)
+            (funcall conjunction 1)))
+  (t nil))
 
 (deftest compose.1
     (let ((composite (compose '1+
@@ -385,6 +397,12 @@
       (let ((fun (funcall (compile nil `(lambda () ,compose-form)))))
         (funcall fun "3")))
   7)
+
+(deftest compose.4
+    (let ((composite (compose #'zerop)))
+      (list (funcall composite 0)
+            (funcall composite 1)))
+  (t nil))
 
 (deftest multiple-value-compose.1
     (let ((composite (multiple-value-compose
@@ -421,6 +439,11 @@
                                  nil)))
       (let ((fun (funcall (compile nil `(lambda () ,compose-form)))))
         (multiple-value-list (funcall fun "2 9"))))
+  (4 1))
+
+(deftest multiple-value-compose.4
+    (let ((composite (multiple-value-compose #'truncate)))
+      (multiple-value-list (funcall composite 9 2)))
   (4 1))
 
 (deftest curry.1

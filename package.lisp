@@ -226,6 +226,8 @@
    #:write-byte-vector-into-file
    #:copy-stream
    #:copy-file
-   ;; new additions collected at the end
+   ;; new additions collected at the end (subject to removal or further changes)
    #:symbolicate
+   #:assoc-value
+   #:rassoc-value
    ))

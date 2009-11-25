@@ -22,6 +22,45 @@ property list PLIST in the same order."
         ((safe-endp tail) (nreverse alist))
       (push (cons (car tail) (cadr tail)) alist))))
 
+(declaim (inline racons))
+(defun racons (key value ralist)
+  (acons value key ralist))
+
+(macrolet ((define-alist-get (name get-pair get-value-from-pair add doc)
+            `(progn
+               (declaim (inline ,name))
+               (defun ,name (alist key &key (test 'eql))
+                 ,doc
+                 (let ((pair (,get-pair key alist :test test)))
+                   (values (,get-value-from-pair pair) pair)))
+               (define-setf-expander ,name (place key &key (test ''eql)
+                                            &environment env)
+                 (multiple-value-bind (dummies vals newvals setter getter)
+                     (get-setf-expansion place env)
+                   (when (cdr newvals)
+                     (error "~A cannot store multiple values in one place" ',name))
+                   (with-unique-names (store key-val test-val alist found)
+                     (values
+                      (append dummies (list key-val test-val))
+                      (append vals (list key test))
+                      (list store)
+                      `(let ((,alist ,getter))
+                         (let ((,found (,',get-pair ,key-val ,alist :test ,test-val)))
+                           (cond (,found
+                                  (setf (,',get-value-from-pair ,found) ,store))
+                                 (t
+                                  (let ,newvals
+                                    (setf ,(first newvals) (,',add ,key ,store ,alist))
+                                    ,setter)))
+                           ,store))
+                      `(,',name ,getter ,key))))))))
+ (define-alist-get assoc-value assoc cdr acons
+"ASSOC-VALUE is an alist accessor very much like ASSOC, but it can
+be used with SETF.")
+ (define-alist-get rassoc-value rassoc car racons
+"RASSOC-VALUE is an alist accessor very much like RASSOC, but it can
+be used with SETF."))
+
 (defun malformed-plist (plist)
   (error "Malformed plist: ~S" plist))
 

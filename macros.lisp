@@ -199,7 +199,7 @@ Signals a PROGRAM-ERROR is the lambda-list is malformed."
                      (check-variable elt "keyword parameter")
                      (setf elt (if normalize-keyword
                                    (list (list (make-keyword elt) elt) nil nil)
-                                   (list elt)))))
+                                   elt))))
               (push elt keys))
              (&aux
               (if (consp elt)

@@ -103,11 +103,11 @@ argument.")
   "Modify-macro for NCONC. Concatenates LISTS to place designated by the first
 argument.")
 
-(define-modify-macro unionf (list) union
+(define-modify-macro unionf (list &rest args) union
   "Modify-macro for UNION. Saves the union of LIST and the contents of the
 place designated by the first argument to the designated place.")
 
-(define-modify-macro nunionf (list) nunion
+(define-modify-macro nunionf (list &rest args) nunion
   "Modify-macro for NUNION. Saves the union of LIST and the contents of the
 place designated by the first argument to the designated place. May modify
 either argument.")

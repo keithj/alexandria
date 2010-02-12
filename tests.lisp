@@ -806,6 +806,23 @@
     (mappend (compose 'list '*) '(1 2 3) '(1 2 3))
   (1 4 9))
 
+(deftest assoc-value.1
+    (let ((key1 '(complex key))
+          (key2 'simple-key)
+          (alist '())
+          (result '()))
+      (push 1 (assoc-value alist key1 :test #'equal))
+      (push 2 (assoc-value alist key1 :test 'equal))
+      (push 42 (assoc-value alist key2))
+      (push 43 (assoc-value alist key2 :test 'eq))
+      (push (assoc-value alist key1 :test #'equal) result)
+      (push (assoc-value alist key2) result)
+
+      (push 'very (rassoc-value alist (list 2 1) :test #'equal))
+      (push (cdr (assoc '(very complex key) alist :test #'equal)) result)
+      result)
+  ((2 1) (43 42) (2 1)))
+
 ;;;; Numbers
 
 (deftest clamp.1

@@ -26,34 +26,42 @@ property list PLIST in the same order."
 (defun racons (key value ralist)
   (acons value key ralist))
 
-(macrolet ((define-alist-get (name get-pair get-value-from-pair add doc)
-            `(progn
-               (declaim (inline ,name))
-               (defun ,name (alist key &key (test 'eql))
-                 ,doc
-                 (let ((pair (,get-pair key alist :test test)))
-                   (values (,get-value-from-pair pair) pair)))
-               (define-setf-expander ,name (place key &key (test ''eql)
-                                            &environment env)
-                 (multiple-value-bind (dummies vals newvals setter getter)
-                     (get-setf-expansion place env)
-                   (when (cdr newvals)
-                     (error "~A cannot store multiple values in one place" ',name))
-                   (with-unique-names (store key-val test-val alist found)
-                     (values
-                      (append dummies (list key-val test-val))
-                      (append vals (list key test))
-                      (list store)
-                      `(let ((,alist ,getter))
-                         (let ((,found (,',get-pair ,key-val ,alist :test ,test-val)))
-                           (cond (,found
-                                  (setf (,',get-value-from-pair ,found) ,store))
-                                 (t
-                                  (let ,newvals
-                                    (setf ,(first newvals) (,',add ,key ,store ,alist))
-                                    ,setter)))
-                           ,store))
-                      `(,',name ,getter ,key :test ,test-val))))))))
+(macrolet
+    ((define-alist-get (name get-entry get-value-from-entry add doc)
+       `(progn
+          (declaim (inline ,name))
+          (defun ,name (alist key &key (test 'eql))
+            ,doc
+            (let ((entry (,get-entry key alist :test test)))
+              (values (,get-value-from-entry entry) entry)))
+          (define-setf-expander ,name (place key &key (test ''eql)
+                                       &environment env)
+            (multiple-value-bind
+                  (temporary-variables initforms newvals setter getter)
+                (get-setf-expansion place env)
+              (when (cdr newvals)
+                (error "~A cannot store multiple values in one place" ',name))
+              (with-unique-names (new-entry key-val test-val alist entry)
+                (values
+                 (append temporary-variables
+                         (list alist
+                               key-val
+                               test-val
+                               entry))
+                 (append initforms
+                         (list getter
+                               key
+                               test
+                               `(,',get-entry ,key-val ,alist :test ,test-val)))
+                 `(,new-entry)
+                 `(cond
+                    (,entry
+                     (setf (,',get-value-from-entry ,entry) ,new-entry))
+                    (t
+                     (let ,newvals
+                       (setf ,(first newvals) (,',add ,key ,new-entry ,alist))
+                       ,setter)))
+                 `(,',get-value-from-entry ,entry))))))))
  (define-alist-get assoc-value assoc cdr acons
 "ASSOC-VALUE is an alist accessor very much like ASSOC, but it can
 be used with SETF.")

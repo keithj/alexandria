@@ -53,7 +53,7 @@ property list PLIST in the same order."
                                     (setf ,(first newvals) (,',add ,key ,store ,alist))
                                     ,setter)))
                            ,store))
-                      `(,',name ,getter ,key))))))))
+                      `(,',name ,getter ,key :test ,test-val))))))))
  (define-alist-get assoc-value assoc cdr acons
 "ASSOC-VALUE is an alist accessor very much like ASSOC, but it can
 be used with SETF.")

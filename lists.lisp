@@ -41,7 +41,7 @@ property list PLIST in the same order."
                 (get-setf-expansion place env)
               (when (cdr newvals)
                 (error "~A cannot store multiple values in one place" ',name))
-              (with-unique-names (new-entry key-val test-val alist entry)
+              (with-unique-names (new-value key-val test-val alist entry)
                 (values
                  (append temporary-variables
                          (list alist
@@ -53,14 +53,15 @@ property list PLIST in the same order."
                                key
                                test
                                `(,',get-entry ,key-val ,alist :test ,test-val)))
-                 `(,new-entry)
+                 `(,new-value)
                  `(cond
                     (,entry
-                     (setf (,',get-value-from-entry ,entry) ,new-entry))
+                     (setf (,',get-value-from-entry ,entry) ,new-value))
                     (t
                      (let ,newvals
-                       (setf ,(first newvals) (,',add ,key ,new-entry ,alist))
-                       ,setter)))
+                       (setf ,(first newvals) (,',add ,key ,new-value ,alist))
+                       ,setter
+                       ,new-value)))
                  `(,',get-value-from-entry ,entry))))))))
  (define-alist-get assoc-value assoc cdr acons
 "ASSOC-VALUE is an alist accessor very much like ASSOC, but it can

@@ -7,7 +7,7 @@
 
 (in-package :alexandria-tests)
 
-(defun run-tests (&key ((:compiled *compile-tests)))
+(defun run-tests (&key ((:compiled *compile-tests*)))
   (do-tests))
 
 ;;;; Arrays

@@ -7,7 +7,7 @@ clean:
 # to bootrap documentation for now.
 include:
 	sbcl --eval '(progn (require :asdf) (require :alexandria) (rename-package :alexandria :alexandria))' \
-	--eval '(load (merge-pathnames "doc/manual/docstrings" (posix-getenv "SBCL_SOURCE_ROOT")))' \
+	--eval '(load (merge-pathnames "doc/manual/docstrings.lisp" (posix-getenv "SBCL_SOURCE_ROOT")))' \
 	--eval '(sb-texinfo:generate-includes "include/" :alexandria)' \
 	--eval '(quit)'
 	mv include/fun-alexandria-type=.texinfo include/fun-alexandria-type-equal.texinfo

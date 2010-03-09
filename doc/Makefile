@@ -6,11 +6,10 @@ clean:
 # Hook into the super sekrit texinfo generator in the SBCL tree -- this is just a quick way
 # to bootrap documentation for now.
 include:
-	sbcl --eval '(progn (require :asdf) (require :alexandria) (rename-package :alexandria :alexandria))' \
-	--eval '(load (merge-pathnames "doc/manual/docstrings.lisp" (posix-getenv "SBCL_SOURCE_ROOT")))' \
-	--eval '(sb-texinfo:generate-includes "include/" :alexandria)' \
+	sbcl --eval '(progn (require :asdf) (require :alexandria))' \
+	--load docstrings.lisp \
+	--eval '(sb-texinfo:generate-includes "include/" (list :alexandria) :base-package :alexandria)' \
 	--eval '(quit)'
-	mv include/fun-alexandria-type=.texinfo include/fun-alexandria-type-equal.texinfo
 
 pdf: include
 	texi2pdf alexandria.texinfo

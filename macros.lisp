@@ -28,15 +28,23 @@ unique symbol the named variable will be bound to."
   `(with-gensyms ,names ,@forms))
 
 (defmacro once-only (specs &body forms)
-  "Each SPEC must be either a NAME, or a (NAME INITFORM), with plain
-NAME using the named variable as initform.
+  "Evaluates FORMS with symbols specified in SPECS rebound to temporary
+variables, ensuring that each initform is evaluated only once.
 
-Evaluates FORMS with names rebound to temporary variables, ensuring
-that each is evaluated only once.
+Each of SPECS must either be a symbol naming the variable to be rebound, or of
+the form:
+
+  (symbol initform)
+
+Bare symbols in SPECS are equivalent to
+
+  (symbol symbol)
 
 Example:
+
   (defmacro cons1 (x) (once-only (x) `(cons ,x ,x)))
-  (let ((y 0)) (cons1 (incf y))) => (1 . 1)"
+  (let ((y 0)) (cons1 (incf y))) => (1 . 1)
+"
   (let ((gensyms (make-gensym-list (length specs) "ONCE-ONLY"))
         (names-and-forms (mapcar (lambda (spec)
                                    (etypecase spec
@@ -84,18 +92,25 @@ arguments when given."
                                    (normalize-optional normalize)
                                    (normalize-keyword normalize)
                                    (normalize-auxilary normalize))
-  "Parses an ordinary lambda-list, returning:
+  "Parses an ordinary lambda-list, returning as multiple values:
 
-\(values requireds optionals rest keywords allow-other-keys? auxiliaries)
+1. Required parameters.
 
- 1. Required parameters.
- 2. Optional parameter specifications, normalized into form (NAME INIT SUPPLIEDP)
-    where SUPPLIEDP is NIL if not present.
- 3. Name of the rest parameter, or NIL.
- 4. Keyword parameter specifications, normalized into form ((KEYWORD-NAME NAME) INIT SUPPLIEDP)
-    where SUPPLIEDP is NIL if not present.
- 5. Boolean indicating &ALLOW-OTHER-KEYS presence.
- 6. &AUX parameter specifications, normalized into form (NAME INIT).
+2. Optional parameter specifications, normalized into form:
+
+   (name init suppliedp)
+
+3. Name of the rest parameter, or NIL.
+
+4. Keyword parameter specifications, normalized into form:
+
+   ((keyword-name name) init suppliedp)
+
+5. Boolean indicating &ALLOW-OTHER-KEYS presence.
+
+6. &AUX parameter specifications, normalized into form
+
+   (name init).
 
 Signals a PROGRAM-ERROR is the lambda-list is malformed."
   (let ((state :required)

@@ -2,7 +2,7 @@
 
 (declaim (inline clamp))
 (defun clamp (number min max)
-  "Clamps the NUMBER into [MIN, MAX] range. Returns MIN if NUMBER lesser then
+  "Clamps the NUMBER into [min, max] range. Returns MIN if NUMBER is lesser then
 MIN and MAX if NUMBER is greater then MAX, otherwise returns NUMBER."
   (if (< number min)
       min

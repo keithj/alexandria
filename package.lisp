@@ -137,7 +137,7 @@
    #:negative-float-p
    #:negative-long-float
    #:negative-long-float-p
-   #:negative-rational 
+   #:negative-rational
    #:negative-rational-p
    #:negative-real
    #:negative-single-float-p

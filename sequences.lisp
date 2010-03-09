@@ -64,10 +64,15 @@ SEQUENCE is not a sequence. Returns FALSE for circular lists."
 SEQUENCE rotated by N: N elements are moved from the end of the sequence to
 the front if N is positive, and -N elements moved from the front to the end if
 N is negative. SEQUENCE must be a proper sequence. N must be an integer,
-defaulting to 1. If absolute value of N is greater then the length of the
-sequence, the results are identical to calling ROTATE with (* (SIGNUM N) (MOD
-N (LENGTH SEQUENCE))). The original sequence may be destructively altered, and
-result sequence may share structure with it."
+defaulting to 1.
+
+If absolute value of N is greater then the length of the sequence, the results
+are identical to calling ROTATE with
+
+  (* (signum n) (mod n (length sequence))).
+
+Note: the original sequence may be destructively altered, and result sequence may
+share structure with it."
   (if (plusp n)
       (rotate-tail-to-head sequence n)
       (if (minusp n)

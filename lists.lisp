@@ -215,7 +215,7 @@ designator of the expected type in a TYPE-ERROR."
   
   (def lastcar (list)
       "Returns the last element of LIST. Signals a type-error if LIST is not a
-proper list." 
+proper list."
     nil
     nil
     (cadr last)
@@ -278,8 +278,10 @@ provided plist."
   ;; FIXME: should not cons
   (apply 'remove-from-plist plist keys))
 
-(define-modify-macro remove-from-plistf (&rest keys) remove-from-plist)
-(define-modify-macro delete-from-plistf (&rest keys) delete-from-plist)
+(define-modify-macro remove-from-plistf (&rest keys) remove-from-plist
+                     "Modify macro for REMOVE-FROM-PLIST.")
+(define-modify-macro delete-from-plistf (&rest keys) delete-from-plist
+                     "Modify macro for DELETE-FROM-PLIST.")
 
 (declaim (inline sans))
 (defun sans (plist &rest keys)
@@ -322,8 +324,9 @@ In other words, returns the product of LIST and MORE-LISTS using FUNCTION.
 
 Example:
 
- (map-product 'list '(1 2) '(3 4) '(5 6)) => ((1 3 5) (1 3 6) (1 4 5) (1 4 6)
-                                              (2 3 5) (2 3 6) (2 4 5) (2 4 6))
+ (map-product 'list '(1 2) '(3 4) '(5 6))
+  => ((1 3 5) (1 3 6) (1 4 5) (1 4 6)
+      (2 3 5) (2 3 6) (2 4 5) (2 4 6))
 "
   (labels ((%map-product (f lists)
              (let ((more (cdr lists))

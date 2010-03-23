@@ -72,9 +72,11 @@ terms and conditions:
 
 @ifnottex
 
+@include include/ifnottex.texinfo
+
 @node Top
 @comment  node-name,  next,  previous,  up
-@top sbcl
+@top Alexandria
 
 @insertcopying
 
@@ -166,7 +168,6 @@ terms and conditions:
 @include include/fun-alexandria-lastcar.texinfo
 @include include/fun-alexandria-setf-lastcar.texinfo
 @include include/fun-alexandria-proper-list-length.texinfo
-@include include/fun-alexandria-make-circular-list.texinfo
 @include include/fun-alexandria-mappend.texinfo
 @include include/fun-alexandria-map-product.texinfo
 @include include/fun-alexandria-remove-from-plist.texinfo

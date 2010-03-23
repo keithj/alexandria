@@ -383,6 +383,9 @@ there is no corresponding docstring."
                      (cons (car x) (clean (cdr x) :optional t)))
                     ((cons (member &key))
                      (cons (car x) (clean (cdr x) :key t)))
+                    ((cons (member &whole &environment))
+                     ;; Skip these
+                     (clean (cdr x) :optional optional :key key))
                     ((cons cons)
                      (cons
                       (cond (key (if (consp (caar x))
@@ -824,6 +827,18 @@ package, as well as for the package itself."
                                     :if-exists :supersede)
     ,@forms))
 
+(defun write-ifnottex ()
+  ;; We use @&key, etc to escape & from TeX in lambda lists -- so we need to
+  ;; define them for info as well.
+  (flet ((macro (name)
+                 (let ((string (string-downcase name)))
+                   (format *texinfo-output* "@macro ~A~%~A~%@end macro~%" string string))))
+    (macro '&allow-other-keys)
+    (macro '&optional)
+    (macro '&rest)
+    (macro '&key)
+    (macro '&body)))
+
 (defun generate-includes (directory packages &key (base-package :cl-user))
   "Create files in `directory' containing Texinfo markup of all
 docstrings of each exported symbol in `packages'. `directory' is
@@ -841,6 +856,8 @@ markup, you lose."
         (dolist (doc (collect-documentation (find-package package)))
           (with-texinfo-file (merge-pathnames (include-pathname doc) directory)
             (write-texinfo doc))))
+      (with-texinfo-file (merge-pathnames "ifnottex.texinfo" directory)
+        (write-ifnottex))
       directory)))
 
 (defun document-package (package &optional filename)

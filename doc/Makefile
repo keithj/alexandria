@@ -12,7 +12,8 @@ clean: clean-include
 	rm -f  *.pdf *.html *.info
 
 include:
-	sbcl --eval '(progn (require :asdf) (require :alexandria))' \
+	sbcl --no-userinit --eval '(require :asdf)' \
+	--eval '(let ((asdf:*central-registry* (list "../"))) (require :alexandria))' \
 	--load docstrings.lisp \
 	--eval '(sb-texinfo:generate-includes "include/" (list :alexandria) :base-package :alexandria)' \
 	--eval '(quit)'

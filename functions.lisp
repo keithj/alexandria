@@ -15,7 +15,8 @@ it must be a function name and its FDEFINITION is returned."
 (define-modify-macro ensure-functionf/1 () ensure-function)
 
 (defmacro ensure-functionf (&rest places)
-  "FIXME: UNDOCUMENTED!"
+  "Multiple-place modify macro for ENSURE-FUNCTION: ensures that each of
+PLACES contains a function."
   `(progn ,@(mapcar (lambda (x) `(ensure-functionf/1 ,x)) places)))
 
 (defun disjoin (predicate &rest more-predicates)

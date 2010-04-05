@@ -13,16 +13,19 @@
    ;; REVIEW IN PROGRESS
    ;;
    ;; Control flow
+   ;;
+   ;; -- no clear consensus yet --
    #:cswitch
    #:eswitch
    #:switch
+   ;; -- problem free? --
    #:multiple-value-prog2
-   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   ;; REVIEW PENDING
-   ;;
    #:nth-value-or
    #:whichever
    #:xor
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ;; REVIEW PENDING
+   ;;
    ;; Definitions
    #:define-constant
    ;; Hash tables

@@ -138,6 +138,21 @@
       (13.0 :oops))
   :yay)
 
+(deftest multiple-value-prog2.1
+    (multiple-value-prog2
+        (values 1 1 1)
+        (values 2 20 200)
+      (values 3 3 3))
+  2 20 200)
+
+(deftest nth-value-or.1
+    (multiple-value-bind (a b c)
+        (nth-value-or 1
+                      (values 1 nil 1)
+                      (values 2 2 2))
+      (= a b c 2))
+  t)
+
 (deftest whichever.1
     (let ((x (whichever 1 2 3)))
       (and (member x '(1 2 3)) t))
@@ -154,6 +169,16 @@
 (deftest xor.1
     (xor nil nil 1 nil)
   1
+  t)
+
+(deftest xor.2
+    (xor nil nil 1 2)
+  nil
+  nil)
+
+(deftest xor.3
+    (xor nil nil nil)
+  nil
   t)
 
 ;;;; Definitions
@@ -1676,14 +1701,6 @@
       (type-error ()
         :type-error))
   :type-error)
-
-(deftest nth-value-or.1
-    (multiple-value-bind (a b c)
-        (nth-value-or 1
-                      (values 1 nil 1)
-                      (values 2 2 2))
-      (= a b c 2))
-  t)
 
 (deftest doplist.1
     (let (keys values)

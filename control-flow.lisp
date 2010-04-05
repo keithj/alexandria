@@ -68,7 +68,7 @@ returns the values of DEFAULT if no keys match."
                ,(expand possibilities 0 random-number)))))))
 
 (defmacro xor (&rest datums)
-  "Evaluates its argument one at a time, from left to right. If more then one
+  "Evaluates its arguments one at a time, from left to right. If more then one
 argument evaluates to a true value no further DATUMS are evaluated, and NIL is
 returned as both primary and secondary value. If exactly one argument
 evaluates to true, its value is returned as the primary value after all the
@@ -100,7 +100,7 @@ NIL."
                   `(nth-value-or ,nth-value ,@(rest forms))
                   nil))))))
 
-(defmacro multiple-value-prog2 (first-form second-form &body body)
-  "Like CL:MULTIPLE-VALUE-PROG1, except it saves the values of the
-second form."
-  `(progn ,first-form (multiple-value-prog1 ,second-form ,@body)))
+(defmacro multiple-value-prog2 (first-form second-form &body forms)
+  "Evaluates FIRST-FORM, then SECOND-FORM, and then FORMS. Yields as its value
+all the value returned by SECOND-FORM."
+  `(progn ,first-form (multiple-value-prog1 ,second-form ,@forms)))

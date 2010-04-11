@@ -6,7 +6,7 @@ use as an initialization form for structure and class-slots, and
 a default value for required keyword arguments."
   (error "Required argument ~@[~S ~]missing." name))
 
-(define-condition simple-style-warning (style-warning simple-warning)
+(define-condition simple-style-warning (simple-warning style-warning)
   ())
 
 (defun simple-style-warning (message &rest args)
@@ -19,7 +19,7 @@ a default value for required keyword arguments."
 ;; implementation. But even then it's still inspectable from the
 ;; debugger...
 (define-condition simple-reader-error
-    #-sbcl(reader-error simple-error)
+    #-sbcl(simple-error reader-error)
     #+sbcl(sb-int:simple-reader-error)
   ())
 

@@ -21,12 +21,12 @@ Example:
 
 (declaim (inline format-symbol))
 (defun format-symbol (package control &rest arguments)
-  "Constructs a string by applying ARGUMENTS to CONTROL as if by FORMAT, and
-then creates a symbol named by that string. If PACKAGE is NIL, returns an
-uninterned symbol, if package is T, returns a symbol interned in the current
-package, and otherwise returns a symbol interned in the package designated by
-PACKAGE."
-  (maybe-intern (apply #'format nil control arguments) package))
+  "Constructs a string by applying ARGUMENTS to string designator
+CONTROL as if by FORMAT, and then creates a symbol named by that
+string. If PACKAGE is NIL, returns an uninterned symbol, if package is
+T, returns a symbol interned in the current package, and otherwise
+returns a symbol interned in the package designated by PACKAGE."
+  (maybe-intern (apply #'format nil (string control) arguments) package))
 
 (defun make-keyword (name)
   "Interns the string designated by NAME in the KEYWORD package."

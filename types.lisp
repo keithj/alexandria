@@ -24,7 +24,7 @@ ARRAY-DIMENSION-LIMIT."
                     (push result subtype-names)
                     result))
                 (make-predicate-name (sybtype-name)
-                  (let ((result (format-symbol :alexandria "~A-P"
+                  (let ((result (format-symbol :alexandria '#:~A-p
                                                (symbol-name sybtype-name))))
                     (push result predicate-names)
                     result))
@@ -34,10 +34,10 @@ ARRAY-DIMENSION-LIMIT."
 			    type
 			    (if (equal range-beg ''*) inf (ensure-car range-beg))
 			    (if (equal range-end ''*) inf (ensure-car range-end))))))
-           (let* ((negative-name     (make-subtype-name "NEGATIVE-~A"))
-                  (non-positive-name (make-subtype-name "NON-POSITIVE-~A"))
-                  (non-negative-name (make-subtype-name "NON-NEGATIVE-~A"))
-                  (positive-name     (make-subtype-name "POSITIVE-~A"))
+           (let* ((negative-name     (make-subtype-name '#:negative-~A))
+                  (non-positive-name (make-subtype-name '#:non-positive-~A))
+                  (non-negative-name (make-subtype-name '#:non-negative-~A))
+                  (positive-name     (make-subtype-name '#:positive-~A))
                   (negative-p-name     (make-predicate-name negative-name))
                   (non-positive-p-name (make-predicate-name non-positive-name))
                   (non-negative-p-name (make-predicate-name non-negative-name))

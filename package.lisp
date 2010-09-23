@@ -233,4 +233,7 @@
    #:symbolicate
    #:assoc-value
    #:rassoc-value
+   #:destructuring-case
+   #:destructuring-ccase
+   #:destructuring-ecase
    ))

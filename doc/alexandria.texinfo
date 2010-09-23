@@ -114,6 +114,7 @@ terms and conditions:
 @chapter Data and Control Flow
 
 @include include/macro-alexandria-define-constant.texinfo
+@include include/macro-alexandria-destructuring-case.texinfo
 @include include/macro-alexandria-ensure-functionf.texinfo
 @include include/macro-alexandria-multiple-value-prog2.texinfo
 @include include/macro-alexandria-named-lambda.texinfo

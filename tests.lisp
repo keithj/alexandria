@@ -1712,3 +1712,21 @@
   (1 2 3)
   nil
   nil)
+
+(deftest count-permutations.1
+    (values (count-permutations 31 7)
+            (count-permutations 1 1)
+            (count-permutations 2 1)
+            (count-permutations 2 2)
+            (count-permutations 3 2)
+            (count-permutations 3 1))
+  13253058000
+  1
+  2
+  2
+  6
+  3)
+
+(deftest binomial-coefficient.1
+    (alexandria:binomial-coefficient 1239 139)
+  28794902202288970200771694600561826718847179309929858835480006683522184441358211423695124921058123706380656375919763349913245306834194782172712255592710204598527867804110129489943080460154)

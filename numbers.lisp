@@ -210,6 +210,10 @@ greater then K."
   (if (or (zerop k) (= n k))
       1
       (let ((n-k (- n k)))
+        ;; Swaps K and N-K if K < N-K because the algorithm
+        ;; below is faster for bigger K and smaller N-K
+        (when (< k n-k)
+          (rotatef k n-k))
         (if (= 1 n-k)
             n
             ;; General case, avoid computing the 1x...xK twice:
@@ -231,8 +235,8 @@ greater then K."
 
 (defun count-permutations (n &optional (k n))
   "Number of K element permutations for a sequence of N objects.
-R defaults to N"
-  ;; FIXME: Use %multiply-range and take care of 1 and 2, plus
-  ;; check types.
-  (/ (factorial n)
-     (factorial (- n k))))
+K defaults to N"
+  (check-type n (integer 0))
+  (check-type k (integer 0))
+  (assert (>= n k))
+  (%multiply-range (1+ (- n k)) n))

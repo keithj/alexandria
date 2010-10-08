@@ -111,11 +111,13 @@ unless it's NIL, which means the system default."
   "Reads data from INPUT and writes it to OUTPUT. Both INPUT and OUTPUT must
 be streams, they will be passed to READ-SEQUENCE and WRITE-SEQUENCE and must have
 compatible element-types."
-  (loop
-     :for bytes-read = (read-sequence buffer input)
-     :while (= bytes-read buffer-size)
-     :do (write-sequence buffer output)
-     :finally (progn
-                (write-sequence buffer output :end bytes-read)
-                (when finish-output
-                  (finish-output output)))))
+  (let ((bytes-written 0))
+    (loop
+      :for bytes-read = (read-sequence buffer input)
+      :until (zerop bytes-read)
+      :do (progn
+            (write-sequence buffer output :end bytes-read)
+            (incf bytes-written bytes-read)))
+    (when finish-output
+      (finish-output output))
+    bytes-written))

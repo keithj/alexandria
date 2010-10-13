@@ -1,6 +1,8 @@
 (defpackage :alexandria.0.dev
   (:nicknames :alexandria)
   (:use :cl)
+  #+sbcl
+  (:lock t)
   (:export
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ;; BLESSED

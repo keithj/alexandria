@@ -1,7 +1,7 @@
 (defpackage :alexandria.0.dev
   (:nicknames :alexandria)
   (:use :cl)
-  #+sbcl
+  #+sb-package-locks
   (:lock t)
   (:export
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -138,7 +138,7 @@ that are not lists."
 
 (defun emptyp (sequence)
   "Returns true if SEQUENCE is an empty sequence. Signals an error if SEQUENCE
-is not a sequence"
+is not a sequence."
   (etypecase sequence
     (list (null sequence))
     (sequence (zerop (length sequence)))))

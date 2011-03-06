@@ -104,13 +104,28 @@ error if SEQUENCE is not a proper sequence."
 
 (defun random-elt (sequence &key (start 0) end)
   "Returns a random element from SEQUENCE bounded by START and END. Signals an
-error if the SEQUENCE is not a proper sequence."
+error if the SEQUENCE is not a proper non-empty sequence, or if END and START
+are not proper bounding index designators for SEQUENCE."
   (declare (sequence sequence) (fixnum start) (type (or fixnum null) end))
-  (let ((i (+ start (random (- (or end  (if (listp sequence)
-                                            (proper-list-length sequence)
-                                            (length sequence)))
-                               start)))))
-    (elt sequence i)))
+  (let* ((size (if (listp sequence)
+                   (proper-list-length sequence)
+                   (length sequence)))
+         (end2 (or end size)))
+    (cond ((zerop size)
+           (error 'type-error
+                  :datum sequence
+                  :expected-type `(and sequence (not (satisfies emptyp)))))
+          ((not (and (<= 0 start) (< start end2) (<= end2 size)))
+           (error 'simple-type-error
+                  :datum (cons start end)
+                  :expected-type `(cons (integer 0 (,end2))
+                                        (or null (integer (,start) ,size)))
+                  :format-control "~@<~S and ~S are not valid bounding index designators for ~
+                                   a sequence of length ~S.~:@>"
+                  :format-arguments (list start end size)))
+          (t
+           (let ((index (+ start (random (- end2 start)))))
+             (elt sequence index))))))
 
 (declaim (inline remove/swapped-arguments))
 (defun remove/swapped-arguments (sequence item &rest keyword-arguments)

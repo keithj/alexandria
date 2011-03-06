@@ -2,7 +2,7 @@
 
 ;; Make these inlinable by declaiming them INLINE here and some of them
 ;; NOTINLINE at the end of the file. Exclude functions that have a compiler
-;; macro, because inlining seems to cancel compiler macros (at least on SBCL).
+;; macro, because NOTINLINE is required to prevent compiler-macro expansion.
 (declaim (inline copy-sequence sequence-of-length-p))
 
 (defun sequence-of-length-p (sequence length)

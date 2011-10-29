@@ -198,7 +198,8 @@ designator of the expected type in a TYPE-ERROR."
                      (slow (cons (car list) (cdr list)) (cdr slow))
                      ,@(when step (list step)))
                     (nil)
-                  (declare (dynamic-extent slow) ,@(when declare (list declare)))
+                  (declare (dynamic-extent slow) ,@(when declare (list declare))
+                           (ignorable last))
                   (when (safe-endp fast)
                     (return ,ret1))
                   (when (safe-endp (cdr fast))
@@ -211,10 +212,10 @@ designator of the expected type in a TYPE-ERROR."
     ;; KLUDGE: Most implementations don't actually support lists with bignum
     ;; elements -- and this is WAY faster on most implementations then declaring
     ;; N to be an UNSIGNED-BYTE.
-    (fixnum n) 
+    (fixnum n)
     (1- n)
     n)
-  
+
   (def lastcar (list)
       "Returns the last element of LIST. Signals a type-error if LIST is not a
 proper list."
@@ -222,7 +223,7 @@ proper list."
     nil
     (cadr last)
     (car fast))
-  
+
   (def (setf lastcar) (object list)
       "Sets the last element of LIST. Signals a type-error if LIST is not a proper
 list."

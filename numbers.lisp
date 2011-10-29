@@ -227,11 +227,12 @@ greater then K."
 (defun subfactorial (n)
   "Subfactorial of the non-negative integer N."
   (check-type n (integer 0))
-  (case n
-    (0 1)
-    (1 0)
-    (otherwise
-     (floor (/ (+ 1 (factorial n)) (exp 1))))))
+  (if (zerop n)
+      1
+      (do ((x 1 (1+ x))
+           (a 0 (* x (+ a b)))
+           (b 1 a))
+          ((= n x) a))))
 
 (defun count-permutations (n &optional (k n))
   "Number of K element permutations for a sequence of N objects.

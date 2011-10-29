@@ -29,6 +29,24 @@
                 (eql (fill-pointer orig) (fill-pointer copy)))))
   nil t t t)
 
+(deftest copy-array.3
+    (let* ((orig (vector 1 2 3))
+           (copy (copy-array orig)))
+      (typep copy 'simple-array))
+  t)
+
+(deftest copy-array.4
+   (let ((orig (make-array 21
+                           :adjustable t
+                           :fill-pointer 0)))
+     (dotimes (n 42)
+       (vector-push-extend n orig))
+     (let ((copy (copy-array orig
+                             :adjustable nil
+                             :fill-pointer nil)))
+       (typep copy 'simple-array)))
+ t)
+
 (deftest array-index.1
     (typep 0 'array-index)
   t)

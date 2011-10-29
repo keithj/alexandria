@@ -606,6 +606,10 @@
             (circular-tree-p quite-dotted)))
   (t t t t t t nil nil))
 
+(deftest circular-tree-p.2
+    (alexandria:circular-tree-p '#1=(#1#))
+  t)
+
 (deftest proper-list-p.1
     (let ((l1 (list 1))
           (l2 (list 1 2))

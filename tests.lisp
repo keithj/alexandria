@@ -508,10 +508,32 @@
         (funcall fun 2)))
   4)
 
+(deftest curry.4
+    (let* ((x 1)
+           (curried (curry (progn
+                             (incf x)
+                             (lambda (y z) (* x y z)))
+                           3)))
+      (list (funcall curried 7)
+            (funcall curried 7)
+            x))
+  (42 42 2))
+
 (deftest rcurry.1
     (let ((r (rcurry '/ 2)))
       (funcall r 8))
   4)
+
+(deftest rcurry.2
+    (let* ((x 1)
+           (curried (rcurry (progn
+                              (incf x)
+                              (lambda (y z) (* x y z)))
+                            3)))
+      (list (funcall curried 7)
+            (funcall curried 7)
+            x))
+  (42 42 2))
 
 (deftest named-lambda.1
     (let ((fac (named-lambda fac (x)

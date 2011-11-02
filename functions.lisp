@@ -1,6 +1,8 @@
 (in-package :alexandria)
 
-(declaim (inline ensure-function))	; to propagate return type.
+;;; To propagate return type and allow the compiler to eliminate the IF when
+;;; it is known if the argument is function or not.
+(declaim (inline ensure-function))
 
 (declaim (ftype (function (t) (values function &optional))
                 ensure-function))
@@ -120,11 +122,13 @@ it is called with to FUNCTION."
       (multiple-value-call fn (values-list arguments) (values-list more)))))
 
 (define-compiler-macro curry (function &rest arguments)
-  (let ((curries (make-gensym-list (length arguments) "CURRY")))
-    `(let ,(mapcar #'list curries arguments)
+  (let ((curries (make-gensym-list (length arguments) "CURRY"))
+        (fun (gensym "FUN")))
+    `(let ((,fun (ensure-function ,function))
+           ,@(mapcar #'list curries arguments))
        (declare (optimize (speed 3) (safety 1) (debug 1)))
        (lambda (&rest more)
-         (apply ,function ,@curries more)))))
+         (apply ,fun ,@curries more)))))
 
 (defun rcurry (function &rest arguments)
   "Returns a function that applies the arguments it is called

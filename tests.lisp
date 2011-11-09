@@ -1128,6 +1128,14 @@
                    s)))
   (nil t t))
 
+(deftest shuffle.3
+    (let* ((orig (coerce (iota 21) 'vector))
+           (copy (copy-seq orig)))
+      (shuffle copy :start 10 :end 15)
+      (list (every #'eql (subseq copy 0 10) (subseq orig 0 10))
+            (every #'eql (subseq copy 15) (subseq orig 15))))
+  (t t))
+
 (deftest random-elt.1
     (let ((s1 #(1 2 3 4))
           (s2 '(1 2 3 4)))

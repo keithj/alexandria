@@ -89,11 +89,11 @@ PLIST. Hash table is initialized using the HASH-TABLE-INITARGS."
       (setf (gethash (car tail) table) (cadr tail)))
     table))
 
-(defun ensure-gethash (key hash-table &optional default)
+(defmacro ensure-gethash (key hash-table &optional default)
   "Like GETHASH, but if KEY is not found in the HASH-TABLE saves the DEFAULT
 under key before returning it. Secondary return value is true if key was
 already in the table."
-  (multiple-value-bind (value ok) (gethash key hash-table)
-    (if ok
-        (values value ok)
-        (values (setf (gethash key hash-table) default) nil))))
+  `(multiple-value-bind (value ok) (gethash ,key ,hash-table)
+     (if ok
+         (values value ok)
+         (values (setf (gethash ,key ,hash-table) ,default) nil))))

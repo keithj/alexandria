@@ -84,20 +84,57 @@ Examples:
 interpolation coefficient V."
    (+ a (* v (- b a))))
 
-(declaim (inline mean))
-(defun mean (sample)
-  "Returns the mean of SAMPLE. SAMPLE must be a sequence of numbers."
-  (/ (reduce #'+ sample) (length sample)))
+(defgeneric mean (object)
+  (:documentation "Returns the mean of OBJECT.
+Predefined methods work on sequences and arrays of numbers. Users can
+define new methods.")
+  (:method ((object list))
+    (let ((sum 0)
+          (count 0))
+      (declare (fixnum count))
+      (dolist (elt object)
+        (incf sum elt)
+        (incf count))
+      (/ sum count)))
+  (:method ((object vector))
+    ;; Need a separate method for vectors, since
+    ;; they could have fill-pointers which we need to respect.
+    (let ((n (length object)))
+      (/ (loop for index below n
+               summing (aref object index))
+         n)))
+  (:method ((object array))
+    (let ((n (array-total-size object)))
+      (/ (loop for index below n
+               summing (row-major-aref object index))
+         n)))
+  (:method ((object sequence))
+    ;; For implementations supporting custom sequence types.
+    (/ (reduce #'+ object) (length object))))
 
-(declaim (inline median))
-(defun median (sample)
-  "Returns median of SAMPLE. SAMPLE must be a sequence of real numbers."
-  (let* ((vector (sort (copy-sequence 'vector sample) #'<))
+(defun median-in-place (vector)
+  (declare (vector vector))
+  (let* ((vector (sort vector #'<))
          (length (length vector))
          (middle (truncate length 2)))
     (if (oddp length)
         (aref vector middle)
         (/ (+ (aref vector middle) (aref vector (1- middle))) 2))))
+
+(defgeneric median (object)
+  (:documentation
+   "Returns median of OBJECT.
+Predefined methods work on sequences and arrays of numbers. Users can
+define new methods.")
+  (:method ((object list))
+    (median-in-place (copy-sequence 'vector object)))
+  (:method ((object array))
+    (median-in-place (copy-sequence 'vector (if (vectorp object)
+                                                object
+                                                (displace-array object)))))
+  (:method ((object sequence))
+    ;; For implementations supporting custom sequence types.
+    (median-in-place (copy-sequence 'vector object))))
 
 (declaim (inline variance))
 (defun variance (sample &key (biased t))

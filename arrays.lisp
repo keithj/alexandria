@@ -16,3 +16,14 @@ arguments."
      (setf (row-major-aref new-array i)
            (row-major-aref array i)))
    new-array))
+
+(declaim (inline displace-array))
+(defun displace-array (array &key (offset 0)
+                                  (dimensions (- (array-total-size array)
+                                               offset)))
+  "Return an array displaced to ARRAY with the given OFFSET and DIMENSIONS.
+Default arguments displace to a vector."
+  (make-array dimensions
+              :displaced-to array
+              :displaced-index-offset offset
+              :element-type (array-element-type array)))

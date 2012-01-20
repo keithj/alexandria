@@ -1584,18 +1584,18 @@
   :inherited)
 
 (deftest format-symbol.1
-    (let ((s (format-symbol nil "X-~D" 13)))
+    (let ((s (format-symbol nil '#:x-~d 13)))
       (list (symbol-package s)
-            (symbol-name s)))
-  (nil "X-13"))
+            (string= (string '#:x-13) (symbol-name s))))
+  (nil t))
 
 (deftest format-symbol.2
-    (format-symbol :keyword "SYM-~A" :bolic)
+    (format-symbol :keyword '#:sym-~a (string :bolic))
   :sym-bolic)
 
 (deftest format-symbol.3
     (let ((*package* (find-package :cl)))
-      (format-symbol t "FIND-~A" 'package))
+      (format-symbol t '#:find-~a (string 'package)))
   find-package)
 
 (deftest make-keyword.1
@@ -1657,12 +1657,12 @@
 
 (macrolet
     ((test (type numbers)
-       `(deftest ,(format-symbol t "CDR5.~A" type)
+       `(deftest ,(format-symbol t '#:cdr5.~a (string type))
 	    (let ((numbers ,numbers))
-	      (values (mapcar (of-type ',(format-symbol t "NEGATIVE-~A" type)) numbers)
-		      (mapcar (of-type ',(format-symbol t "NON-POSITIVE-~A" type)) numbers)
-		      (mapcar (of-type ',(format-symbol t "NON-NEGATIVE-~A" type)) numbers)
-		      (mapcar (of-type ',(format-symbol t "POSITIVE-~A" type)) numbers)))
+	      (values (mapcar (of-type ',(format-symbol t '#:negative-~a (string type))) numbers)
+		      (mapcar (of-type ',(format-symbol t '#:non-positive-~a (string type))) numbers)
+		      (mapcar (of-type ',(format-symbol t '#:non-negative-~a (string type))) numbers)
+		      (mapcar (of-type ',(format-symbol t '#:positive-~a (string type))) numbers)))
 	  (t t t nil nil nil nil)
 	  (t t t t nil nil nil)
 	  (nil nil nil t t t t)

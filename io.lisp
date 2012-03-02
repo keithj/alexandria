@@ -107,17 +107,45 @@ unless it's NIL, which means the system default."
 (defun copy-stream (input output &key (element-type (stream-element-type input))
                     (buffer-size 4096)
                     (buffer (make-array buffer-size :element-type element-type))
+                    (start 0) end
                     finish-output)
   "Reads data from INPUT and writes it to OUTPUT. Both INPUT and OUTPUT must
 be streams, they will be passed to READ-SEQUENCE and WRITE-SEQUENCE and must have
 compatible element-types."
-  (let ((bytes-written 0))
+  (check-type start non-negative-integer)
+  (check-type end (or null non-negative-integer))
+  (check-type buffer-size positive-integer)
+  (when (< end start)
+    (error "END is smaller than START in ~S" 'copy-stream))
+  (let ((output-position 0)
+        (input-position 0))
+    (unless (zerop start)
+      ;; FIXME add platform specific optimization to skip seekable streams
+      (loop
+        :while (< input-position start)
+        :for bytes-read = (read-sequence buffer input
+                                         :end (min (length buffer)
+                                                   (- start input-position)))
+        :do (progn
+              (when (zerop bytes-read)
+                (error "Could not read enough bytes from the input to fulfill the START requirement in ~S" 'copy-stream))
+              (incf input-position bytes-read))))
+    (assert (= input-position start))
     (loop
-      :for bytes-read = (read-sequence buffer input)
-      :until (zerop bytes-read)
+      :while (or (null end)
+                 (< input-position end))
+      :for bytes-read = (read-sequence buffer input
+                                       :end (when end
+                                              (min (length buffer)
+                                                   (- end input-position))))
       :do (progn
+            (when (zerop bytes-read)
+              (if end
+                  (error "Could not read enough bytes from the input to fulfill the END requirement in ~S" 'copy-stream)
+                  (return)))
+            (incf input-position bytes-read)
             (write-sequence buffer output :end bytes-read)
-            (incf bytes-written bytes-read)))
+            (incf output-position bytes-read)))
     (when finish-output
       (finish-output output))
-    bytes-written))
+    output-position))

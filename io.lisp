@@ -115,7 +115,8 @@ compatible element-types."
   (check-type start non-negative-integer)
   (check-type end (or null non-negative-integer))
   (check-type buffer-size positive-integer)
-  (when (< end start)
+  (when (and end
+             (< end start))
     (error "END is smaller than START in ~S" 'copy-stream))
   (let ((output-position 0)
         (input-position 0))

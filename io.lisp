@@ -122,31 +122,28 @@ compatible element-types."
         (input-position 0))
     (unless (zerop start)
       ;; FIXME add platform specific optimization to skip seekable streams
-      (loop
-        :while (< input-position start)
-        :for bytes-read = (read-sequence buffer input
-                                         :end (min (length buffer)
-                                                   (- start input-position)))
-        :do (progn
-              (when (zerop bytes-read)
-                (error "Could not read enough bytes from the input to fulfill the START requirement in ~S" 'copy-stream))
-              (incf input-position bytes-read))))
+      (loop while (< input-position start)
+            do (let ((n (read-sequence buffer input
+                                       :end (min (length buffer)
+                                                 (- start input-position)))))
+                 (when (zerop n)
+                   (error "~@<Could not read enough bytes from the input to fulfill ~
+                           the :START ~S requirement in ~S.~:@>" 'copy-stream start))
+                 (incf input-position n))))
     (assert (= input-position start))
-    (loop
-      :while (or (null end)
-                 (< input-position end))
-      :for bytes-read = (read-sequence buffer input
-                                       :end (when end
-                                              (min (length buffer)
-                                                   (- end input-position))))
-      :do (progn
-            (when (zerop bytes-read)
-              (if end
-                  (error "Could not read enough bytes from the input to fulfill the END requirement in ~S" 'copy-stream)
-                  (return)))
-            (incf input-position bytes-read)
-            (write-sequence buffer output :end bytes-read)
-            (incf output-position bytes-read)))
+    (loop while (or (null end) (< input-position end))
+          do (let ((n (read-sequence buffer input
+                                     :end (when end
+                                            (min (length buffer)
+                                                 (- end input-position))))))
+               (when (zerop n)
+                 (if end
+                     (error "~@<Could not read enough bytes from the input to fulfill ~
+                          the :END ~S requirement in ~S.~:@>" 'copy-stream end)
+                     (return)))
+               (incf input-position n)
+               (write-sequence buffer output :end n)
+               (incf output-position n)))
     (when finish-output
       (finish-output output))
     output-position))

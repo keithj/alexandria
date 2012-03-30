@@ -1807,3 +1807,26 @@
 (deftest binomial-coefficient.1
     (alexandria:binomial-coefficient 1239 139)
   28794902202288970200771694600561826718847179309929858835480006683522184441358211423695124921058123706380656375919763349913245306834194782172712255592710204598527867804110129489943080460154)
+
+(deftest copy-stream.1
+    (let ((data "sdkfjhsakfh weior763495ewofhsdfk sdfadlkfjhsadf woif sdlkjfhslkdfh sdklfjh"))
+      (values (equal data
+                     (with-input-from-string (in data)
+                       (with-output-to-string (out)
+                         (alexandria:copy-stream in out))))
+              (equal (subseq data 10 20)
+                     (with-input-from-string (in data)
+                       (with-output-to-string (out)
+                         (alexandria:copy-stream in out :start 10 :end 20))))
+              (equal (subseq data 10)
+                     (with-input-from-string (in data)
+                       (with-output-to-string (out)
+                         (alexandria:copy-stream in out :start 10))))
+              (equal (subseq data 0 20)
+                     (with-input-from-string (in data)
+                       (with-output-to-string (out)
+                         (alexandria:copy-stream in out :end 20))))))
+  t
+  t
+  t
+  t)

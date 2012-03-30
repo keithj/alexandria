@@ -81,8 +81,9 @@ share structure with it."
 
 (defun shuffle (sequence &key (start 0) end)
   "Returns a random permutation of SEQUENCE bounded by START and END.
-Permuted sequence may share storage with the original one. Signals an
-error if SEQUENCE is not a proper sequence."
+Original sequece may be destructively modified, and share storage with
+the original one. Signals an error if SEQUENCE is not a proper
+sequence."
   (declare (type fixnum start)
            (type (or fixnum null) end))
   (etypecase sequence

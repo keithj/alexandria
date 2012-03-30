@@ -101,7 +101,6 @@
    #:array-index
    #:array-length
    #:copy-array
-   #:displace-array
    ;; Sequences
    #:copy-sequence
    #:deletef

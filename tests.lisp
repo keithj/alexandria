@@ -47,24 +47,6 @@
        (typep copy 'simple-array)))
  t)
 
-(deftest displace-array.1
-    (displace-array #2A((1 2)
-                        (3 4)))
-  #(1 2 3 4))
-
-(deftest displace-array.2
-    (displace-array #2A((1 2)
-                        (3 4))
-                    :offset 1)
-  #(2 3 4))
-
-(deftest displace-array.3
-    (displace-array #2A((1 2)
-                        (3 4))
-                    :offset 1
-                    :dimensions '(3 1))
-  #2A((2) (3) (4)))
-
 (deftest array-index.1
     (typep 0 'array-index)
   t)
@@ -976,23 +958,12 @@
     (mean '(1 2 10))
   13/3)
 
-(deftest mean.4
-    (mean #2A((1 2 3)
-              (4 5 6)
-              (7 8 9)))
-  5)
-
 (deftest median.1
     (median '(100 0 99 1 98 2 97))
   97)
 
 (deftest median.2
     (median '(100 0 99 1 98 2 97 96))
-  193/2)
-
-(deftest median.3
-    (median #2A((100 0 99 1)
-                (98 2 97 96)))
   193/2)
 
 (deftest variance.1

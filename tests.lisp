@@ -1828,3 +1828,31 @@
   t
   t
   t)
+
+(deftest extremum.1
+    (let ((n 0))
+      (dotimes (i 10)
+       (let ((data (shuffle (coerce (iota 10000 :start i) 'vector)))
+             (ok t))
+         (unless (eql i (extremum data #'<))
+           (setf ok nil))
+         (unless (eql i (extremum (coerce data 'list) #'<))
+           (setf ok nil))
+         (unless (eql (+ 9999 i) (extremum data #'>))
+           (setf ok nil))
+         (unless (eql (+ 9999 i) (extremum (coerce  data 'list) #'>))
+           (setf ok nil))
+         (when ok
+           (incf n))))
+      (when (eql 10 (extremum #(100 1 10 1000) #'> :start 1 :end 3))
+        (incf n))
+      (when (eql -1000 (extremum #(100 1 10 -1000) #'> :key 'abs))
+        (incf n))
+      (let ((err nil))
+        (handler-bind ((no-extremum (lambda (c)
+                                      (setf err c)
+                                      (continue c))))
+          (when (eq nil (extremum "" #'error))
+            (when err
+              (incf n))))))
+  13)

@@ -107,17 +107,19 @@
    #:emptyp
    #:ends-with
    #:ends-with-subseq
+   #:extremum
    #:first-elt
    #:last-elt
+   #:length=
    #:map-combinations
    #:map-derangements
    #:map-permutations
+   #:no-extremum
    #:proper-sequence
    #:random-elt
    #:removef
    #:rotate
    #:sequence-of-length-p
-   #:length=
    #:shuffle
    #:starts-with
    #:starts-with-subseq

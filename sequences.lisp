@@ -506,8 +506,7 @@ The arguments to the PREDICATE function are computed from elements of SEQUENCE
 using the KEY function, if supplied. If KEY is not supplied or is NIL, the
 sequence element itself is used.
 
-If SEQUENCE is empty, then the error NO-EXTREMUM is signalled. Invoking the
-CONTINUE restart will cause extremum to return NIL."
+If SEQUENCE is empty, NIL is returned."
   (let* ((pred-fun (ensure-function predicate))
          (key-fun (unless (or (not key) (eq key 'identity) (eq key #'identity))
                     (ensure-function key)))
@@ -529,7 +528,7 @@ CONTINUE restart will cause extremum to return NIL."
                  (declare (dynamic-extent #'reduce-elts))
                  (reduce #'reduce-elts sequence :start start :end real-end))))
           ((= real-end start)
-           (cerror "Return NIL instead." 'no-extremum))
+           nil)
           (t
            (error "Invalid bounding indexes for sequence of length ~S: ~S ~S, ~S ~S"
                   (length sequence)

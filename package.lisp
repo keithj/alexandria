@@ -114,7 +114,6 @@
    #:map-combinations
    #:map-derangements
    #:map-permutations
-   #:no-extremum
    #:proper-sequence
    #:random-elt
    #:removef

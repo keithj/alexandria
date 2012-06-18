@@ -81,15 +81,16 @@ terms and conditions:
 @insertcopying
 
 @menu
-* Hash Tables::                 
-* Data and Control Flow::       
-* Conses::                      
-* Sequences::                   
-* Macro Writing::               
-* Symbols::                     
-* Arrays::                      
-* Types::                       
-* Numbers::                     
+* Hash Tables::
+* Data and Control Flow::
+* Conses::
+* Sequences::
+* IO::
+* Macro Writing::
+* Symbols::
+* Arrays::
+* Types::
+* Numbers::
 @end menu
 
 @end ifnottex
@@ -98,7 +99,7 @@ terms and conditions:
 @comment  node-name,  next,  previous,  up
 @chapter Hash Tables
 
-@include include/fun-alexandria-ensure-gethash.texinfo
+@include include/macro-alexandria-ensure-gethash.texinfo
 @include include/fun-alexandria-copy-hash-table.texinfo
 @include include/fun-alexandria-maphash-keys.texinfo
 @include include/fun-alexandria-maphash-values.texinfo
@@ -203,6 +204,13 @@ terms and conditions:
 @include include/fun-alexandria-map-combinations.texinfo
 @include include/fun-alexandria-map-derangements.texinfo
 @include include/fun-alexandria-map-permutations.texinfo
+
+@node IO
+@comment  node-name,   next,  previous,  up
+@chapter IO
+
+@include include/fun-alexandria-read-file-into-string.texinfo
+@include include/fun-alexandria-read-file-into-byte-vector.texinfo
 
 @node Macro Writing
 @comment  node-name,  next,  previous,  up

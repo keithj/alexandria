@@ -226,8 +226,10 @@
    ;; io
    #:with-input-from-file
    #:with-output-to-file
+   #:read-stream-content-into-string
    #:read-file-into-string
    #:write-string-into-file
+   #:read-stream-content-into-byte-vector
    #:read-file-into-byte-vector
    #:write-byte-vector-into-file
    #:copy-stream

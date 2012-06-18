@@ -209,7 +209,9 @@ terms and conditions:
 @comment  node-name,   next,  previous,  up
 @chapter IO
 
+@include include/fun-alexandria-read-stream-content-into-string.texinfo
 @include include/fun-alexandria-read-file-into-string.texinfo
+@include include/fun-alexandria-read-stream-content-into-byte-vector.texinfo
 @include include/fun-alexandria-read-file-into-byte-vector.texinfo
 
 @node Macro Writing

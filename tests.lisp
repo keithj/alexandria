@@ -1511,6 +1511,59 @@
                                  dotted-list nth)))))))))
   nil)
 
+;;;; IO
+
+(deftest read-stream-content-into-string.1
+    (values (with-input-from-string (stream "foo bar")
+              (read-stream-content-into-string stream))
+            (with-input-from-string (stream "foo bar")
+              (read-stream-content-into-string stream :buffer-size 1))
+            (with-input-from-string (stream "foo bar")
+              (read-stream-content-into-string stream :buffer-size 6))
+            (with-input-from-string (stream "foo bar")
+              (read-stream-content-into-string stream :buffer-size 7)))
+  "foo bar"
+  "foo bar"
+  "foo bar"
+  "foo bar")
+
+(deftest read-stream-content-into-string.2
+    (handler-case
+        (let ((stream (make-broadcast-stream)))
+          (read-stream-content-into-string stream :buffer-size 0))
+      (type-error ()
+        :type-error))
+  :type-error)
+
+#+(or)
+(defvar *octets*
+  (map '(simple-array (unsigned-byte 8) (7)) #'char-code "foo bar"))
+
+#+(or)
+(deftest read-stream-content-into-byte-vector.1
+    (values (with-input-from-byte-vector (stream *octets*)
+              (read-stream-content-into-byte-vector stream))
+            (with-input-from-byte-vector (stream *octets*)
+              (read-stream-content-into-byte-vector stream :initial-size 1))
+            (with-input-from-byte-vector (stream *octets*)
+              (read-stream-content-into-byte-vector stream 'alexandria::%length 6))
+            (with-input-from-byte-vector (stream *octets*)
+              (read-stream-content-into-byte-vector stream 'alexandria::%length 3)))
+  *octets*
+  *octets*
+  *octets*
+  (subseq *octets* 0 3))
+
+(deftest read-stream-content-into-byte-vector.2
+    (handler-case
+        (let ((stream (make-broadcast-stream)))
+          (read-stream-content-into-byte-vector stream :initial-size 0))
+      (type-error ()
+        :type-error))
+  :type-error)
+
+;;;; Macros
+
 (deftest with-unique-names.1
     (let ((*gensym-counter* 0))
       (let ((syms (with-unique-names (foo bar quux)

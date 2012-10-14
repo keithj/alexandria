@@ -14,7 +14,7 @@ meet the following constraints:
    include anaphoric constructs, loop-like binding macros, etc.
 
  * Portable: Alexandria limits itself to portable parts of Common
-   Lisp. Even apparently conservative and usefull functions remain
+   Lisp. Even apparently conservative and useful functions remain
    outside the scope of Alexandria if they cannot be implemented
    portably. Portability is here defined as portable within a
    conforming implementation: implementation bugs are not considered
@@ -48,5 +48,5 @@ Patches:
   done and /why/, and when fixing a bug or adding a feature you should
   also include a test-case.
 
-  Be adviced though that right now new features are unlikely to be
+  Be advised though that right now new features are unlikely to be
   accepted until 1.0 is officially out of the door.

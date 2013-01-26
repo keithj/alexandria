@@ -1885,3 +1885,13 @@
     (equal '(#C(0.0 0.0) #C(0.0 2.0) #C(0.0 4.0))
            (iota 3 :start 0.0 :step #C(0 2)))
   t)
+
+(deftest parse-ordinary-lambda-list.1
+  (multiple-value-bind (req opt rest keys allowp aux keyp)
+      (parse-ordinary-lambda-list '(a b c &optional d &key))
+    (and (equal '(a b c) req)
+         (equal '((d nil nil)) opt)
+         (equal '() keys)
+         (not allowp)
+         (not aux)
+         (eq t keyp))))

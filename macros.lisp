@@ -112,6 +112,8 @@ arguments when given."
 
    (name init).
 
+7. Existence of &KEY in the lambda-list.
+
 Signals a PROGRAM-ERROR is the lambda-list is malformed."
   (let ((state :required)
         (allow-other-keys nil)
@@ -120,6 +122,7 @@ Signals a PROGRAM-ERROR is the lambda-list is malformed."
         (optional nil)
         (rest nil)
         (keys nil)
+        (keyp nil)
         (aux nil))
     (labels ((fail (elt)
                (simple-program-error "Misplaced ~S in ordinary lambda-list:~%  ~S"
@@ -148,7 +151,8 @@ Signals a PROGRAM-ERROR is the lambda-list is malformed."
           (&key
            (if (member state '(:required &optional :after-rest))
                (setf state elt)
-               (fail elt)))
+               (fail elt))
+           (setf keyp t))
           (&allow-other-keys
            (if (eq state '&key)
                (setf allow-other-keys t
@@ -229,7 +233,7 @@ Signals a PROGRAM-ERROR is the lambda-list is malformed."
              (t
               (simple-program-error "Invalid ordinary lambda-list:~%  ~S" lambda-list)))))))
     (values (nreverse required) (nreverse optional) rest (nreverse keys)
-            allow-other-keys (nreverse aux))))
+            allow-other-keys (nreverse aux) keyp)))
 
 ;;;; DESTRUCTURING-*CASE
 

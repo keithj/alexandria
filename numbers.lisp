@@ -58,9 +58,9 @@ Examples:
 "
   (declare (type (integer 0) n) (number start step))
   (loop repeat n
-     ;; KLUDGE: get numeric contagion right for the first element too
-     for i = (+ start (- step step)) then (+ i step)
-     collect i))
+        ;; KLUDGE: get numeric contagion right for the first element too
+        for i = (+ (- (+ start step) step)) then (+ i step)
+        collect i))
 
 (declaim (inline map-iota))
 (defun map-iota (function n &key (start 0) (step 1))

@@ -1880,3 +1880,8 @@
   t
   t
   t)
+
+(deftest iota.fp-start-and-complex-integer-step
+    (equal '(#C(0.0 0.0) #C(0.0 2.0) #C(0.0 4.0))
+           (iota 3 :start 0.0 :step #C(0 2)))
+  t)

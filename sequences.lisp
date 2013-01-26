@@ -289,7 +289,7 @@ displaced array pointing to the sequence after PREFIX."
   (let ((sequence-length (length sequence))
         (prefix-length (length prefix)))
     (if (<= prefix-length sequence-length)
-        (let ((mismatch (apply #'mismatch sequence prefix args)))
+        (let ((mismatch (apply #'mismatch prefix sequence args)))
           (if mismatch
               (if (< mismatch prefix-length)
                   (values nil nil)

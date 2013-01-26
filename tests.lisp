@@ -1852,3 +1852,13 @@
         (incf n))
       n)
   13)
+
+(deftest starts-with-subseq.start1
+    (starts-with-subseq "foo" "oop" :start1 1)
+  t
+  nil)
+
+(deftest starts-with-subseq.start2
+    (starts-with-subseq "foo" "xfoop" :start2 1)
+  t
+  nil)

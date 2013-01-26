@@ -1862,3 +1862,21 @@
     (starts-with-subseq "foo" "xfoop" :start2 1)
   t
   nil)
+
+(deftest format-symbol.print-case-bound
+    (let ((upper (intern "FOO-BAR"))
+          (lower (intern "foo-bar"))
+          (*print-escape* nil))
+      (values
+       (let ((*print-case* :downcase))
+         (and (eq upper (format-symbol t "~A" upper))
+               (eq lower (format-symbol t "~A" lower))))
+       (let ((*print-case* :upcase))
+         (and (eq upper (format-symbol t "~A" upper))
+               (eq lower (format-symbol t "~A" lower))))
+       (let ((*print-case* :capitalize))
+         (and (eq upper (format-symbol t "~A" upper))
+              (eq lower (format-symbol t "~A" lower))))))
+  t
+  t
+  t)

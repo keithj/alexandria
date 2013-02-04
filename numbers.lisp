@@ -18,31 +18,35 @@ normal distribution around 0.0d0.
 Sufficiently positive MIN or negative MAX will cause the algorithm used to
 take a very long time. If MIN is positive it should be close to zero, and
 similarly if MAX is negative it should be close to zero."
-  (labels ((gauss ()
-             (loop
-                for x1 = (- (random 2.0d0) 1.0d0)
-                for x2 = (- (random 2.0d0) 1.0d0)
-                for w = (+ (expt x1 2) (expt x2 2))
-                when (< w 1.0d0)
-                do (let ((v (sqrt (/ (* -2.0d0 (log w)) w))))
-                     (return (values (* x1 v) (* x2 v))))))
-           (guard (x min max)
-             (unless (<= min x max)
-               (tagbody
-                :retry
-                  (multiple-value-bind (x1 x2) (gauss)
-                    (when (<= min x1 max)
-                      (setf x x1)
-                      (go :done))
-                    (when (<= min x2 max)
-                      (setf x x2)
-                      (go :done))
-                    (go :retry))
-                :done))
-             x))
-    (multiple-value-bind (g1 g2) (gauss)
-      (values (guard g1 (or min g1) (or max g1))
-              (guard g2 (or min g2) (or max g2))))))
+  (macrolet
+      ((valid (x)
+         `(<= (or min ,x) ,x (or max ,x)) ))
+    (labels
+        ((gauss ()
+           (loop
+                 for x1 = (- (random 2.0d0) 1.0d0)
+                 for x2 = (- (random 2.0d0) 1.0d0)
+                 for w = (+ (expt x1 2) (expt x2 2))
+                 when (< w 1.0d0)
+                 do (let ((v (sqrt (/ (* -2.0d0 (log w)) w))))
+                      (return (values (* x1 v) (* x2 v))))))
+         (guard (x)
+           (unless (valid x)
+             (tagbody
+              :retry
+                (multiple-value-bind (x1 x2) (gauss)
+                  (when (valid x1)
+                    (setf x x1)
+                    (go :done))
+                  (when (valid x2)
+                    (setf x x2)
+                    (go :done))
+                  (go :retry))
+              :done))
+           x))
+      (multiple-value-bind
+            (g1 g2) (gauss)
+        (values (guard g1) (guard g2))))))
 
 (declaim (inline iota))
 (defun iota (n &key (start 0) (step 1))

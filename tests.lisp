@@ -913,6 +913,19 @@
   t
   t)
 
+#+sbcl
+(deftest gaussian-random.2
+    (handler-case
+        (sb-ext:with-timeout 2
+          (progn
+            (loop
+              :repeat 10000
+              :do (gaussian-random 0 nil))
+            'done))
+      (sb-ext:timeout ()
+        'timed-out))
+  'done)
+
 (deftest iota.1
     (iota 3)
   (0 1 2))

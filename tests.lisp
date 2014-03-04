@@ -869,6 +869,27 @@
    nil
    t))
 
+(deftest delete-from-plist.1
+    (let ((orig '(a 1 b 2 c 3 d 4)))
+      (list (delete-from-plist (copy-list orig) 'a 'c)
+            (delete-from-plist (copy-list orig) 'b 'd)
+            (delete-from-plist (copy-list orig) 'b)
+            (delete-from-plist (copy-list orig) 'a)
+            (delete-from-plist (copy-list orig) 'd 42 "zot")
+            (delete-from-plist (copy-list orig) 'a 'b 'c 'd)
+            (delete-from-plist (copy-list orig) 'a 'b 'c 'd 'x)
+            (equal orig (delete-from-plist orig))
+            (eq orig (delete-from-plist orig))))
+  ((b 2 d 4)
+   (a 1 c 3)
+   (a 1 c 3 d 4)
+   (b 2 c 3 d 4)
+   (a 1 b 2 c 3)
+   nil
+   nil
+   t
+   t))
+
 (deftest mappend.1
     (mappend (compose 'list '*) '(1 2 3) '(1 2 3))
   (1 4 9))
@@ -924,7 +945,7 @@
             'done))
       (sb-ext:timeout ()
         'timed-out))
-  'done)
+  done)
 
 (deftest iota.1
     (iota 3)

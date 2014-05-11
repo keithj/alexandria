@@ -1463,7 +1463,7 @@
 
 (deftest sequences.passing-improper-lists
     (macrolet ((signals-error-p (form)
-                 `(handler-case 
+                 `(handler-case
                       (progn ,form nil)
                     (type-error (e)
                       t)))
@@ -1839,6 +1839,11 @@
 (deftest binomial-coefficient.1
     (alexandria:binomial-coefficient 1239 139)
   28794902202288970200771694600561826718847179309929858835480006683522184441358211423695124921058123706380656375919763349913245306834194782172712255592710204598527867804110129489943080460154)
+
+;; Exercise bignum case (at least on x86).
+(deftest binomial-coefficient.2
+    (alexandria:binomial-coefficient 2000000000000 20)
+  430998041177272843950422879590338454856322722740402365741730748431530623813012487773080486408378680853987520854296499536311275320016878730999689934464711239072435565454954447356845336730100919970769793030177499999999900000000000)
 
 (deftest copy-stream.1
     (let ((data "sdkfjhsakfh weior763495ewofhsdfk sdfadlkfjhsadf woif sdlkjfhslkdfh sdklfjh"))

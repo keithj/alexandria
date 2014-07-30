@@ -870,7 +870,7 @@
    t))
 
 (deftest delete-from-plist.1
-    (let ((orig '(a 1 b 2 c 3 d 4)))
+    (let ((orig '(a 1 b 2 c 3 d 4 d 5)))
       (list (delete-from-plist (copy-list orig) 'a 'c)
             (delete-from-plist (copy-list orig) 'b 'd)
             (delete-from-plist (copy-list orig) 'b)
@@ -880,10 +880,10 @@
             (delete-from-plist (copy-list orig) 'a 'b 'c 'd 'x)
             (equal orig (delete-from-plist orig))
             (eq orig (delete-from-plist orig))))
-  ((b 2 d 4)
+  ((b 2 d 4 d 5)
    (a 1 c 3)
-   (a 1 c 3 d 4)
-   (b 2 c 3 d 4)
+   (a 1 c 3 d 4 d 5)
+   (b 2 c 3 d 4 d 5)
    (a 1 b 2 c 3)
    nil
    nil

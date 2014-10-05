@@ -230,7 +230,7 @@ not a sequence, or is an empty sequence."
   ;; type-error.
   (cond  ((consp sequence)
           (car sequence))
-         ((and (typep sequence '(and sequence (not list))) (plusp (length sequence)))
+         ((and (typep sequence 'sequence) (not (emptyp sequence)))
           (elt sequence 0))
          (t
           (error 'type-error
@@ -244,8 +244,7 @@ not a sequence, is an empty sequence, or if OBJECT cannot be stored in SEQUENCE.
   ;; type-error.
   (cond ((consp sequence)
          (setf (car sequence) object))
-        ((and (typep sequence '(and sequence (not list)))
-              (plusp (length sequence)))
+        ((and (typep sequence 'sequence) (not (emptyp sequence)))
          (setf (elt sequence 0) object))
         (t
          (error 'type-error
@@ -327,38 +326,33 @@ the last (length SUFFIX) elements of SEQUENCE are equal to SUFFIX."
 (defun starts-with (object sequence &key (test #'eql) (key #'identity))
   "Returns true if SEQUENCE is a sequence whose first element is EQL to OBJECT.
 Returns NIL if the SEQUENCE is not a sequence or is an empty sequence."
-  (funcall test
-           (funcall key
-                    (typecase sequence
-                      (cons (car sequence))
-                      (sequence
-                       (if (plusp (length sequence))
-                           (elt sequence 0)
-                           (return-from starts-with nil)))
-                      (t
-                       (return-from starts-with nil))))
-           object))
+  (let ((first-elt (typecase sequence
+                     (cons (car sequence))
+                     (sequence
+                      (if (emptyp sequence)
+                          (return-from starts-with nil)
+                          (elt sequence 0)))
+                     (t
+                      (return-from starts-with nil)))))
+    (funcall test (funcall key first-elt) object)))
 
 (defun ends-with (object sequence &key (test #'eql) (key #'identity))
   "Returns true if SEQUENCE is a sequence whose last element is EQL to OBJECT.
 Returns NIL if the SEQUENCE is not a sequence or is an empty sequence. Signals
 an error if SEQUENCE is an improper list."
-  (funcall test
-           (funcall key
-                    (typecase sequence
-                      (cons
-                       ;; signals for improper lists
-                       (lastcar sequence))
-                      (sequence
-                       ;; Can't use last-elt, as that signals an error
-                       ;; for empty sequences
-                       (let ((len (length sequence)))
-                         (if (plusp len)
-                             (elt sequence (1- len))
-                             (return-from ends-with nil))))
-                      (t
-                       (return-from ends-with nil))))
-           object))
+  (let ((last-elt (typecase sequence
+                    (cons
+                     (lastcar sequence)) ; signals for improper lists
+                    (sequence
+                     ;; Can't use last-elt, as that signals an error
+                     ;; for empty sequences
+                     (let ((len (length sequence)))
+                       (if (plusp len)
+                           (elt sequence (1- len))
+                           (return-from ends-with nil))))
+                    (t
+                     (return-from ends-with nil)))))
+    (funcall test (funcall key last-elt) object)))
 
 (defun map-combinations (function sequence &key (start 0) end length (copy t))
   "Calls FUNCTION with each combination of LENGTH constructable from the

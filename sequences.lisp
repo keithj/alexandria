@@ -491,13 +491,6 @@ if calling FUNCTION modifies either the derangement or SEQUENCE."
 
 (declaim (notinline sequence-of-length-p))
 
-(define-condition no-extremum (error)
-  ()
-  (:report (lambda (condition stream)
-             (declare (ignore condition))
-             (format stream "Empty sequence in ~S." 'extremum))))
-
-
 (defun extremum (sequence predicate &key key (start 0) end)
   "Returns the element of SEQUENCE that would appear first if the subsequence
 bounded by START and END was sorted using PREDICATE and KEY.

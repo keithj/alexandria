@@ -239,7 +239,7 @@
 
 ;;;; Hash tables
 
-(deftest ensure-hash-table.1
+(deftest ensure-gethash.1
     (let ((table (make-hash-table))
           (x (list 1)))
       (multiple-value-bind (value already-there)
@@ -253,6 +253,17 @@
                     already-there2
                     (= 42 (gethash x table)))))))
   t)
+
+(deftest ensure-gethash.2
+    (let ((table (make-hash-table))
+          (count 0))
+      (multiple-value-call #'values
+        (ensure-gethash (progn (incf count) :foo)
+                        (progn (incf count) table)
+                        (progn (incf count) :bar))
+        (gethash :foo table)
+        count))
+  :bar nil :bar t 3)
 
 (deftest copy-hash-table.1
     (let ((orig (make-hash-table :test 'eq :size 123))

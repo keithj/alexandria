@@ -93,7 +93,9 @@ PLIST. Hash table is initialized using the HASH-TABLE-INITARGS."
   "Like GETHASH, but if KEY is not found in the HASH-TABLE saves the DEFAULT
 under key before returning it. Secondary return value is true if key was
 already in the table."
-  `(multiple-value-bind (value ok) (gethash ,key ,hash-table)
-     (if ok
-         (values value ok)
-         (values (setf (gethash ,key ,hash-table) ,default) nil))))
+  (once-only (key hash-table)
+    (with-unique-names (value presentp)
+      `(multiple-value-bind (,value ,presentp) (gethash ,key ,hash-table)
+         (if ,presentp
+             (values ,value ,presentp)
+             (values (setf (gethash ,key ,hash-table) ,default) nil))))))

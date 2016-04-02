@@ -280,16 +280,22 @@ sequence, is an empty sequence, or if OBJECT cannot be stored in SEQUENCE."
                   :datum sequence
                   :expected-type '(and proper-sequence (not (satisfies emptyp))))))))
 
-(defun starts-with-subseq (prefix sequence &rest args &key (return-suffix nil) &allow-other-keys)
+(defun starts-with-subseq (prefix sequence &rest args
+                           &key
+                           (return-suffix nil return-suffix-supplied-p)
+                           &allow-other-keys)
   "Test whether the first elements of SEQUENCE are the same (as per TEST) as the elements of PREFIX.
 
-If RETURN-SUFFIX is T the functions returns, as a second value, a
+If RETURN-SUFFIX is T the function returns, as a second value, a
 displaced array pointing to the sequence after PREFIX."
-  (remove-from-plistf args :return-suffix)
+  (declare (dynamic-extent args))
   (let ((sequence-length (length sequence))
         (prefix-length (length prefix)))
     (if (<= prefix-length sequence-length)
-        (let ((mismatch (apply #'mismatch prefix sequence args)))
+        (let ((mismatch (apply #'mismatch prefix sequence
+                               (if return-suffix-supplied-p
+                                   (remove-from-plist args :return-suffix)
+                                   args))))
           (if mismatch
               (if (< mismatch prefix-length)
                   (values nil nil)

@@ -989,6 +989,10 @@
     (lerp 0.1 1 2)
   1.1)
 
+(deftest lerp.3
+    (lerp 0.1 4 25)
+  6.1)
+
 (deftest mean.1
     (mean '(1 2 3))
   2)

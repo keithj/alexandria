@@ -90,7 +90,14 @@ Examples:
 (defun lerp (v a b)
   "Returns the result of linear interpolation between A and B, using the
 interpolation coefficient V."
-   (+ a (* v (- b a))))
+  ;; The correct version is numerically stable, at the expense of an
+  ;; extra multiply. See (lerp 0.1 4 25) with (+ a (* v (- b a))). The
+  ;; unstable version can often be converted to a fast instruction on
+  ;; a lot of machines, though this is machine/implementation
+  ;; specific. As alexandria is more about correct code, than
+  ;; efficiency, and we're only talking about a single extra multiply,
+  ;; many would prefer the stable version
+  (+ (* (- 1.0 v) a) (* v b)))
 
 (declaim (inline mean))
 (defun mean (sample)

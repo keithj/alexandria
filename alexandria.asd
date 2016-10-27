@@ -2,6 +2,7 @@
   :version "0.0.0"
   :licence "Public Domain / 0-clause MIT"
   :description "Alexandria is a collection of portable public domain utilities."
+  :author "Nikodemus Siivola <nikodemus@sb-studio.net>, and others."
   :long-description
   "Alexandria is a project and a library.
 

@@ -1,4 +1,7 @@
 (defsystem alexandria-tests
+  :licence "Public Domain / 0-clause MIT"
+  :description "Tests for Alexandria, which is a collection of portable public domain utilities."
+  :author "Nikodemus Siivola <nikodemus@sb-studio.net>, and others."
   :depends-on (:alexandria #+sbcl :sb-rt #-sbcl :rt)
   :components ((:file "tests")))
 

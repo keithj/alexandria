@@ -1960,6 +1960,21 @@
       n)
   13)
 
+(deftest starts-with-subseq.string
+    (starts-with-subseq "f" "foo" :return-suffix t)
+  t
+  "oo")
+
+(deftest starts-with-subseq.vector
+    (starts-with-subseq #(1) #(1 2 3) :return-suffix t)
+  t
+  #(2 3))
+
+(deftest starts-with-subseq.list
+    (starts-with-subseq '(1) '(1 2 3) :return-suffix t)
+  t
+  (2 3))
+
 (deftest starts-with-subseq.start1
     (starts-with-subseq "foo" "oop" :start1 1)
   t

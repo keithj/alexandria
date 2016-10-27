@@ -300,28 +300,40 @@ sequence, is an empty sequence, or if OBJECT cannot be stored in SEQUENCE."
   "Test whether the first elements of SEQUENCE are the same (as per TEST) as the elements of PREFIX.
 
 If RETURN-SUFFIX is T the function returns, as a second value, a
-displaced array pointing to the sequence after PREFIX."
+sub-sequence or displaced array pointing to the sequence after PREFIX."
   (declare (dynamic-extent args))
   (let ((sequence-length (length sequence))
         (prefix-length (length prefix)))
-    (if (<= prefix-length sequence-length)
-        (let ((mismatch (apply #'mismatch prefix sequence
-                               (if return-suffix-supplied-p
-                                   (remove-from-plist args :return-suffix)
-                                   args))))
-          (if mismatch
-              (if (< mismatch prefix-length)
-                  (values nil nil)
-                  (values t (when return-suffix
-                              (make-array (- sequence-length mismatch)
-                                          :element-type (array-element-type sequence)
-                                          :displaced-to sequence
-                                          :displaced-index-offset prefix-length
-                                          :adjustable nil))))
-              (values t (when return-suffix
-                          (make-array 0 :element-type (array-element-type sequence)
-                                      :adjustable nil)))))
-        (values nil nil))))
+    (when (< sequence-length prefix-length)
+      (return-from starts-with-subseq (values nil nil)))
+    (flet ((make-suffix (start)
+             (when return-suffix
+               (cond
+                 ((not (arrayp sequence))
+                  (if start
+                      (subseq sequence start)
+                      (subseq sequence 0 0)))
+                 ((not start)
+                  (make-array 0
+                              :element-type (array-element-type sequence)
+                              :adjustable nil))
+                 (t
+                  (make-array (- sequence-length start)
+                              :element-type (array-element-type sequence)
+                              :displaced-to sequence
+                              :displaced-index-offset start
+                              :adjustable nil))))))
+      (let ((mismatch (apply #'mismatch prefix sequence
+                             (if return-suffix-supplied-p
+                                 (remove-from-plist args :return-suffix)
+                                 args))))
+        (cond
+          ((not mismatch)
+           (values t (make-suffix nil)))
+          ((= mismatch prefix-length)
+           (values t (make-suffix mismatch)))
+          (t
+           (values nil nil)))))))
 
 (defun ends-with-subseq (suffix sequence &key (test #'eql))
   "Test whether SEQUENCE ends with SUFFIX. In other words: return true if

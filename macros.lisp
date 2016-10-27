@@ -184,8 +184,10 @@ Signals a PROGRAM-ERROR is the lambda-list is malformed."
                        (check-variable name "optional parameter")
                        (cond ((cdr tail)
                               (check-spec tail "optional-supplied-p parameter"))
+                             ((and normalize-optional tail)
+                              (setf elt (append elt '(nil))))
                              (normalize-optional
-                              (setf elt (append elt '(nil)))))))
+                              (setf elt (append elt '(nil nil)))))))
                     (t
                      (check-variable elt "optional parameter")
                      (when normalize-optional
@@ -209,10 +211,12 @@ Signals a PROGRAM-ERROR is the lambda-list is malformed."
                               (check-variable var-or-kv "keyword parameter")
                               (when normalize-keyword
                                 (setf var-or-kv (list (make-keyword var-or-kv) var-or-kv)))))
-                       (if (cdr tail)
-                           (check-spec tail "keyword-supplied-p parameter")
-                           (when normalize-keyword
-                             (setf tail (append tail '(nil)))))
+                       (cond ((cdr tail)
+                              (check-spec tail "keyword-supplied-p parameter"))
+                             ((and normalize-keyword tail)
+                              (setf tail (append tail '(nil))))
+                             (normalize-keyword
+                              (setf tail '(nil nil))))
                        (setf elt (cons var-or-kv tail))))
                     (t
                      (check-variable elt "keyword parameter")

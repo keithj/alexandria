@@ -2010,10 +2010,19 @@
 
 (deftest parse-ordinary-lambda-list.1
     (multiple-value-bind (req opt rest keys allowp aux keyp)
-        (parse-ordinary-lambda-list '(a b c &optional d &key))
+        (parse-ordinary-lambda-list '(a b c
+                                      &optional o1 (o2 42) (o3 42 o3-supplied?)
+                                      &key (k1) ((:key k2)) (k3 42 k3-supplied?))
+                                    :normalize t)
       (and (equal '(a b c) req)
-           (equal '((d nil nil)) opt)
-           (equal '() keys)
+           (equal '((o1 nil nil)
+                    (o2 42 nil)
+                    (o3 42 o3-supplied?))
+                  opt)
+           (equal '(((:k1 k1) nil nil)
+                    ((:key k2) nil nil)
+                    ((:k3 k3) 42 k3-supplied?))
+                  keys)
            (not allowp)
            (not aux)
            (eq t keyp)))

@@ -68,7 +68,7 @@ returns the values of DEFAULT if no keys match."
                ,(expand possibilities 0 random-number)))))))
 
 (defmacro xor (&rest datums)
-  "Evaluates its arguments one at a time, from left to right. If more then one
+  "Evaluates its arguments one at a time, from left to right. If more than one
 argument evaluates to a true value no further DATUMS are evaluated, and NIL is
 returned as both primary and secondary value. If exactly one argument
 evaluates to true, its value is returned as the primary value after all the

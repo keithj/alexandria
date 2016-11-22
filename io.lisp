@@ -33,7 +33,7 @@ FILE-NAME. ARGS is sent as is to the call to OPEN except EXTERNAL-FORMAT,
 which is only sent to WITH-OPEN-FILE when it's not NIL."
   (declare (ignore direction))
   (when direction-p
-    (error "Can't specifiy :DIRECTION for WITH-INPUT-FROM-FILE."))
+    (error "Can't specify :DIRECTION for WITH-INPUT-FROM-FILE."))
   `(with-open-file* (,stream-name ,file-name :direction :input ,@args)
      ,@body))
 
@@ -46,7 +46,7 @@ FILE-NAME. ARGS is sent as is to the call to OPEN except EXTERNAL-FORMAT,
 which is only sent to WITH-OPEN-FILE when it's not NIL."
   (declare (ignore direction))
   (when direction-p
-    (error "Can't specifiy :DIRECTION for WITH-OUTPUT-TO-FILE."))
+    (error "Can't specify :DIRECTION for WITH-OUTPUT-TO-FILE."))
   `(with-open-file* (,stream-name ,file-name :direction :output ,@args)
      ,@body))
 

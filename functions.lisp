@@ -142,6 +142,16 @@ with and ARGUMENTS to FUNCTION."
       (declare (dynamic-extent more))
       (multiple-value-call fn (values-list more) (values-list arguments)))))
 
+(define-compiler-macro rcurry (function &rest arguments)
+  (let ((rcurries (make-gensym-list (length arguments) "RCURRY"))
+        (fun (gensym "FUN")))
+    `(let ((,fun (ensure-function ,function))
+           ,@(mapcar #'list rcurries arguments))
+       (declare (optimize (speed 3) (safety 1)))
+       (lambda (&rest more)
+         (declare (dynamic-extent more))
+         (multiple-value-call ,fun (values-list more) ,@rcurries)))))
+
 (declaim (notinline curry rcurry))
 
 (defmacro named-lambda (name lambda-list &body body)

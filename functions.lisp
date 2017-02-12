@@ -111,10 +111,12 @@ the last."
            (declare (dynamic-extent arguments))
            ,(compose-1 funs))))))
 
+(declaim (inline curry rcurry))
+
 (defun curry (function &rest arguments)
   "Returns a function that applies ARGUMENTS and the arguments
 it is called with to FUNCTION."
-  (declare (optimize (speed 3) (safety 1) (debug 1)))
+  (declare (optimize (speed 3) (safety 1)))
   (let ((fn (ensure-function function)))
     (lambda (&rest more)
       (declare (dynamic-extent more))
@@ -126,18 +128,21 @@ it is called with to FUNCTION."
         (fun (gensym "FUN")))
     `(let ((,fun (ensure-function ,function))
            ,@(mapcar #'list curries arguments))
-       (declare (optimize (speed 3) (safety 1) (debug 1)))
+       (declare (optimize (speed 3) (safety 1)))
        (lambda (&rest more)
+         (declare (dynamic-extent more))
          (apply ,fun ,@curries more)))))
 
 (defun rcurry (function &rest arguments)
   "Returns a function that applies the arguments it is called
 with and ARGUMENTS to FUNCTION."
-  (declare (optimize (speed 3) (safety 1) (debug 1)))
+  (declare (optimize (speed 3) (safety 1)))
   (let ((fn (ensure-function function)))
     (lambda (&rest more)
       (declare (dynamic-extent more))
       (multiple-value-call fn (values-list more) (values-list arguments)))))
+
+(declaim (notinline curry rcurry))
 
 (defmacro named-lambda (name lambda-list &body body)
   "Expands into a lambda-expression within whose BODY NAME denotes the

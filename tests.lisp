@@ -373,6 +373,15 @@
                 (hash-table-test table))))
   (3 (a) (b) (c) t))
 
+(deftest alist-hash-table.duplicate-keys
+    (let* ((alist '((0 a) (1 b) (0 c) (1 d) (2 e)))
+           (table (alist-hash-table alist)))
+      (list (hash-table-count table)
+            (gethash 0 table)
+            (gethash 1 table)
+            (gethash 2 table)))
+  (3 (a) (b) (e)))
+
 (deftest plist-hash-table.1
     (let* ((plist '(:a 1 :b 2 :c 3))
            (table (plist-hash-table plist :test 'eq)))
@@ -385,6 +394,15 @@
             (eq (hash-table-test-name 'eq)
                 (hash-table-test table))))
   (3 1 2 3 nil nil t))
+
+(deftest plist-hash-table.duplicate-keys
+    (let* ((plist '(:a 1 :b 2 :a 3 :b 4 :c 5))
+           (table (plist-hash-table plist)))
+      (list (hash-table-count table)
+            (gethash :a table)
+            (gethash :b table)
+            (gethash :c table)))
+  (3 1 2 5))
 
 ;;;; Functions
 

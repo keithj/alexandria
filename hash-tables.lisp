@@ -88,7 +88,7 @@ TABLE."
 ALIST. Hash table is initialized using the HASH-TABLE-INITARGS."
   (let ((table (apply #'make-hash-table hash-table-initargs)))
     (dolist (cons alist)
-      (setf (gethash (car cons) table) (cdr cons)))
+      (ensure-gethash (car cons) table (cdr cons)))
     table))
 
 (defun plist-hash-table (plist &rest hash-table-initargs)
@@ -97,5 +97,5 @@ PLIST. Hash table is initialized using the HASH-TABLE-INITARGS."
   (let ((table (apply #'make-hash-table hash-table-initargs)))
     (do ((tail plist (cddr tail)))
         ((not tail))
-      (setf (gethash (car tail) table) (cadr tail)))
+      (ensure-gethash (car tail) table (cadr tail)))
     table))

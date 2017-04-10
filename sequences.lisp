@@ -135,7 +135,7 @@ are not proper bounding index designators for SEQUENCE."
 (defun remove/swapped-arguments (sequence item &rest keyword-arguments)
   (apply #'remove item sequence keyword-arguments))
 
-(define-modify-macro removef (item &rest remove-keywords)
+(define-modify-macro removef (item &rest keyword-arguments)
   remove/swapped-arguments
   "Modify-macro for REMOVE. Sets place designated by the first argument to
 the result of calling REMOVE with ITEM, place, and the REMOVE-KEYWORDS.")
@@ -144,7 +144,7 @@ the result of calling REMOVE with ITEM, place, and the REMOVE-KEYWORDS.")
 (defun delete/swapped-arguments (sequence item &rest keyword-arguments)
   (apply #'delete item sequence keyword-arguments))
 
-(define-modify-macro deletef (item &rest remove-keywords)
+(define-modify-macro deletef (item &rest keyword-arguments)
   delete/swapped-arguments
   "Modify-macro for DELETE. Sets place designated by the first argument to
 the result of calling DELETE with ITEM, place, and the REMOVE-KEYWORDS.")

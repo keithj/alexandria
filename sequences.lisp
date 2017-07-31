@@ -388,7 +388,7 @@ delimited subsequence. (So unless LENGTH is specified there is only a single
 combination, which has the same elements as the delimited subsequence.) If
 COPY is true (the default) each combination is freshly allocated. If COPY is
 false all combinations are EQ to each other, in which case consequences are
-specified if a combination is modified by FUNCTION."
+unspecified if a combination is modified by FUNCTION."
   (let* ((end (or end (length sequence)))
          (size (- end start))
          (length (or length size))

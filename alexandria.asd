@@ -1,4 +1,4 @@
-(defsystem :alexandria
+(defsystem "alexandria"
   :version "0.0.0"
   :licence "Public Domain / 0-clause MIT"
   :description "Alexandria is a collection of portable public domain utilities."
@@ -58,11 +58,5 @@ the following constraints:
    (:file "arrays" :depends-on ("package" "types"))
    (:file "sequences" :depends-on ("package" "lists" "types"))
    (:file "numbers" :depends-on ("package" "sequences"))
-   (:file "features" :depends-on ("package" "control-flow"))))
-
-(defmethod operation-done-p ((o test-op) (c (eql (find-system :alexandria))))
-  nil)
-
-(defmethod perform ((o test-op) (c (eql (find-system :alexandria))))
-  (operate 'load-op :alexandria-tests)
-  (operate 'test-op :alexandria-tests))
+   (:file "features" :depends-on ("package" "control-flow")))
+  :in-order-to ((test-op (test-op "alexandria-tests"))))

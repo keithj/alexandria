@@ -289,7 +289,7 @@ Example:
      ((:foo a b)
       (format nil \"foo: ~S, ~S\" a b))
      ((:bar &key a b)
-      (format nil \"bar, ~S, ~S\" a b))
+      (format nil \"bar: ~S, ~S\" a b))
      (((:alt1 :alt2) a)
       (format nil \"alt: ~S\" a))))
 

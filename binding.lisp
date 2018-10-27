@@ -71,12 +71,12 @@ or a list of bindings of the form:
   ...
   (variable-n initial-form-n))
 
-Each initial-form is executed in turn, and the variable bound to the
-corresponding value. Initial-form expressions can refer to variables
+Each INITIAL-FORM is executed in turn, and the variable bound to the
+corresponding value. INITIAL-FORM expressions can refer to variables
 previously bound by the WHEN-LET*.
 
-Execution of WHEN-LET* stops immediately if any initial-form evaluates to NIL.
-If all initial-forms evaluate to true, then FORMS are executed as an implicit
+Execution of WHEN-LET* stops immediately if any INITIAL-FORM evaluates to NIL.
+If all INITIAL-FORMs evaluate to true, then FORMS are executed as an implicit
 PROGN."
   (let ((binding-list (if (and (consp bindings) (symbolp (car bindings)))
                           (list bindings)

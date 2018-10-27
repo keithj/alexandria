@@ -57,8 +57,8 @@ implicit PROGN."
        (when (and ,@variables)
          ,@forms))))
 
-(defmacro when-let* (bindings &body forms)
-  "Creates new variable bindings, and conditionally executes FORMS.
+(defmacro when-let* (bindings &body body)
+  "Creates new variable bindings, and conditionally executes BODY.
 
 BINDINGS must be either single binding of the form:
 
@@ -76,18 +76,18 @@ corresponding value. INITIAL-FORM expressions can refer to variables
 previously bound by the WHEN-LET*.
 
 Execution of WHEN-LET* stops immediately if any INITIAL-FORM evaluates to NIL.
-If all INITIAL-FORMs evaluate to true, then FORMS are executed as an implicit
+If all INITIAL-FORMs evaluate to true, then BODY is executed as an implicit
 PROGN."
   (let ((binding-list (if (and (consp bindings) (symbolp (car bindings)))
                           (list bindings)
                           bindings)))
-    (labels ((bind (bindings forms)
+    (labels ((bind (bindings body)
                (if bindings
                    `((let (,(car bindings))
                        (when ,(caar bindings)
-                         ,@(bind (cdr bindings) forms))))
-                   forms)))
+                         ,@(bind (cdr bindings) body))))
+                   body)))
       `(let (,(car binding-list))
          (when ,(caar binding-list)
-           ,@(bind (cdr binding-list) forms))))))
+           ,@(bind (cdr binding-list) body))))))
 

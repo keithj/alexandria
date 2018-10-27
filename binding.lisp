@@ -83,11 +83,8 @@ PROGN."
                           bindings)))
     (labels ((bind (bindings body)
                (if bindings
-                   `((let (,(car bindings))
-                       (when ,(caar bindings)
-                         ,@(bind (cdr bindings) body))))
-                   body)))
-      `(let (,(car binding-list))
-         (when ,(caar binding-list)
-           ,@(bind (cdr binding-list) body))))))
-
+                   `(let (,(car bindings))
+                      (when ,(caar bindings)
+                        ,(bind (cdr bindings) body)))
+                   `(progn ,@body))))
+      (bind binding-list body))))

@@ -138,7 +138,7 @@ are not proper bounding index designators for SEQUENCE."
 (define-modify-macro removef (item &rest keyword-arguments)
   remove/swapped-arguments
   "Modify-macro for REMOVE. Sets place designated by the first argument to
-the result of calling REMOVE with ITEM, place, and the REMOVE-KEYWORDS.")
+the result of calling REMOVE with ITEM, place, and the KEYWORD-ARGUMENTS.")
 
 (declaim (inline delete/swapped-arguments))
 (defun delete/swapped-arguments (sequence item &rest keyword-arguments)
@@ -147,7 +147,7 @@ the result of calling REMOVE with ITEM, place, and the REMOVE-KEYWORDS.")
 (define-modify-macro deletef (item &rest keyword-arguments)
   delete/swapped-arguments
   "Modify-macro for DELETE. Sets place designated by the first argument to
-the result of calling DELETE with ITEM, place, and the REMOVE-KEYWORDS.")
+the result of calling DELETE with ITEM, place, and the KEYWORD-ARGUMENTS.")
 
 (deftype proper-sequence ()
   "Type designator for proper sequences, that is proper lists and sequences

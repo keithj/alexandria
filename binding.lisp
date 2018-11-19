@@ -79,13 +79,15 @@ Execution of WHEN-LET* stops immediately if any INITIAL-FORM evaluates to NIL.
 If all INITIAL-FORMs evaluate to true, then BODY is executed as an implicit
 PROGN."
   (let ((binding-list (if (and (consp bindings) (symbolp (car bindings)))
-                        (list bindings)
-                        bindings)))
+                          (list bindings)
+                          bindings)))
     (labels ((bind (bindings body)
                (if bindings
-                 `(let (,(car bindings))
-                    (when ,(caar bindings)
-                      (bind (cdr bindings) body)))
-                 `(progn ,@body))))
-      (bind (cdr binding-list) body))))
+                   `((let (,(car bindings))
+                       (when ,(caar bindings)
+                         ,@(bind (cdr bindings) body))))
+                   body)))
+      `(let (,(car binding-list))
+         (when ,(caar binding-list)
+           ,@(bind (cdr binding-list) body))))))
 

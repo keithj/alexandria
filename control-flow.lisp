@@ -34,7 +34,7 @@ like #'eq and 'eq."
 (defmacro switch (&whole whole (object &key (test 'eql) (key 'identity))
                          &body clauses)
   "Evaluates first matching clause, returning its values, or evaluates and
-returns the values of DEFAULT if no keys match."
+returns the values of T or OTHERWISE if no keys match."
   (generate-switch-body whole object clauses test key))
 
 (defmacro eswitch (&whole whole (object &key (test 'eql) (key 'identity))

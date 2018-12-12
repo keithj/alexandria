@@ -61,9 +61,9 @@ Examples:
   (iota 3 :start -1 :step -1/2) => (-1 -3/2 -2)
 "
   (declare (type (integer 0) n) (number start step))
-  (loop repeat n
-        ;; KLUDGE: get numeric contagion right for the first element too
+  (loop ;; KLUDGE: get numeric contagion right for the first element too
         for i = (+ (- (+ start step) step)) then (+ i step)
+        repeat n
         collect i))
 
 (declaim (inline map-iota))
@@ -80,9 +80,9 @@ Examples:
     ;;; 3.0
 "
   (declare (type (integer 0) n) (number start step))
-  (loop repeat n
-        ;; KLUDGE: get numeric contagion right for the first element too
+  (loop ;; KLUDGE: get numeric contagion right for the first element too
         for i = (+ start (- step step)) then (+ i step)
+        repeat n
         do (funcall function i))
   n)
 

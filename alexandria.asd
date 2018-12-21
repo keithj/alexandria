@@ -1,16 +1,14 @@
 (defsystem "alexandria"
-  :version "0.0.0"
+  :version "1.0.0"
   :licence "Public Domain / 0-clause MIT"
   :description "Alexandria is a collection of portable public domain utilities."
-  :author "Nikodemus Siivola <nikodemus@sb-studio.net>, and others."
+  :author "Nikodemus Siivola and others."
   :long-description
   "Alexandria is a project and a library.
 
 As a project Alexandria's goal is to reduce duplication of effort and improve
 portability of Common Lisp code according to its own idiosyncratic and rather
-conservative aesthetic. What this actually means is open to debate, but each
-project member has a veto on all project activities, so a degree of
-conservativism is inevitable.
+conservative aesthetic.
 
 As a library Alexandria is one of the means by which the project strives for
 its goals.
@@ -28,6 +26,8 @@ the following constraints:
  * Conservative: Alexandria limits itself to what project members consider
    conservative utilities. Alexandria does not and will not include anaphoric
    constructs, loop-like binding macros, etc.
+   Also, its exported symbols are being imported by many other packages
+   already, so each new export carries the danger of causing conflicts.
 
  * Portable: Alexandria limits itself to portable parts of Common Lisp. Even
    apparently conservative and useful functions remain outside the scope of

@@ -1,4 +1,4 @@
-(defpackage :alexandria.0.dev
+(defpackage :alexandria.1.0.0
   (:nicknames :alexandria)
   (:use :cl)
   #+sb-package-locks

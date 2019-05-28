@@ -173,7 +173,6 @@
    #:non-positive-short-float
    #:non-positive-short-float-p
    #:non-positive-single-float-p
-   #:ordinary-lambda-list-keywords
    #:positive-double-float
    #:positive-double-float-p
    #:positive-fixnum

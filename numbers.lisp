@@ -104,15 +104,50 @@ interpolation coefficient V."
   "Returns the mean of SAMPLE. SAMPLE must be a sequence of numbers."
   (/ (reduce #'+ sample) (length sample)))
 
-(declaim (inline median))
 (defun median (sample)
   "Returns median of SAMPLE. SAMPLE must be a sequence of real numbers."
-  (let* ((vector (sort (copy-sequence 'vector sample) #'<))
-         (length (length vector))
-         (middle (truncate length 2)))
-    (if (oddp length)
-        (aref vector middle)
-        (/ (+ (aref vector middle) (aref vector (1- middle))) 2))))
+  ;; Implements and uses the quick-select algorithm to find the median
+  ;; https://en.wikipedia.org/wiki/Quickselect
+
+  (labels ((randint-in-range (start-int end-int)
+             "Returns a random integer in the specified range, inclusive"
+             (+ start-int (random (1+ (- end-int start-int)))))
+           (partition (vec start-i end-i)
+             "Implements the partition function, which performs a partial
+              sort of vec around the (randomly) chosen pivot.
+              Returns the index where the pivot element would be located
+              in a correctly-sorted array"
+             (if (= start-i end-i)
+                 start-i
+                 (let ((pivot-i (randint-in-range start-i end-i)))
+                   (rotatef (aref vec start-i) (aref vec pivot-i))
+                   (let ((swap-i end-i))
+                     (loop for i from swap-i downto (1+ start-i) do
+                       (when (>= (aref vec i) (aref vec start-i))
+                         (rotatef (aref vec i) (aref vec swap-i))
+                         (decf swap-i)))
+                     (rotatef (aref vec swap-i) (aref vec start-i))
+                     swap-i)))))
+
+    (let* ((vector (copy-sequence 'vector sample))
+           (len (length vector))
+           (mid-i (ash len -1))
+           (i 0)
+           (j (1- len)))
+
+      (loop for correct-pos = (partition vector i j)
+            while (/= correct-pos mid-i) do
+              (if (< correct-pos mid-i)
+                  (setf i (1+ correct-pos))
+                  (setf j (1- correct-pos))))
+
+      (if (oddp len)
+          (aref vector mid-i)
+          (* 1/2
+             (+ (aref vector mid-i)
+                (reduce #'max (make-array
+                               mid-i
+                               :displaced-to vector))))))))
 
 (declaim (inline variance))
 (defun variance (sample &key (biased t))
